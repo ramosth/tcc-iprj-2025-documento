@@ -74,6 +74,8 @@
 
 %% Imagens
 \usepackage{graphicx} % Inclusão de gráficos
+\usepackage{placeins}
+\usepackage{adjustbox}
 
 %% Tamanho e alinhamento das legendas
 \usepackage[
@@ -101,16 +103,16 @@
 \newcommand{\entradaAutor}{DOS SANTOS, Thamires Ramos} % Sem ponto no final
 
 % Titulo do trabalho
-\titulo{O papel da engenharia da computação na prevenção de acidentes em barragens de rejeitos} %Título do trabalho
-\newcommand{\englishTitle}{The role of computer engineering in preventing tailings dam accidents} %Título do trabalho em inglês
+\titulo{A engenharia da computação na prevenção de acidentes em barragens de rejeitos} %Título do trabalho
+\newcommand{\englishTitle}{The computer engineering in preventing tailings dam accidents} %Título do trabalho em inglês
 \data{\today}			%Ano de publicação
 \local{Nova Friburgo}	%Local
 
 %% Membros da banca
-\newcommand{\membrobancaA}{Prof. Dr. Banca 1}
+\newcommand{\membrobancaA}{Prof. Sílvia Mara da Costa Campos}
 \newcommand{\intituicaoBancaA}{Instituto Politécnico - UERJ}
 
-\newcommand{\membrobancaB}{Prof. Dr. Banca 2}
+\newcommand{\membrobancaB}{Prof. Dra. Sílvia Cristina Dias Pinto}
 \newcommand{\intituicaoBancaB}{Instituto Politécnico - UERJ}
 
 
@@ -167,6 +169,7 @@
 	\include{cap3}
 	\include{cap4}
 	\include{cap5}
+	\include{cap6}
  \include{conclusao}
 
     \include{nocite}
@@ -175,8 +178,8 @@
 	\postextual
 	% \include{glossario}
 
-	%\include{apendices}
-	%\include{anexos} 
+	\include{apendices}
+	\include{anexos} 
 	
 	
 	\appendix

@@ -8,7 +8,7 @@ This is a LaTeX academic thesis (TCC) for a Computer Engineering Bachelor's degr
 
 - **Language**: Portuguese (pt-BR) — all document content must be written in Portuguese
 - **Standard**: ABNT formatting via the `abnTeX2` LaTeX class
-- **Author**: Thamires Ramos dos Santos | **Advisor**: Prof. Edgard Poiate Junior
+- **Author**: Thamires Ramos dos Santos | **Advisor**: Prof. Dr. Edgard Poiate Junior
 
 ## Build Commands
 

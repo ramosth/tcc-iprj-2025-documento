@@ -1,9 +1,62 @@
 \apendices
 
-\chapter{A experiência de cuidar}
-<OPCIONAL>\\
-(INFORMAÇÃO ELABORADA PELO PRÓPRIO AUTOR DA MONOGRAFIA)
+% =============================================================
+% APÊNDICE
+% =============================================================
 
-\chapter{A experiência de estudar}
-OPCIONAL\\
-(INFORMAÇÃO ELABORADA PELO PRÓPRIO AUTOR DA MONOGRAFIA)
+\chapter{links dos arquivos}
+\label{apendice:geral}
+
+\begin{itemize}
+
+    \item \label{apendice:vch30d} Planilha com o cálculo, dia a dia,
+    dos acumulados de precipitação nas duas janelas de 30 dias
+    (temporadas 2025 e 2026) utilizadas para calibrar o limiar de
+    300\,mm da variável $V_{ch.30d}$ do modelo de risco, com valores
+    obtidos por soma automática (fórmula) a partir dos dados brutos
+    apresentados no \autoref{anexo:bndmet}:
+    \url{https://docs.google.com/spreadsheets/d/1JSbU4Wg6zigt4yfWcpLcHkyjZ2fzYpd0/edit?usp=sharing&ouid=101357379878577913884&rtpof=true&sd=true}
+
+    \item \label{apendice:codigo-firmware} Código-fonte do
+    \textit{firmware} (ESP8266):
+    \url{https://github.com/ramosth/tcc-iprj-2025-firmware}
+
+    \item \label{apendice:codigo-sistema} Código-fonte do sistema
+    \textit{backend} e \textit{frontend}:
+    \url{https://github.com/ramosth/tcc-iprj-2025-sistema}
+
+    \item \label{apendice:codigo-simulador-web} Simulação inicial do
+    sistema embarcado (versão web do Wokwi, com suporte apenas à
+    leitura do sensor):
+    \url{https://wokwi.com/projects/474974754335924225}
+
+    \item \label{apendice:codigo-simulador-wokwi} Simulação completa
+    do sistema embarcado (via extensão Wokwi para VS Code), com
+    leitura do sensor, consulta às APIs externas (BNDMET e
+    OpenWeatherMap) e envio dos dados à API local:
+    \url{https://github.com/ramosth/tcc-iprj-2025-simulador-wokwi}
+
+    \item \label{apendice:diagrama-casos-uso} Diagramas de casos de
+    uso (Partes 1 a 4 -- Sistema Embarcado, Acesso Público e
+    Autenticação, Monitoramento e Alertas, Gestão de Usuários):
+    \url{https://drive.google.com/drive/folders/1aNQMksipEQy6HfXWmwDxU32FmRdDJhbn?usp=drive_link}
+
+    \item \label{apendice:diagrama-classes} Diagramas de classes
+    (Partes 1 a 4 -- Modelos de Dados, Autenticação e Usuários,
+    Serviços e Controladores, Sistema Embarcado):
+    \url{https://drive.google.com/drive/folders/1nF1d9998obAmu5V4ewTkCRDLbgGNlGqb?usp=drive_link}
+
+    \item \label{apendice:diagrama-sequencia} Diagramas de sequência
+    (Partes 1 a 7 -- Boot/Inicialização, Ciclo de Coleta e Envio,
+    Autenticação, Recuperação de Senha, Dashboard, Sensores/Relatórios,
+    Gestão de Usuários/Central de Alertas):
+    \url{https://drive.google.com/drive/folders/14QUf7ajd2kgJ16Rpt5cOIzdIxqXy7h4D?usp=drive_link}
+
+    \item \label{apendice:fluxogramas} Fluxogramas de lógica do
+    sistema (F1 a F9 -- loop principal, análise de risco integrado,
+    protocolo de ruptura, índice de confiabilidade, recebimento e
+    persistência de leitura, autenticação JWT, detecção de status do
+    sensor, simulação de nível via Serial, envio de alerta em massa):
+    \url{https://drive.google.com/drive/folders/1nOPPpEWdytbwXwL3oq-wt3r2ZcHGtqoG?usp=drive_link}
+
+\end{itemize}

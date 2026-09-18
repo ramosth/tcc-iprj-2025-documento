@@ -1,9 +1,9 @@
-# O Papel da Engenharia da Computação na Prevenção de Acidentes em Barragens de Rejeitos
+# A Engenharia da Computação na Prevenção de Acidentes em Barragens de Rejeitos
 
 Trabalho de Conclusão de Curso (TCC) apresentado ao Instituto Politécnico do Rio de Janeiro (IPRJ) da Universidade do Estado do Rio de Janeiro (UERJ), como requisito para obtenção do grau de Bacharel em Engenharia da Computação.
 
 **Autora:** Thamires Ramos dos Santos  
-**Orientador:** Prof. Edgard Poiate Junior  
+**Orientador:** Prof. Dr. Edgard Poiate Junior  
 **Período:** 2026/1  
 
 ---

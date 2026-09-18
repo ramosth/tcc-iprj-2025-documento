@@ -3,161 +3,382 @@
 
 Este capítulo descreve os materiais e métodos empregados no
 desenvolvimento do sistema proposto. A exposição está organizada em
-quatro eixos principais: o protótipo de \textit{hardware} embarcado,
-as fontes de dados meteorológicos externas, o modelo de avaliação de
-risco integrado e a plataforma de \textit{software} desenvolvida.
+quatro eixos principais, apresentados na ordem em que fundamentam
+conceitualmente o sistema: o modelo de avaliação de risco integrado,
+que define \emph{o que} é medido e como o risco é quantificado; as
+fontes de dados meteorológicos externas que alimentam esse modelo; a
+plataforma de \textit{software} que implementa o modelo e disponibiliza
+seus resultados; e, por fim, o protótipo de \textit{hardware} embarcado
+que realiza a coleta física dos dados em campo. Ao final do capítulo,
+descreve-se ainda a metodologia adotada para os testes de validação do
+sistema, cujos resultados são detalhados no Capítulo~\ref{cap:resultados}.
+
+Conforme orientação da Coordenação de Aperfeiçoamento de Pessoal de
+Nível Superior (CAPES) quanto à transparência no uso de ferramentas de
+inteligência artificial em trabalhos acadêmicos, registra-se que
+ferramentas de IA generativa foram utilizadas em duas frentes deste
+trabalho: (i) auxílio à depuração e ao desenvolvimento do código-fonte
+do \textit{firmware}, do \textit{backend} e do \textit{frontend} do
+sistema; e (ii) revisão textual e de formatação deste documento. Em
+ambos os casos, a autoria intelectual do modelo de risco, das decisões
+de arquitetura e das análises apresentadas é da autora.
 
 % =============================================================
-\section{Protótipo de \textit{Hardware} Embarcado}
-\label{sec:hardware}
+\section{Modelo de Avaliação de Risco Integrado}
+\label{sec:modelo-risco}
 % =============================================================
 
-O módulo de aquisição de dados foi implementado com o microcontrolador
-ESP8266 NodeMCU V3, escolhido pela disponibilidade de conectividade
-Wi-Fi integrada, suporte ao protocolo HTTPS, programação direta pela
-Arduino IDE e custo acessível. O protótipo é composto por cinco
-componentes eletrônicos descritos a seguir.
+O modelo de avaliação de risco integrado foi desenvolvido pela
+autora com base na abordagem multidimensional documentada por
+\citeonline{rico2008mine} para causas de ruptura em barragens de
+rejeitos, que identificaram que 39\% dos 147 casos
+de ruptura de barragens de rejeitos documentados resultaram da combinação de múltiplos fatores, e não de uma causa
+isolada. 
+
+Partindo dessa premissa, o modelo quantifica, em cada
+ciclo de análise, as condições geotécnicas e meteorológicas da
+estrutura monitorada por meio de um índice numérico adimensional.
+O fator de risco integrado ($F_{risco}$) é calculado pela soma
+ponderada de sete variáveis, conforme a Equação~\ref{eq:frisco}.
+
+\begin{equation}
+\label{eq:frisco}
+F_{risco} = V_{len} + V_{ch.24h} + V_{ch.7d} + V_{ch.30d}
+            + V_{ch.fut} + V_{taxa} + V_{press}
+\end{equation}
+
+\noindent onde cada variável representa uma dimensão do risco geotécnico
+e meteorológico, descrita nas subseções seguintes. A escolha das sete
+variáveis reflete os dois grupos de fatores historicamente associados
+a rupturas de barragens de rejeitos: condições geotécnicas de
+saturação do maciço e condições meteorológicas de precipitação e
+pressão atmosférica, ambos discutidos nos casos de Merriespruit e
+Brumadinho apresentados no \autoref{cap1Revisao}
+\cite{rico2008mine, robertson2019feijaoson2019}.
 
 % -------------------------------------------------------------
-\subsection{ESP8266 NodeMCU V3}
-\label{subsec:esp8266}
+\subsection{Parâmetros Geotécnicos}
+\label{subsec:geotecnicos}
 % -------------------------------------------------------------
 
-O ESP8266 NodeMCU V3 é uma placa de desenvolvimento baseada no módulo
-ESP-12E, equipada com processador de arquitetura 32 \textit{bits},
-\textit{clock} de 80\,MHz, 4\,MB de memória \textit{flash} e 80\,KB
-de RAM. Opera com tensão de 3,3\,V a nível lógico, admitindo
-alimentação entre 5\,V e 9\,V via USB Tipo C. Possui 17 pinos GPIO,
-conversor ADC de 10 \textit{bits} (pino A0), suporte a Wi-Fi 802.11
-b/g/n em 2,4\,GHz com criptografia WPA/WPA2 e chip conversor USB-serial
-CH340. No protótipo, o ESP8266 é responsável pela leitura do sensor
-de umidade, pela consulta às APIs meteorológicas externas via HTTPS e
-pelo envio periódico dos dados ao \textit{backend}
-\cite{mercadolivre_esp8266}.
+\subsubsection{Nível do Lençol Freático (\texorpdfstring{$V_{len}$}{V\_len})}
+
+O nível do lençol freático é estimado indiretamente pela umidade do
+solo medida pelo higrômetro, seguindo o mesmo princípio funcional dos
+piezômetros convencionais descritos no \autoref{cap2Fundamentacao},
+que também inferem o comportamento hidrostático da barragem a partir
+de uma grandeza física medida localmente \cite{machado2007}. O fator
+de lençol freático ($F_{len}$) é calculado pela Equação~\ref{eq:flencol}:
+
+\begin{equation}
+\label{eq:flencol}
+F_{len} = \frac{\text{Umidade}_{solo}\,(\%)}{25\,\%}
+\end{equation}
+
+O valor crítico de referência de 25\% é um limiar técnico definido
+pela autora. Ele indica o ponto em que o solo é considerado em estado de
+saturação elevada, a partir da faixa operacional de calibração do sensor
+higrômetro resistivo FC-28 (Seção~\ref{subsec:higrometro}) --- e não
+de um valor extraído da literatura de barragens ---, com $F_{len}$
+limitado ao intervalo $[0;\,1]$. 
+
+O peso de 0,40 atribuído a
+esta variável, o maior do modelo, foi definido pela autora por ser o
+indicador mais direto da estabilidade do maciço --- escolha amparada pelo comportamento observado em Brumadinho
+(2019), onde o nível d'água interno persistentemente elevado
+antecedeu o colapso \cite{robertson2019feijaoson2019}. A variável componente é obtida pela
+Equação~\ref{eq:vlen}:
+
+\begin{equation}
+\label{eq:vlen}
+V_{len} = F_{len} \times 0{,}40
+\end{equation}
+
+Adicionalmente, quando a umidade do solo atinge o limiar de 30\%,
+o sistema aciona imediatamente o protocolo de ruptura, forçando
+$F_{risco} = 1{,}0$ independentemente dos demais parâmetros e
+ativando o LED vermelho e o \textit{buzzer}. A adoção de um gatilho
+de ruptura direto, desacoplado do cálculo ponderado, é coerente com o
+registrado por \citeonline{rico2008mine}, para quem a saturação
+extrema do maciço antecede diretamente a perda de resistência ao
+cisalhamento em rupturas por liquefação.
+
+\subsubsection{Taxa de Variação da Umidade (\texorpdfstring{$V_{taxa}$}{V\_taxa})}
+
+A taxa de variação da umidade mensura a velocidade de saturação do
+maciço ao longo do tempo, calculada a partir de um \textit{buffer}
+circular de dez leituras consecutivas. O tamanho do \textit{buffer}
+foi definido pela autora como solução de compromisso entre a
+resolução temporal necessária para capturar variações relevantes de
+umidade e as limitações de memória RAM do microcontrolador ESP8266
+(Seção~\ref{subsec:esp8266}). O valor normalizado é obtido pela
+Equação~\ref{eq:vtaxa}:
+
+\begin{equation}
+\label{eq:vtaxa}
+V_{taxa} = \frac{|\Delta U|}{100\,\%} \times 0{,}10
+\end{equation}
+
+\noindent onde $|\Delta U|$ é o valor absoluto da variação percentual de umidade
+entre a leitura mais recente e a mais antiga do \textit{buffer}. O uso do
+valor absoluto garante que tanto a absorção quanto a drenagem rápida do solo
+contribuam para o risco; a normalização por 100\% evita a saturação do
+componente em eventos de variação extrema, preservando a escala proporcional.
+
+O peso de 0,10 atribuído a $V_{taxa}$ foi arbitrado pela autora: não há, na
+literatura consultada, um coeficiente numérico específico para a
+velocidade de saturação em modelos de baixo custo, mas sua inclusão se
+justifica pela relevância da rapidez do fenômeno nos mecanismos de
+ruptura por liquefação, nos quais a perda de resistência ao
+cisalhamento ocorre de forma súbita \cite{arnez1999avaliacao}.
 
 % -------------------------------------------------------------
-\subsection{Sensor Higrômetro Resistivo}
-\label{subsec:higrometro}
+\subsection{Parâmetros Pluviométricos}
+\label{subsec:pluviometricos}
 % -------------------------------------------------------------
 
-O módulo sensor de umidade de solo é baseado no comparador LM393 e
-possui saída analógica (A0) e digital (D0), com tensão de operação
-entre 3,3\,V e 5\,V. A sensibilidade é ajustável por potenciômetro
-integrado à placa de circuito impresso (PCB de 3$\times$1,5\,cm),
-acompanhada de sonda de 6$\times$2\,cm. No protótipo, apenas a saída
-analógica é utilizada, conectada ao pino A0 do ESP8266. As leituras
-brutas do ADC (0 a 1023) são mapeadas para o intervalo de umidade de
-0\% a 100\%, com os pontos extremos calibrados e persistidos na EEPROM
-do microcontrolador para garantir consistência entre reinicializações
-\cite{eletrogate_higrometro}.
+\subsubsection{Precipitação nas últimas 24 horas (\texorpdfstring{$V_{ch.24h}$}{V\_ch.24h})}
 
-% -------------------------------------------------------------
-\subsection{LEDs Indicadores}
-\label{subsec:leds}
-% -------------------------------------------------------------
+O limiar de 50\,mm em 24 horas foi estabelecido com base em dois
+referenciais: o acidente de Merriespruit (África do Sul, 1994), no
+qual precipitação de 50\,mm antecedeu o rompimento da barragem
+\cite{rico2008mine}; e os critérios de alerta nível~3 do sistema
+AlertaRio, que classifica precipitações acima de 50\,mm/24h como de
+alto potencial de risco \cite{sistemaalertario2025}. A variável é calculada
+pela Equação~\ref{eq:vch24h}:
 
-Foram utilizados três LEDs difusos de 5\,mm para sinalização visual
-do nível de risco, conectados respectivamente aos pinos D1 (verde),
-D2 (amarelo) e D3 (vermelho). As especificações elétricas variam por
-cor: o LED verde opera com tensão de alimentação de 3,0 a 3,3\,V e
-corrente máxima de 20\,mA; o LED amarelo opera entre 2,0 e 2,2\,V,
-com corrente máxima de 20\,mA; e o LED vermelho opera a 1,8\,V com
-corrente máxima de 15\,mA. Todos possuem ângulo de abertura de 120°
-e diâmetro de 5\,mm. O nível lógico de 3,3\,V do ESP8266 é
-compatível com a operação direta dos três LEDs
-\cite{usinainfo_led_amarelo,usinainfo_led_vermelho}.
+\begin{equation}
+\label{eq:vch24h}
+V_{ch.24h} = \frac{\text{Precip}_{24h}\,\text{(mm)}}{50\,\text{mm}}
+             \times 0{,}08
+\end{equation}
 
-% -------------------------------------------------------------
-\subsection{\textit{Buzzer} Passivo 5\,V}
-\label{subsec:buzzer}
-% -------------------------------------------------------------
+\subsubsection{Precipitação acumulada nos últimos 7 dias (\texorpdfstring{$V_{ch.7d}$}{V\_ch.7d})}
 
-O \textit{buzzer} passivo modelo BPA5 é conectado ao pino D4 do
-ESP8266 e atua como sinalização sonora proporcional à severidade do
-risco. Por ser passivo, opera como um pequeno alto-falante e permite
-variar a frequência de emissão por software. No protótipo, a
-frequência é ajustada entre 2000\,Hz e 2400\,Hz conforme o índice
-de risco calculado. Especificações: tensão de trabalho de 5\,V,
-corrente máxima de 40\,mA, diâmetro de 12\,mm e altura de 8\,mm
-\cite{usinainfo_buzzer}.
+O limiar de 150\,mm para a janela de 7 dias fundamenta-se em
+\citeonline{rico2008mine}, que identificaram chuvas intensas como
+principal causa de rompimentos na Europa (35\%) e causa global
+relevante (25\%). O componente é dado pela Equação~\ref{eq:vch7d}:
 
-% -------------------------------------------------------------
-\subsection{Diagrama de Circuito e Conexões}
-\label{subsec:circuito}
-% -------------------------------------------------------------
+\begin{equation}
+\label{eq:vch7d}
+V_{ch.7d} = \frac{\text{Precip}_{7d}\,\text{(mm)}}{150\,\text{mm}}
+            \times 0{,}12
+\end{equation}
 
-A Figura~\ref{fig:componentes_ligados} apresenta o diagrama de
-montagem do protótipo com os componentes conectados, elaborado no
-software Fritzing. A Figura~\ref{fig:esquematico} apresenta o
-esquemático elétrico correspondente, com a identificação dos pinos
-e das ligações entre os componentes.
+\subsubsection{Precipitação acumulada nos últimos 30 dias (\texorpdfstring{$V_{ch.30d}$}{V\_ch.30d})}
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width=0.85\textwidth]
-    {figures/image51_componentes_ligados_versao_2_bb.png}
-\caption{Diagrama de montagem do protótipo embarcado}
-\label{fig:componentes_ligados}
-\fonte{Elaborado pela autora no software Fritzing.}
-\end{figure}
+O limiar de 300\,mm para 30 dias foi calibrado com base na análise
+histórica dos dados da estação D6594. A inspeção do histórico da estação, tendo por base as
+requisições e respostas da API BNDMET/DECEA reproduzidas no
+\autoref{anexo:bndmet} e o cálculo detalhado apresentado no
+\autoref{apendice:vch30d}, identificou, em cada uma das duas
+temporadas chuvosas analisadas, uma janela de 30 dias consecutivos
+com acúmulo elevado: 346\,mm entre 2 e 31 de janeiro de 2026 e
+310\,mm entre 5 de janeiro e 3 de fevereiro de 2025. 
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width=0.85\textwidth]
-    {figures/image52_componentes_ligados_versao_2_Esquematico.png}
-\caption{Esquemático elétrico do protótipo embarcado}
-\label{fig:esquematico}
-\fonte{Elaborado pela autora no software Fritzing.}
-\end{figure}
+O valor de
+300\,mm representa, portanto, um
+limiar próximo aos maiores acúmulos observados nessas duas janelas
+analisadas, e não o resultado de uma varredura exaustiva de todas as
+janelas móveis de 30 dias já registradas pela estação.
 
-% -------------------------------------------------------------
-\subsection{Especificações Técnicas e Custos}
-\label{subsec:specs-custos}
-% -------------------------------------------------------------
+Diferentemente dos limiares de 24 horas e de
+7 dias, extraídos de referências internacionais específicas
+\cite{rico2008mine, sistemaalertario2025}, este limiar foi definido
+pela autora a partir da análise de dados históricos regionais, na
+ausência de um valor de referência bibliográfica consolidado para essa
+janela temporal em barragens de rejeitos. O componente é calculado pela
+Equação~\ref{eq:vch30d}:
 
-A Tabela~\ref{tab:specs} consolida as principais especificações
-técnicas dos componentes utilizados.
+\begin{equation}
+\label{eq:vch30d}
+V_{ch.30d} = \frac{\text{Precip}_{30d}\,\text{(mm)}}{300\,\text{mm}}
+             \times 0{,}10
+\end{equation}
+
+\subsubsection{Previsão de Intensidade Pluviométrica (\texorpdfstring{$V_{ch.fut}$}{V\_ch.fut})}
+
+A previsão de precipitação para as próximas 24 horas é obtida via
+OWM e classificada pela autora em cinco categorias de intensidade,
+inspiradas na nomenclatura de classificação de chuva adotada pelo
+Sistema Alerta Rio --- fraca, moderada, forte, muito forte e pancada
+de chuva \cite{sistemaalertario2025}. É importante ressaltar que a
+classificação original do Alerta Rio refere-se à intensidade
+\textbf{instantânea} da chuva, medida em mm/h
+\cite{sistemaalertario2025}. 
+
+A autora adaptou apenas os
+\textbf{nomes} das cinco categorias do Alerta Rio, redefinindo os
+intervalos numéricos e atribuindo um fator discreto ($F_{int}$)
+próprio a cada classe, conforme a Tabela~\ref{tab:intensidade}. Os
+valores de corte (5, 25, 50 e 80\,mm) e os fatores correspondentes
+não constam da fonte original e resultam de arbítrio da autora, por
+analogia proporcional às faixas do Alerta Rio.
 
 \begin{table}[htb]
 \centering
-\caption{Especificações técnicas dos componentes do protótipo}
-\label{tab:specs}
-\begin{tabular}{llll}
-\hline
-\textbf{Componente}      & \textbf{Tensão (V)} & \textbf{Corrente máx.} & \textbf{Interface} \\
-\hline
-ESP8266 NodeMCU V3       & 3,3 (lógico)        & 200\,mA                & Wi-Fi / GPIO / ADC \\
-Higrômetro LM393         & 3,3–5               & —                      & Analógica (A0)     \\
-LED verde 5\,mm          & 3,0–3,3             & 20\,mA                 & GPIO digital       \\
-LED amarelo 5\,mm        & 2,0–2,2             & 20\,mA                 & GPIO digital       \\
-LED vermelho 5\,mm       & 1,8                 & 15\,mA                 & GPIO digital       \\
-\textit{Buzzer} BPA5 5\,V & 5                  & 40\,mA                 & GPIO digital (PWM) \\
-\hline
-\end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{mercadolivre_esp8266,eletrogate_higrometro,usinainfo_led_amarelo,usinainfo_led_vermelho,usinainfo_buzzer}.}
-\end{table}
-
-O custo total dos componentes do protótipo é de R\$\,70,30, conforme
-detalhado na Tabela~\ref{tab:custos}.
-
-\begin{table}[htb]
-\centering
-\caption{Componentes e custos do protótipo embarcado}
-\label{tab:custos}
+\caption{Classificação da intensidade pluviométrica prevista e fator correspondente}
+\label{tab:intensidade}
 \begin{tabular}{lcc}
 \hline
-\textbf{Componente}              & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
+\textbf{Intensidade}     & \textbf{Acumulado previsto 24h (mm)} & \textbf{Fator ($F_{int}$)} \\
 \hline
-ESP8266 NodeMCU V3               & 1             & 59,90                \\
-Higrômetro resistivo LM393       & 1             & 7,50                 \\
-\textit{Buzzer} passivo BPA5 5\,V & 1            & 2,30                 \\
-LEDs indicadores (conjunto)      & 1             & 0,60                 \\
-\hline
-\textbf{Total}                   &               & \textbf{70,30}       \\
+Fraca                    & $< 5$                                & 0,00                       \\
+Moderada                 & $5 \leq x < 25$                      & 0,25                       \\
+Forte                    & $25 \leq x < 50$                     & 0,50                       \\
+Muito forte              & $50 \leq x < 80$                     & 0,75                       \\
+Pancada de chuva         & $\geq 80$                            & 1,00                       \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{table}
+
+O componente é calculado pela Equação~\ref{eq:vchfut}:
+
+\begin{equation}
+\label{eq:vchfut}
+V_{ch.fut} = F_{int} \times 0{,}15
+\end{equation}
+
+% -------------------------------------------------------------
+\subsection{Parâmetro Atmosférico}
+\label{subsec:atmosferico}
+% -------------------------------------------------------------
+
+\subsubsection{Queda de Pressão Atmosférica (\texorpdfstring{$V_{press}$}{V\_press})}
+
+A queda da pressão atmosférica é um indicador reconhecido da
+aproximação de frentes frias e de sistemas de baixa pressão
+associados a precipitações intensas: o ar quente e úmido em
+ascensão reduz a pressão à superfície, favorecendo a formação de
+nuvens e chuva \cite{noaa2024pressure}.
+
+Por esse
+motivo, a tendência de pressão em janelas de três horas é um
+parâmetro sinótico padronizado internacionalmente --- reportado
+pelas estações meteorológicas conforme a Tabela de Código 0200 da
+\textit{World Meteorological Organization} (WMO) --- exatamente para
+caracterizar a evolução da pressão no curto prazo e antecipar a
+chegada de sistemas de mau tempo \cite{wmo2014guide}.
+
+A escolha do campo \texttt{grnd\_level} (pressão atmosférica ao
+nível do solo), com \texttt{pressure} (pressão ao nível do mar)
+como valor de \textit{fallback} quando o primeiro está ausente,
+decorre diretamente da disponibilidade desses dados na resposta
+padrão do \textit{endpoint} \texttt{/weather} consultado pelo
+sistema (Seção~\ref{subsec:owm}).
+
+O limiar de 5\,hPa em 3 horas e o peso de
+0,05 atribuído a esta variável --- o menor entre os sete componentes
+--- foram adotados pela autora como indicador auxiliar e antecipatório
+de instabilidade atmosférica iminente, e não como parâmetro geotécnico
+direto; optou-se por um peso reduzido justamente por se tratar de um
+sinal indireto e de menor especificidade para a estabilidade do
+maciço, sem correspondência quantitativa direta na literatura
+consultada sobre rupturas de barragens de rejeitos. O componente
+é calculado pela Equação~\ref{eq:vpress}:
+
+\begin{equation}
+\label{eq:vpress}
+V_{press} = \frac{\max(\Delta P,\,0)}{5\,\text{hPa}} \times 0{,}05
+\end{equation}
+
+\noindent onde $\Delta P$ é a queda de pressão em hPa observada no
+intervalo de 3 horas entre leituras consecutivas.
+
+% -------------------------------------------------------------
+\subsection{Distribuição de Pesos e Limites de Alerta}
+\label{subsec:pesos-limites}
+% -------------------------------------------------------------
+
+A Tabela~\ref{tab:pesos} apresenta a distribuição de pesos das sete
+variáveis do modelo. A distribuição reflete a abordagem
+multidimensional recomendada por \citeonline{rico2008mine}: o maior
+peso (0,40) foi atribuído à variável geotécnica direta (umidade do
+solo), enquanto os pesos meteorológicos (que somam 0,45) refletem
+a relevância das causas pluviométricas identificadas por esses
+autores em 25\% dos casos mundiais analisados. Os pesos
+remanescentes ($V_{taxa}=0{,}10$ e $V_{press}=0{,}05$) foram
+arbitrados pela autora como componentes complementares de menor
+magnitude, dado o caráter indireto desses indicadores em relação à
+ruptura estrutural. Os pesos somam 1,00, garantindo que $F_{risco}$
+varie entre 0 e 1 em condições normais de operação.
+
+\begin{table}[htb]
+\centering
+\caption{Variáveis do modelo de risco, fontes de dados e pesos atribuídos}
+\label{tab:pesos}
+\begin{tabular}{llcc}
+\hline
+\textbf{Variável} & \textbf{Fonte}                & \textbf{Peso} & \textbf{Limiar máx.} \\
+\hline
+$V_{len}$         & Higrômetro (sensor físico)    & 0,40          & Umidade $\geq 25\,\%$ \\
+$V_{ch.24h}$      & BNDMET / I006                 & 0,08          & 50\,mm               \\
+$V_{ch.7d}$       & BNDMET / I006                 & 0,12          & 150\,mm              \\
+$V_{ch.30d}$      & BNDMET / I006                 & 0,10          & 300\,mm              \\
+$V_{ch.fut}$      & OpenWeatherMap /forecast      & 0,15          & $\geq 80$\,mm/24h    \\
+$V_{taxa}$        & Higrômetro (\textit{buffer} circular) & 0,10 & $|\Delta U| = 100\,\%$ \\
+$V_{press}$       & OpenWeatherMap /weather       & 0,05          & Queda $\geq 5$\,hPa/3h \\
+\hline
+\textbf{Total}    &                               & \textbf{1,00} &                      \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
+
+Os limites de alerta e a sinalização correspondente são apresentados
+na Tabela~\ref{tab:alertas}. Os limiares (0,45 e 0,75) foram
+arbitrados pela autora seguindo a lógica de bandas de risco em três
+níveis já adotada pelo Sistema Alerta Rio \cite{sistemaalertario2025}
+e pela metodologia de Categoria de Risco da ANM, que também
+classifica barragens em faixas discretas de risco a partir de
+pontuações agregadas \cite{brasil2017portaria70389}. A opção por um
+corte próximo à metade inferior da escala para o nível VERDE
+($\leq 0{,}45$) reflete uma postura conservadora, priorizando a
+antecipação de alertas em detrimento de eventuais falsos positivos.
+
+\begin{table}[htb]
+\centering
+\caption{Classificação do nível de alerta com base no fator de risco integrado}
+\label{tab:alertas}
+\begin{tabular}{ccc}
+\hline
+\textbf{Fator de Risco} & \textbf{LED} & \textbf{Situação}                       \\
+\hline
+$0{,}00 \leq F_{risco} \leq 0{,}45$ & Verde   & Condições normais de operação           \\
+$0{,}46 \leq F_{risco} \leq 0{,}75$ & Amarelo & Atenção — monitoramento intensificado   \\
+$F_{risco} > 0{,}75$                 & Vermelho & Alerta crítico — ação imediata requerida \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
+
+% -------------------------------------------------------------
+\subsection{Mecanismo de Amplificação}
+\label{subsec:amplificacao}
+% -------------------------------------------------------------
+
+O modelo incorpora um mecanismo de amplificação do fator de risco,
+ativado quando duas condições são verificadas simultaneamente:
+$F_{len} \geq 0{,}70$ (solo em estado avançado de saturação,
+equivalente a umidade $\geq 17{,}5\,\%$) e acumulado previsto para
+as próximas 24 horas classificado como moderado ou superior
+($\geq 5$\,mm). Quando ambas as condições são satisfeitas, o fator
+de risco calculado é multiplicado por 1,20, conforme a
+Equação~\ref{eq:amplif}:
+
+\begin{equation}
+\label{eq:amplif}
+F_{risco}^{*} = F_{risco} \times 1{,}20
+\end{equation}
+
+Esta abordagem é fundamentada no comportamento geotécnico observado
+em acidentes históricos: em Brumadinho (2019), a barragem já
+apresentava nível d'água interno elevado de forma persistente, e o
+período foi precedido por chuvas intensas que reduziram a
+resistência do material na zona acima do lençol freático
+\cite{robertson2019feijaoson2019}.
 
 % =============================================================
 \section{Fontes de Dados Meteorológicos}
@@ -232,256 +453,6 @@ Brumadinho — Córrego do Feijão
 (latitude~$-$20,1433; longitude~$-$44,1997).
 
 % =============================================================
-\section{Modelo de Avaliação de Risco Integrado}
-\label{sec:modelo-risco}
-% =============================================================
-
-O modelo de avaliação de risco quantifica, em cada ciclo de análise,
-as condições geotécnicas e meteorológicas da estrutura monitorada
-por meio de um índice numérico adimensional. O fator de risco integrado
-($F_{risco}$) é calculado pela soma ponderada de sete variáveis,
-conforme a Equação~\ref{eq:frisco}.
-
-\begin{equation}
-\label{eq:frisco}
-F_{risco} = V_{len} + V_{ch.24h} + V_{ch.7d} + V_{ch.30d}
-            + V_{ch.fut} + V_{taxa} + V_{press}
-\end{equation}
-
-\noindent onde cada variável representa uma dimensão do risco geotécnico
-e meteorológico, descrita nas subseções seguintes.
-
-% -------------------------------------------------------------
-\subsection{Parâmetros Geotécnicos}
-\label{subsec:geotecnicos}
-% -------------------------------------------------------------
-
-\subsubsection{Nível do Lençol Freático (\texorpdfstring{$V_{len}$}{V\_len})}
-
-O nível do lençol freático é estimado indiretamente pela umidade do
-solo medida pelo higrômetro. O fator de lençol freático
-($F_{len}$) é calculado pela Equação~\ref{eq:flencol}:
-
-\begin{equation}
-\label{eq:flencol}
-F_{len} = \frac{\text{Umidade}_{solo}\,(\%)}{25\,\%}
-\end{equation}
-
-O valor crítico de referência de 25\% corresponde à saturação máxima
-do sensor para efeitos do modelo, com $F_{len}$ limitado ao intervalo
-$[0;\,1]$. O peso atribuído a esta variável é de 0,40, o maior do
-modelo, por ser o indicador mais direto da estabilidade do maciço.
-A variável componente é obtida pela Equação~\ref{eq:vlen}:
-
-\begin{equation}
-\label{eq:vlen}
-V_{len} = F_{len} \times 0{,}40
-\end{equation}
-
-Adicionalmente, quando a umidade do solo atinge o limiar de 30\%,
-o sistema aciona imediatamente o protocolo de ruptura, forçando
-$F_{risco} = 1{,}0$ independentemente dos demais parâmetros e
-ativando o LED vermelho e o \textit{buzzer}.
-
-\subsubsection{Taxa de Variação da Umidade (\texorpdfstring{$V_{taxa}$}{V\_taxa})}
-
-A taxa de variação da umidade mensura a velocidade de saturação do
-maciço ao longo do tempo, calculada a partir de um \textit{buffer}
-circular de dez leituras consecutivas. O valor normalizado é obtido
-pela Equação~\ref{eq:vtaxa}:
-
-\begin{equation}
-\label{eq:vtaxa}
-V_{taxa} = \frac{|\Delta U|}{100\,\%} \times 0{,}10
-\end{equation}
-
-\noindent onde $|\Delta U|$ é o valor absoluto da variação percentual de umidade
-entre a leitura mais recente e a mais antiga do \textit{buffer}. O uso do
-valor absoluto garante que tanto a absorção quanto a drenagem rápida do solo
-contribuam para o risco; a normalização por 100\% evita a saturação do
-componente em eventos de variação extrema, preservando a escala proporcional.
-
-% -------------------------------------------------------------
-\subsection{Parâmetros Pluviométricos}
-\label{subsec:pluviometricos}
-% -------------------------------------------------------------
-
-\subsubsection{Precipitação nas últimas 24 horas (\texorpdfstring{$V_{ch.24h}$}{V\_ch.24h})}
-
-O limiar de 50\,mm em 24 horas foi estabelecido com base em dois
-referenciais: o acidente de Merriespruit (África do Sul, 1994), no
-qual precipitação de 50\,mm antecedeu o rompimento da barragem
-\cite{rico2008mine}; e os critérios de alerta nível~3 do sistema
-AlertaRio, que classifica precipitações acima de 50\,mm/24h como de
-alto potencial de risco \cite{sistemaalertario2025}. A variável é calculada
-pela Equação~\ref{eq:vch24h}:
-
-\begin{equation}
-\label{eq:vch24h}
-V_{ch.24h} = \frac{\text{Precip}_{24h}\,\text{(mm)}}{50\,\text{mm}}
-             \times 0{,}08
-\end{equation}
-
-\subsubsection{Precipitação acumulada nos últimos 7 dias (\texorpdfstring{$V_{ch.7d}$}{V\_ch.7d})}
-
-O limiar de 150\,mm para a janela de 7 dias fundamenta-se em
-\citeonline{rico2008mine}, que identificaram chuvas intensas como
-principal causa de rompimentos na Europa (35\%) e causa global
-relevante (25\%). O componente é dado pela Equação~\ref{eq:vch7d}:
-
-\begin{equation}
-\label{eq:vch7d}
-V_{ch.7d} = \frac{\text{Precip}_{7d}\,\text{(mm)}}{150\,\text{mm}}
-            \times 0{,}12
-\end{equation}
-
-\subsubsection{Precipitação acumulada nos últimos 30 dias (\texorpdfstring{$V_{ch.30d}$}{V\_ch.30d})}
-
-O limiar de 300\,mm para 30 dias foi calibrado com base na análise
-histórica dos dados da estação D6594. A análise por janela deslizante
-de 30 dias consecutivos identificou o período de maior acúmulo em
-cada temporada chuvosa: 346\,mm entre 2 e 31 de janeiro de 2026 e
-310\,mm entre 5 de janeiro e 3 de fevereiro de 2025. O valor de
-300\,mm representa, portanto, um limiar próximo ao pico histórico
-observado na região. O componente é calculado pela
-Equação~\ref{eq:vch30d}:
-
-\begin{equation}
-\label{eq:vch30d}
-V_{ch.30d} = \frac{\text{Precip}_{30d}\,\text{(mm)}}{300\,\text{mm}}
-             \times 0{,}10
-\end{equation}
-
-\subsubsection{Previsão de Intensidade Pluviométrica (\texorpdfstring{$V_{ch.fut}$}{V\_ch.fut})}
-
-A previsão de precipitação para as próximas 24 horas é obtida via
-OWM e classificada em cinco categorias de intensidade, conforme a
-Tabela~\ref{tab:intensidade}. A variável utiliza um fator discreto
-($F_{int}$) correspondente à classe identificada.
-
-\begin{table}[htb]
-\centering
-\caption{Classificação da intensidade pluviométrica prevista e fator correspondente}
-\label{tab:intensidade}
-\begin{tabular}{lcc}
-\hline
-\textbf{Intensidade}     & \textbf{Acumulado previsto 24h (mm)} & \textbf{Fator ($F_{int}$)} \\
-\hline
-Fraca                    & $< 5$                                & 0,00                       \\
-Moderada                 & $5 \leq x < 25$                      & 0,25                       \\
-Forte                    & $25 \leq x < 50$                     & 0,50                       \\
-Muito forte              & $50 \leq x < 80$                     & 0,75                       \\
-Pancada de chuva         & $\geq 80$                            & 1,00                       \\
-\hline
-\end{tabular}
-\fonte{Adaptado de \citeonline{sistemaalertario2025}.}
-\end{table}
-
-O componente é calculado pela Equação~\ref{eq:vchfut}:
-
-\begin{equation}
-\label{eq:vchfut}
-V_{ch.fut} = F_{int} \times 0{,}15
-\end{equation}
-
-% -------------------------------------------------------------
-\subsection{Parâmetro Atmosférico}
-\label{subsec:atmosferico}
-% -------------------------------------------------------------
-
-\subsubsection{Queda de Pressão Atmosférica (\texorpdfstring{$V_{press}$}{V\_press})}
-
-Quedas rápidas de pressão atmosférica sinalizam a aproximação de
-frentes frias ou sistemas de baixa pressão associados a
-precipitações intensas. O limiar de 5\,hPa em 3 horas foi adotado
-como indicador de instabilidade atmosférica iminente. O componente
-é calculado pela Equação~\ref{eq:vpress}:
-
-\begin{equation}
-\label{eq:vpress}
-V_{press} = \frac{\max(\Delta P,\,0)}{5\,\text{hPa}} \times 0{,}05
-\end{equation}
-
-\noindent onde $\Delta P$ é a queda de pressão em hPa observada no
-intervalo de 3 horas entre leituras consecutivas.
-
-% -------------------------------------------------------------
-\subsection{Distribuição de Pesos e Limites de Alerta}
-\label{subsec:pesos-limites}
-% -------------------------------------------------------------
-
-A Tabela~\ref{tab:pesos} apresenta a distribuição de pesos das sete
-variáveis do modelo. Os pesos somam 1,00, garantindo que $F_{risco}$
-varie entre 0 e 1 em condições normais de operação.
-
-\begin{table}[htb]
-\centering
-\caption{Variáveis do modelo de risco, fontes de dados e pesos atribuídos}
-\label{tab:pesos}
-\begin{tabular}{llcc}
-\hline
-\textbf{Variável} & \textbf{Fonte}                & \textbf{Peso} & \textbf{Limiar máx.} \\
-\hline
-$V_{len}$         & Higrômetro (sensor físico)    & 0,40          & Umidade $\geq 25\,\%$ \\
-$V_{ch.24h}$      & BNDMET / I006                 & 0,08          & 50\,mm               \\
-$V_{ch.7d}$       & BNDMET / I006                 & 0,12          & 150\,mm              \\
-$V_{ch.30d}$      & BNDMET / I006                 & 0,10          & 300\,mm              \\
-$V_{ch.fut}$      & OpenWeatherMap /forecast      & 0,15          & $\geq 80$\,mm/24h    \\
-$V_{taxa}$        & Higrômetro (\textit{buffer} circular) & 0,10 & $|\Delta U| = 100\,\%$ \\
-$V_{press}$       & OpenWeatherMap /weather       & 0,05          & Queda $\geq 5$\,hPa/3h \\
-\hline
-\textbf{Total}    &                               & \textbf{1,00} &                      \\
-\hline
-\end{tabular}
-\fonte{Elaborado pela autora.}
-\end{table}
-
-Os limites de alerta e a sinalização correspondente são apresentados
-na Tabela~\ref{tab:alertas}.
-
-\begin{table}[htb]
-\centering
-\caption{Classificação do nível de alerta com base no fator de risco integrado}
-\label{tab:alertas}
-\begin{tabular}{ccc}
-\hline
-\textbf{Fator de Risco} & \textbf{LED} & \textbf{Situação}                       \\
-\hline
-$0{,}00 \leq F_{risco} \leq 0{,}45$ & Verde   & Condições normais de operação           \\
-$0{,}46 \leq F_{risco} \leq 0{,}75$ & Amarelo & Atenção — monitoramento intensificado   \\
-$F_{risco} > 0{,}75$                 & Vermelho & Alerta crítico — ação imediata requerida \\
-\hline
-\end{tabular}
-\fonte{Elaborado pela autora.}
-\end{table}
-
-% -------------------------------------------------------------
-\subsection{Mecanismo de Amplificação}
-\label{subsec:amplificacao}
-% -------------------------------------------------------------
-
-O modelo incorpora um mecanismo de amplificação do fator de risco,
-ativado quando duas condições são verificadas simultaneamente:
-$F_{len} \geq 0{,}70$ (solo em estado avançado de saturação,
-equivalente a umidade $\geq 17{,}5\,\%$) e acumulado previsto para
-as próximas 24 horas classificado como moderado ou superior
-($\geq 5$\,mm). Quando ambas as condições são satisfeitas, o fator
-de risco calculado é multiplicado por 1,20, conforme a
-Equação~\ref{eq:amplif}:
-
-\begin{equation}
-\label{eq:amplif}
-F_{risco}^{*} = F_{risco} \times 1{,}20
-\end{equation}
-
-Esta abordagem é fundamentada no comportamento geotécnico observado
-em acidentes históricos: em Brumadinho (2019), a barragem já
-apresentava nível d'água interno elevado de forma persistente, e o
-período foi precedido por chuvas intensas que reduziram a
-resistência do material na zona acima do lençol freático
-\cite{robertson2019feijaoson2019}.
-
-% =============================================================
 \section{Plataforma de \textit{Software}}
 \label{sec:software}
 % =============================================================
@@ -516,9 +487,10 @@ Tabela~\ref{tab:tecnologias}.
 \textit{Frontend}     & Nodemailer                        & Envio de alertas por e-mail               \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{table}
 
+\FloatBarrier
 \subsection{Arquitetura Modular do Sistema}
 \label{subsec:arquitetura}
 
@@ -576,54 +548,25 @@ Administrador e pode gerenciar outros administradores) — e três de sistema
 de precipitação histórica) e \textbf{API OpenWeatherMap} (previsão
 meteorológica e pressão atmosférica). Em razão do volume de
 funcionalidades, os diagramas foram divididos em quatro partes,
-detalhadas nas subseções a seguir.
+apresentadas nas Figuras~\ref{fig:uc-parte1} a~\ref{fig:uc-parte4}.
 
+% ══════════════════════════════════════════════════════════════
+\paragraph*{Parte 1 --- Sistema Embarcado (ESP8266)}\hfill\break
+% ══════════════════════════════════════════════════════════════
+Esta parte, ilustrada na Figura~\ref{fig:uc-parte1}, reúne os casos de
+uso relativos ao dispositivo embarcado.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=1\textwidth]
-    {figures/image53_diagrama_caso_de_uso_versao_3_pt1.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/image53_diagrama_caso_de_uso_versao_3_pt1.png}}
 \caption{Diagrama de casos de uso --- Parte 1: Sistema Embarcado}
 \label{fig:uc-parte1}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width=1\textwidth]
-    {figures/image53_diagrama_caso_de_uso_versao_3_pt2.png}
-\caption{Diagrama de casos de uso --- Parte 2: Acesso Público e
-Autenticação}
-\label{fig:uc-parte2}
-\fonte{Elaborado pela autora.}
-\end{figure}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width=1\textwidth]
-    {figures/image53_diagrama_caso_de_uso_versao_3_pt3.png}
-\caption{Diagrama de casos de uso --- Parte 3: Monitoramento e
-Alertas}
-\label{fig:uc-parte3}
-\fonte{Elaborado pela autora.}
-\end{figure}
-
-\begin{figure}[htb]
-\centering
-\includegraphics[width=1\textwidth]
-    {figures/image53_diagrama_caso_de_uso_versao_3_pt4.png}
-\caption{Diagrama de casos de uso --- Parte 4: Gestão de Usuários e
-Área Super Administrador}
-\label{fig:uc-parte4}
-\fonte{Elaborado pela autora.}
-\end{figure}
-
-% ══════════════════════════════════════════════════════════════
-\paragraph{Parte 1 --- Sistema Embarcado (ESP8266)}\hfill\break
-% ══════════════════════════════════════════════════════════════
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC01 --- Enviar leitura ao \textit{backend}}\hfill\break
+\paragraph*{UC01 --- Enviar leitura ao \textit{backend}}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -665,7 +608,7 @@ sincronizado com data posterior a 2001.
         correspondentes.
   \item O \textit{firmware} serializa os dados em JSON com
         aproximadamente 35 campos e envia via
-        \texttt{POST /api/sensor/dados} com cabeçalho
+        \path{POST /api/sensor/dados} com cabeçalho
         \texttt{Content-Type: application/json}.
   \item O \textit{backend} persiste a leitura em
         \texttt{leituras\_sensor} e retorna HTTP 201 com
@@ -792,7 +735,7 @@ e OWM.
 risco: 60\,s (VERDE), 20\,s (AMARELO) e 10\,s (VERMELHO).
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC02 --- Calcular fator de risco}\hfill\break
+\paragraph*{UC02 --- Calcular fator de risco}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -853,7 +796,7 @@ componentes individuais e recomendação operacional.
 \textbf{Frequência:} a cada ciclo de leitura do sensor.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC03 --- Acionar sinalização}\hfill\break
+\paragraph*{UC03 --- Acionar sinalização}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -910,7 +853,7 @@ de risco atual do ciclo de análise.
 \textbf{Frequência:} a cada ciclo de leitura do sensor.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC04 --- Consultar precipitação (BNDMET)}\hfill\break
+\paragraph*{UC04 --- Consultar precipitação (BNDMET)}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -989,7 +932,7 @@ intervalo adaptativo por nível de risco; a cada 30 segundos
 em caso de falha (\textit{retry} acelerado).
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC05 --- Consultar previsão e pressão (OWM)}\hfill\break
+\paragraph*{UC05 --- Consultar previsão e pressão (OWM)}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -1073,7 +1016,7 @@ Os dois \textit{timers} são independentes entre si e em relação
 ao nível de alerta vigente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC06 --- Consultar status da API}\hfill\break
+\paragraph*{UC06 --- Consultar status da API}\hfill\break
 
 \textbf{Ator Principal:} ESP8266 (Firmware).
 
@@ -1113,11 +1056,23 @@ com o estado real do \textit{backend}.
 cada verificação de conectividade (a cada 30 segundos).
 
 % ══════════════════════════════════════════════════════════════
-\paragraph{Parte 2 --- Acesso Público e Autenticação}\hfill\break
+\paragraph*{Parte 2 --- Acesso Público e Autenticação}\hfill\break
 % ══════════════════════════════════════════════════════════════
+Esta parte, ilustrada na Figura~\ref{fig:uc-parte2}, reúne os casos de
+uso relativos ao cadastro público e à autenticação do administrador.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]
+    {figures/image53_diagrama_caso_de_uso_versao_3_pt2.png}}
+\caption{Diagrama de casos de uso --- Parte 2: Acesso Público e
+Autenticação}
+\label{fig:uc-parte2}
+\fonte{Autora, 2026.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC07 --- Cadastrar-se para receber alertas}\hfill\break
+\paragraph*{UC07 --- Cadastrar-se para receber alertas}\hfill\break
 
 \textbf{Ator Principal:} Usuário Básico.
 
@@ -1130,7 +1085,7 @@ Administrador: dispor de uma lista de destinatários cadastrados
 para o envio de alertas em massa.
 
 \textbf{Pré-condição:} nenhuma; rota pública
-\texttt{POST /auth/cadastro-basico} sem autenticação.
+\path{POST /auth/cadastro-basico} sem autenticação.
 
 \textbf{Cenário de Sucesso Principal (Fluxo Básico):}
 \begin{enumerate}
@@ -1147,7 +1102,7 @@ para o envio de alertas em massa.
         (formato válido) e telefone (formato brasileiro,
         se informado).
   \item O \textit{frontend} envia
-        \texttt{POST /auth/cadastro-basico} com
+        \path{POST /auth/cadastro-basico} com
         \texttt{\{nome, email, telefone, receberNotificacoes:
         true, tipoNotificacao\}}.
   \item O \textit{backend} verifica a unicidade do e-mail
@@ -1194,7 +1149,7 @@ preferências de notificação salvas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC08 --- Fazer \textit{login}}\hfill\break
+\paragraph*{UC08 --- Fazer \textit{login}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1214,7 +1169,7 @@ monitoramento e gestão da plataforma.
         e-mail e senha.
   \item O ator clica em ``Entrar no Sistema''.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/login} com \texttt{\{email, senha\}}.
+        \path{POST /auth/login} com \texttt{\{email, senha\}}.
   \item O \textit{backend} busca o usuário em
         \texttt{usuarios\_admin} com \texttt{ativo = true}
         e valida a senha via \textit{bcrypt}.
@@ -1276,7 +1231,7 @@ Administrador autenticado e redirecionado ao \textit{dashboard}.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC09 --- Fazer \textit{logout}}\hfill\break
+\paragraph*{UC09 --- Fazer \textit{logout}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1292,7 +1247,7 @@ React e no \texttt{localStorage}.
 \begin{enumerate}
   \item O Administrador clica em ``Sair'' no menu lateral esquerdo.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/logout} com o token no cabeçalho
+        \path{POST /auth/logout} com o token no cabeçalho
         \texttt{Authorization: Bearer}.
   \item O \textit{backend} define \texttt{ativo = false} em
         todas as linhas de \texttt{sessoes\_usuario} com
@@ -1327,7 +1282,7 @@ do \texttt{localStorage}; Administrador desconectado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC10 --- Alterar própria senha}\hfill\break
+\paragraph*{UC10 --- Alterar própria senha}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1402,7 +1357,7 @@ invalidadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC11 --- Solicitar \textit{reset} de senha}\hfill\break
+\paragraph*{UC11 --- Solicitar \textit{reset} de senha}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1422,7 +1377,7 @@ conta em \texttt{usuarios\_admin} com \texttt{ativo = true}.
         cadastrado.
   \item O ator informa o e-mail e clica em ``Solicitar''.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/solicitar-reset-senha}
+        \path{POST /auth/solicitar-reset-senha}
         com \texttt{\{email\}}.
   \item O \textit{backend} localiza o e-mail em
         \texttt{usuarios\_admin}, gera um token aleatório
@@ -1460,7 +1415,7 @@ e \texttt{tokenResetExpira} (+2 horas) persistidos em
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC12 --- Validar \textit{token} de \textit{reset}}\hfill\break
+\paragraph*{UC12 --- Validar \textit{token} de \textit{reset}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1508,7 +1463,7 @@ formulário de nova senha exibido.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC13 --- Redefinir senha com \textit{token}}\hfill\break
+\paragraph*{UC13 --- Redefinir senha com \textit{token}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1530,7 +1485,7 @@ sucesso no UC12.
         caracteres, ao menos uma letra maiúscula, uma
         minúscula e um número.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/resetar-senha} com
+        \path{POST /auth/resetar-senha} com
         \texttt{\{token, novaSenha\}}.
   \item O \textit{backend} valida o token novamente,
         gera \textit{hash} da nova senha e atualiza
@@ -1579,7 +1534,7 @@ invalidadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC14 --- Visualizar perfil e configurações}\hfill\break
+\paragraph*{UC14 --- Visualizar perfil e configurações}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1657,11 +1612,23 @@ técnicas do sistema em tempo real.
 \textbf{Frequência:} Raramente.
 
 % ══════════════════════════════════════════════════════════════
-\paragraph{Parte 3 --- Monitoramento e Alertas}\hfill\break
+\paragraph*{Parte 3 --- Monitoramento e Alertas}\hfill\break
 % ══════════════════════════════════════════════════════════════
+Esta parte, ilustrada na Figura~\ref{fig:uc-parte3}, reúne os casos de
+uso relativos ao monitoramento em tempo real e à central de alertas.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]
+    {figures/image53_diagrama_caso_de_uso_versao_3_pt3.png}}
+\caption{Diagrama de casos de uso --- Parte 3: Monitoramento e
+Alertas}
+\label{fig:uc-parte3}
+\fonte{Autora, 2026.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC15 --- Visualizar \textit{dashboard} em tempo real}\hfill\break
+\paragraph*{UC15 --- Visualizar \textit{dashboard} em tempo real}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1745,7 +1712,7 @@ a tela permanece aberta.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC16 --- Consultar alertas críticos}\hfill\break
+\paragraph*{UC16 --- Consultar alertas críticos}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1804,7 +1771,7 @@ com filtros e paginação ativos.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC17 --- Consultar histórico de leituras}\hfill\break
+\paragraph*{UC17 --- Consultar histórico de leituras}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1863,7 +1830,7 @@ UC20 disparam nova requisição ao
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC18 --- Selecionar período fixo de visualização}\hfill\break
+\paragraph*{UC18 --- Selecionar período fixo de visualização}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1919,7 +1886,7 @@ do período fixo selecionado; filtro customizado de datas
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC19 --- Filtrar leituras por nível de alerta}\hfill\break
+\paragraph*{UC19 --- Filtrar leituras por nível de alerta}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1972,7 +1939,7 @@ refletem o subconjunto filtrado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC20 --- Filtrar leituras por período}\hfill\break
+\paragraph*{UC20 --- Filtrar leituras por período}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2029,7 +1996,7 @@ exibidas com KPIs recalculados.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC21 --- Consultar estatísticas e qualidade}\hfill\break
+\paragraph*{UC21 --- Consultar estatísticas e qualidade}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2076,7 +2043,7 @@ nos painéis de \textit{dashboard} e sensores.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC22 --- Exportar leituras de sensor em CSV}\hfill\break
+\paragraph*{UC22 --- Exportar leituras de sensor em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2129,7 +2096,7 @@ ativos na tela de Sensores no momento da exportação.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC23 --- Gerar relatório}\hfill\break
+\paragraph*{UC23 --- Gerar relatório}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2166,7 +2133,7 @@ de Relatórios acessada.
   \item O sistema organiza e exibe os resultados em seis
         seções colapsáveis: (1) Resumo Executivo, (2)
         Dados Meteorológicos e Pluviométricos, (3)
-        Componentes da Equação 5 TCC, (4) Qualidade
+        Componentes da Equação~\ref{eq:frisco}, (4) Qualidade
         Técnica do Sistema, (5) Diagnóstico de Hardware
         ESP8266 e (6) Tabela de Leituras detalhada.
   \item Cada seção pode ser expandida ou recolhida
@@ -2230,7 +2197,7 @@ informado; botões de exportação em CSV (UC24) e HTML
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC24 --- Exportar relatório em CSV}\hfill\break
+\paragraph*{UC24 --- Exportar relatório em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2289,7 +2256,7 @@ gerado no UC23.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC25 --- Exportar relatório em HTML}\hfill\break
+\paragraph*{UC25 --- Exportar relatório em HTML}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2317,8 +2284,8 @@ relatório gerado com sucesso no UC23.
         nível médio calculado; (2) Dados Meteorológicos
         e Pluviométricos com tabela min/méd/máx por
         fonte (BNDMET I006, BNDMET I175, OWM); (3)
-        Componentes da Equação 5 TCC com valores por
-        variável; (4) Qualidade Técnica do Sistema com
+        Componentes da Equação~\ref{eq:frisco} com valores por
+        variável; (4) Qua-lidade Técnica do Sistema com
         percentuais de disponibilidade; (5) Diagnóstico
         de Hardware ESP8266 com métricas de freeHeap,
         RSSI e tentativas de envio; estilos CSS
@@ -2359,7 +2326,7 @@ externas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC26 --- Enviar alerta manual em massa}\hfill\break
+\paragraph*{UC26 --- Enviar alerta manual em massa}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2390,7 +2357,7 @@ um usuário básico ativo com
         ou preenche os campos manualmente e clica em
         ``Enviar Alerta''.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/enviar-alerta} com token JWT.
+        \path{POST /auth/enviar-alerta} com token JWT.
   \item O \textit{backend} consulta os destinatários
         elegíveis em \texttt{usuarios\_basicos} ou \\ \texttt{usuarios\_admin} conforme
         o tipo selecionado.
@@ -2441,7 +2408,7 @@ via \texttt{SMTP\_HOST}, \texttt{SMTP\_USER} e
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC27 --- Receber alerta por e-mail}\hfill\break
+\paragraph*{UC27 --- Receber alerta por e-mail}\hfill\break
 
 \textbf{Ator Principal:} Usuário Básico (destinatário passivo).
 
@@ -2496,7 +2463,7 @@ ativa e acessível pelo Usuário Básico.
 
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC28 --- Consultar log de alertas enviados}\hfill\break
+\paragraph*{UC28 --- Consultar log de alertas enviados}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2550,11 +2517,24 @@ estado no banco de dados.
 \textbf{Frequência:} Ocasionalmente.
 
 % ══════════════════════════════════════════════════════════════
-\paragraph{Parte 4 --- Gestão de Usuários e Área Super Administrador}\hfill\break
+\paragraph*{Parte 4 --- Gestão de Usuários e Área Super Administrador}\hfill\break
 % ══════════════════════════════════════════════════════════════
+Esta parte, ilustrada na Figura~\ref{fig:uc-parte4}, reúne os casos de
+uso relativos à gestão de usuários básicos, administradores e às
+funcionalidades exclusivas do \textit{super\_admin}.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/image53_diagrama_caso_de_uso_versao_3_pt4.png}}
+\caption{Diagrama de casos de uso --- Parte 4: Gestão de Usuários e
+Área Super Administrador}
+\label{fig:uc-parte4}
+\fonte{Autora, 2026.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC29 --- Gerenciar usuários básicos}\hfill\break
+\paragraph*{UC29 --- Gerenciar usuários básicos}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2623,7 +2603,7 @@ atualizada refletindo as operações realizadas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC30 --- Cadastrar usuário básico (pelo Administrador)}\hfill\break
+\paragraph*{UC30 --- Cadastrar usuário básico (pelo Administrador)}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2646,7 +2626,7 @@ Gestão de Usuários aberta na aba de usuários básicos.
   \item O ator preenche os campos e clica em
         ``Criar Usuário''.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/cadastro-basico} com token JWT.
+        \path{POST /auth/cadastro-basico} com token JWT.
   \item O \textit{backend} verifica unicidade do e-mail
         e cria o registro em \texttt{usuarios\_basicos}.
   \item O \textit{backend} retorna HTTP 201; o modal é
@@ -2677,7 +2657,7 @@ e listado no painel.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC31 --- Editar usuário básico}\hfill\break
+\paragraph*{UC31 --- Editar usuário básico}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2728,7 +2708,7 @@ atualizados em \texttt{usuarios\_basicos}.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC32 --- Ativar / Desativar usuário}\hfill\break
+\paragraph*{UC32 --- Ativar / Desativar usuário}\hfill\break
 
 \textbf{Ator Principal:} Administrador (usuários básicos);
 Super Administrador (administradores).
@@ -2802,7 +2782,7 @@ de alertas conforme o caso.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC33 --- Filtrar usuários por nome ou e-mail}\hfill\break
+\paragraph*{UC33 --- Filtrar usuários por nome ou e-mail}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2857,7 +2837,7 @@ para o conjunto filtrado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC34 --- Alternar aba de usuários}\hfill\break
+\paragraph*{UC34 --- Alternar aba de usuários}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2914,7 +2894,7 @@ de usuário correspondente; filtros anteriores limpos.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC35 --- Exportar usuários em CSV}\hfill\break
+\paragraph*{UC35 --- Exportar usuários em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2982,7 +2962,7 @@ corrente.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC36 --- Gerenciar administradores}\hfill\break
+\paragraph*{UC36 --- Gerenciar administradores}\hfill\break
 
 \textbf{Ator Principal:} Super Administrador.
 
@@ -3046,7 +3026,7 @@ atualizada refletindo as operações realizadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph{UC37 --- Cadastrar administrador}\hfill\break
+\paragraph*{UC37 --- Cadastrar administrador}\hfill\break
 
 \textbf{Ator Principal:} Super Administrador.
 
@@ -3070,7 +3050,7 @@ permissão adequado.
         ao menos uma letra maiúscula, uma minúscula e um
         número; confirmação deve ser igual à senha.
   \item O \textit{frontend} envia
-        \texttt{POST /auth/cadastro-admin} com token JWT.
+        \path{POST /auth/cadastro-admin} com token JWT.
   \item O \textit{backend} verifica unicidade do e-mail,
         gera \textit{hash} da senha via
         \texttt{bcrypt.hash(senha, 10)} e cria o registro
@@ -3132,7 +3112,7 @@ controladores do \textit{backend}; e (4) estruturas de dados e funções do
 sistema embarcado ESP8266.
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 1 — Modelos de Dados}
+\paragraph*{Parte 1 — Modelos de Dados}
 % ─────────────────────────────────────────────────────────────
 
 A Figura~\ref{fig:diagrama_classes_parte1} apresenta os modelos de dados gerenciados
@@ -3142,10 +3122,10 @@ toda a informação produzida pelo sistema em operação.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte1.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte1.pdf}}
   \caption{Diagrama de Classes — Parte 1: Modelos de Dados}
   \label{fig:diagrama_classes_parte1}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A classe central é \texttt{LeiturasSensor}, que concentra todos os dados produzidos
@@ -3170,7 +3150,7 @@ parâmetros de configuração do sistema em formato chave–valor, permitindo aj
 operacionais sem necessidade de recompilação do código.
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 2 — Modelos de Autenticação e Usuários}
+\paragraph*{Parte 2 — Modelos de Autenticação e Usuários}
 % ─────────────────────────────────────────────────────────────
 
 A Figura~\ref{fig:diagrama_classes_parte2} apresenta o modelo de dados responsável
@@ -3179,10 +3159,10 @@ sistema.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte2.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte2.pdf}}
   \caption{Diagrama de Classes — Parte 2: Autenticação e Usuários}
   \label{fig:diagrama_classes_parte2}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A classe \texttt{UsuariosAdmin} representa os administradores, os únicos usuários com
@@ -3209,7 +3189,7 @@ o número de destinatários, os resultados individuais de envio e o nível de cr
 da mensagem.
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 3 — Camada de Serviços e Controladores}
+\paragraph*{Parte 3 — Camada de Serviços e Controladores}
 % ─────────────────────────────────────────────────────────────
 
 A Figura~\ref{fig:diagrama_classes_parte3} apresenta as classes da camada de negócio
@@ -3218,10 +3198,10 @@ TypeScript.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte3.png}
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image54_diagrama_classes_parte3.pdf}}
   \caption{Diagrama de Classes — Parte 3: Serviços e Controladores}
   \label{fig:diagrama_classes_parte3}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A arquitetura do \textit{backend} segue o padrão MVC (\textit{Model-View-Controller}),
@@ -3232,20 +3212,20 @@ dispensando instanciação e tornando seu uso direto por referência à classe.
 A classe \texttt{SensorService} concentra toda a lógica de negócio relacionada às
 leituras do sensor. O método \texttt{salvarDados()} persiste no banco a leitura
 completa recebida do ESP8266 via requisição HTTP POST, incluindo o tratamento
-de campo booleano que corrige um bug identificado na versão anterior do firmware
+de campo booleano que corrige uma inconsistência identificada no firmware
 — quando o sensor estava desconectado, o campo \texttt{sensorOk} chegava como
 \texttt{undefined} e era gravado como \texttt{NULL} em vez de \texttt{false}.
 O método \texttt{buscarEstatisticasRuptura()} foi introduzido para fornecer ao
 \textit{frontend} informações agregadas sobre eventos de ruptura, como quantidade
 de ocorrências, duração média e estado atual do sistema. Os métodos
 \texttt{verificarConectividade()} e \texttt{analisarQualidadeDados()} expõem
-campos específicos do firmware v13, como \texttt{bndmet\_inicializado} e
+campos específicos do firmware, como \texttt{bndmet\_inicializado} e
 \texttt{aguardando\_reset\_ruptura}, possibilitando que o painel \textit{web}
 apresente mensagens contextualizadas ao operador.
 
 A classe \texttt{AuthService} gerencia toda a lógica de autenticação e autorização
 do sistema. Além dos métodos tradicionais de \textit{login}, \textit{logout} e
-gerenciamento de usuários, foram adicionados nesta versão três métodos específicos
+gerenciamento de usuários, o serviço reúne três métodos específicos
 para o fluxo de recuperação de senha: \texttt{solicitarResetSenha()}, responsável
 por gerar o token, persistir no banco e acionar o envio do e-mail;
 \texttt{validarTokenReset()}, que verifica a existência e a validade temporal do
@@ -3257,7 +3237,7 @@ biblioteca \texttt{nodemailer} configurada com servidor SMTP do Gmail. O método
 \texttt{enviarAlerta()} é responsável pelo envio individual de notificações de risco
 para destinatários cadastrados, enquanto \texttt{enviarLote()} processa o envio em
 massa com controle de concorrência e \textit{retry}. O método
-\texttt{enviarResetSenha()}, adicionado nesta versão, envia ao usuário um e-mail com
+\texttt{enviarResetSenha()} envia ao usuário um e-mail com
 \textit{template} HTML contendo o token de recuperação em destaque e instruções
 passo a passo para redefinição da senha, com \textit{fallback} em texto simples para
 clientes de e-mail que não suportam HTML.
@@ -3271,7 +3251,7 @@ validade do token JWT em cada requisição às rotas autenticadas e controlando 
 a funcionalidades restritas a administradores com perfil \texttt{superadmin}.
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 4 — Sistema Embarcado}
+\paragraph*{Parte 4 — Sistema Embarcado}
 % ─────────────────────────────────────────────────────────────
 
 A Figura~\ref{fig:diagrama_classes_parte4} apresenta as estruturas de dados e as
@@ -3280,10 +3260,10 @@ em linguagem C++ para o ambiente Arduino.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte4.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte4.pdf}}
   \caption{Diagrama de Classes — Parte 4: Sistema Embarcado (ESP8266)}
   \label{fig:diagrama_classes_parte4}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 O firmware não adota o paradigma de orientação a objetos com classes formais
@@ -3298,8 +3278,8 @@ similares \cite{guedes2011uml}.
 A estrutura \texttt{DadosLocais} agrupa as informações coletadas diretamente pelo
 higrômetro capacitivo conectado ao pino analógico A0: a umidade do solo em
 percentual, o valor ADC bruto (inteiro entre 0 e 1023), o fator do lençol freático
-normalizado ($F_{len\c{c}ol} = umidade / UMIDADE\_CRITICA$, conforme Equação~3 do
-TCC) e uma \textit{flag} indicando se o sensor está operacional. A estrutura
+normalizado ($F_{len\c{c}ol} = umidade / UMIDADE\_CRITICA$, conforme a
+Equação~\ref{eq:flencol}) e uma \textit{flag} indicando se o sensor está operacional. A estrutura
 \texttt{DadosBNDMET} armazena as precipitações pluviométricas obtidas da API
 BNDMET/DECEA para a estação D6594 (Alberto Flores, ANA): acumulados em 24 horas,
 7 dias e 30 dias, além do status da última requisição e do percentual de qualidade
@@ -3311,7 +3291,7 @@ precipitação total prevista para as próximas 24 horas, obtida a partir da som
 blocos de previsão do endpoint \texttt{/forecast} da mesma API.
 
 A estrutura \texttt{AnaliseRisco} é a mais complexa do firmware e representa o
-resultado completo do cálculo da Equação~5 do TCC. Além do fator de risco integrado
+resultado completo do cálculo da Equação~\ref{eq:frisco}. Além do fator de risco integrado
 e do nível de alerta, ela armazena os sete componentes individuais da equação já
 com seus respectivos pesos aplicados: $V_{len\c{c}ol}$ (peso 0,40),
 $V_{ch.atual}$ (peso 0,08), $V_{ch.hist.}$ (peso 0,12), $V_{ch.mensal}$
@@ -3373,7 +3353,7 @@ via \textit{dashboard}; (6) tela de sensores, filtros e relatórios; e (7) gest�
 usuários e central de alertas.
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 1 — Boot e Inicialização do ESP8266}
+\paragraph*{Parte 1 — Boot e Inicialização do ESP8266}
 % ─────────────────────────────────────────────────────────────
 
 O processo de inicialização do ESP8266 ocorre automaticamente ao energizar o
@@ -3392,10 +3372,10 @@ comunicação de rede.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_1a.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1a.pdf}}
   \caption{Seq. 1a — Inicialização de Hardware (ESP8266)}
   \label{fig:seq_1a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1b} ilustra a conexão Wi-Fi. O firmware configura o modo
@@ -3409,10 +3389,10 @@ reconexão ocorra em ciclo posterior.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_1b.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1b.pdf}}
   \caption{Seq. 1b — Conexão Wi-Fi}
   \label{fig:seq_1b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1c} mostra a sincronização com o servidor NTP
@@ -3428,14 +3408,14 @@ contaminem as métricas de qualidade dos dados pluviométricos no banco de dados
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_1c.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1c.pdf}}
   \caption{Seq. 1c — Sincronização NTP}
   \label{fig:seq_1c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1d} apresenta a verificação do \textit{backend} local. O
-firmware consulta o endpoint \texttt{GET /api/sensor/status} — via HTTP simples sem TLS, pois ESP8266 e servidor encontram-se
+firmware consulta o endpoint \path{GET /api/sensor/status} — via HTTP simples sem TLS, pois ESP8266 e servidor encontram-se
 na mesma rede local. A comunicação com as APIs externas BNDMET e OpenWeatherMap
 utiliza HTTPS com TLS via \texttt{WiFiClientSecure}. Um \textit{timeout} de 5.000
 milissegundos é configurado para a requisição; em caso de falha, o sistema continua
@@ -3443,10 +3423,10 @@ sem \textit{backend}.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_1d.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1d.pdf}}
   \caption{Seq. 1d — Verificação do Backend}
   \label{fig:seq_1d}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 Por fim, a Figura~\ref{fig:seq_1e} apresenta a primeira coleta completa de dados.
@@ -3460,19 +3440,19 @@ Ao final, os \textit{timestamps} de controle são inicializados e \texttt{sistem
 \texttt{loop()} com intervalos adaptativos de produção: leitura do sensor a cada 30 s
 (VERDE), 10 s (AMARELO) ou 5 s (VERMELHO); envio ao \textit{backend} a cada 60 s,
 20 s ou 10 s respectivamente; BNDMET a cada 5 min, 2 min ou 1 min; e OpenWeatherMap
-a cada 30 min. O modo de teste com envio fixo a cada 10 s, disponível na versão 15
-do firmware, está comentado na versão 16 em uso.
+a cada 30 min. Um modo de teste com envio fixo a cada 10\,s permanece
+disponível no código-fonte, porém comentado na versão em uso.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_1e.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1e.pdf}}
   \caption{Seq. 1e — Primeira Coleta Inicial}
   \label{fig:seq_1e}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 2 — Ciclo de Coleta, Análise de Risco e Envio}
+\paragraph*{Parte 2 — Ciclo de Coleta, Análise de Risco e Envio}
 % ─────────────────────────────────────────────────────────────
 
 O ciclo principal de operação autônoma é executado continuamente pela função
@@ -3482,7 +3462,7 @@ subsistema de forma independente.
 A Figura~\ref{fig:seq_2a} detalha a leitura do sensor local. O valor ADC do pino A0
 (0–1023) é mapeado para percentual de umidade do solo e o fator do lençol freático
 normalizado é calculado como $F_{len\c{c}ol} = \text{constrain}(\text{umidade} / 25\%,
-0, 1)$, conforme a Equação~3 do TCC. A variável \texttt{sensorOK} é definida como
+0, 1)$, conforme a Equação~\ref{eq:flencol}. A variável \texttt{sensorOK} é definida como
 \texttt{false} quando o ADC é igual a 0 (curto-circuito) ou igual a 1023 (circuito
 aberto, sensor desconectado), aplicando desconto de $-40\%$ na confiabilidade. O
 buffer circular de 10 posições é atualizado a cada leitura para o cálculo posterior da
@@ -3492,18 +3472,17 @@ confiabilidade quando inferior a 5, indicando buffer histórico insuficiente.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_2a.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2a.pdf}}
   \caption{Seq. 2a — Leitura do Sensor Local}
   \label{fig:seq_2a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2b} ilustra a consulta à API BNDMET/DECEA para a estação D6594
-(Alberto Flores, ANA). Um mecanismo de \textit{retry} acelerado introduzido na versão
-15 do firmware reduz o intervalo de consulta para 30 segundos quando
-\texttt{apiDisponivel = false}, acelerando a recuperação após falhas temporárias da API
-sem aguardar o intervalo normal de 5 minutos. Adicionalmente, uma guarda NTP
-implementada na versão 13 impede que a consulta seja realizada quando
+(Alberto Flores, ANA). Um mecanismo de \textit{retry} acelerado reduz o intervalo de consulta
+para 30 segundos quando \texttt{apiDisponivel = false}, acelerando a recuperação após
+falhas temporárias da API sem aguardar o intervalo normal de 5 minutos. Adicionalmente,
+uma guarda de sincronização NTP impede que a consulta seja realizada quando
 \texttt{time(nullptr) < 1.000.000.000}, evitando requisições com datas inválidas. A
 autenticação utiliza chave de API estática no cabeçalho \texttt{x-api-key}, o que
 garante a autonomia do firmware sem necessidade de renovação de credenciais —
@@ -3512,10 +3491,10 @@ característica fundamental para operação embarcada, incompatível com o model
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_2b.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2b.pdf}}
   \caption{Seq. 2b — Consulta BNDMET}
   \label{fig:seq_2b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2c} apresenta as duas consultas ao OpenWeatherMap, realizadas
@@ -3527,25 +3506,25 @@ cuja soma resulta na precipitação prevista para as próximas 24 horas. Assim c
 BNDMET, o mecanismo de \textit{retry} acelerado de 30 segundos é ativado quando
 \texttt{dadosMeteo.timestamp = 0}, indicando que nenhuma consulta bem-sucedida
 ocorreu ainda. A intensidade da previsão é classificada em cinco categorias conforme a
-Tabela~4 do TCC: Fraca ($<5$ mm, fator 0,00), Moderada (5–25 mm, fator 0,25), Forte
+Tabela~\ref{tab:intensidade}: Fraca ($<5$ mm, fator 0,00), Moderada (5–25 mm, fator 0,25), Forte
 (25–50 mm, fator 0,50), Muito Forte (50–80 mm, fator 0,75) e Pancada de Chuva
 ($\geq 80$ mm, fator 1,00).
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_2c.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2c.pdf}}
   \caption{Seq. 2c — Consulta OpenWeatherMap}
   \label{fig:seq_2c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
-A Figura~\ref{fig:seq_2d} detalha o cálculo da análise de risco pela Equação~5 do TCC.
+A Figura~\ref{fig:seq_2d} detalha o cálculo da análise de risco pela Equação~\ref{eq:frisco}.
 Os sete componentes ponderados são calculados com \texttt{constrain} para limitar
 cada contribuição ao intervalo $[0, 1]$ antes da multiplicação pelo peso. A taxa de
 variação de umidade usa \texttt{fabsf()} para que tanto absorção quanto drenagem
 rápida do solo contribuam ao risco, normalizando pela variação máxima de 100\%
-(correção da versão 12, que substituiu a divisão por 10\%, a qual saturava o componente
-em eventos extremos). Quando $F_{len\c{c}ol} \geq 0{,}70$ (equivalente a umidade $\geq 17{,}5\%$)
+(ajuste que substituiu uma normalização anterior por divisão por 10\%, a qual saturava
+o componente em eventos extremos). Quando $F_{len\c{c}ol} \geq 0{,}70$ (equivalente a umidade $\geq 17{,}5\%$)
 e a previsão é igual ou superior à classe Moderada ($\geq 5$ mm), um coeficiente de
 amplificação de $\times 1{,}20$ é aplicado sobre a soma, sinalizando risco composto.
 Quando a umidade do solo atinge 30\%, a função \texttt{acionarRuptura()} sobrepõe
@@ -3554,33 +3533,33 @@ confirma diretamente o estado crítico.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_2d.png}
-  \caption{Seq. 2d — Cálculo da Análise de Risco (Equação 5 TCC)}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2d.pdf}}
+  \caption{Seq. 2d — Cálculo da Análise de Risco (Equação~\ref{eq:frisco})}
   \label{fig:seq_2d}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
-A Figura~\ref{fig:seq_2e} mostra o envio do \textit{payload} JSON ao \textit{backend}
-via \texttt{POST /api/sensor/dados} com \textit{timeout} de 15.000 milissegundos. O
+A Figura~\ref{fig:seq_2e} mostra o envio do \textit{payload} JSON ao \textit{backend} 
+via \path{POST /api/sensor/dados} com \textit{timeout} de 15.000 milissegundos. O
 objeto contém aproximadamente 35 campos, incluindo o objeto \texttt{dadosBrutos} com
 informações de diagnóstico do firmware (memória livre, RSSI, \textit{uptime},
 tentativas de envio, sinalizador de \textit{cooldown} de ruptura, inicialização do
 BNDMET e detalhamento dos descontos de confiabilidade por fonte). Os intervalos de
 envio são adaptativos por nível de alerta — 60 s (VERDE), 20 s (AMARELO) e 10 s
-(VERMELHO) — com o modo de teste de 10 s fixo disponível mas comentado na versão 16.
+(VERMELHO) — com o modo de teste de 10\,s fixo disponível no código-fonte, porém comentado na versão em uso.
 Em caso de falhas consecutivas, um \textit{watchdog} executa a cada 5 minutos e
 reinicia o módulo Wi-Fi ou o dispositivo conforme a gravidade da situação.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_2e.png}
+  \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2e.pdf}}
   \caption{Seq. 2e — Envio de Dados para o Backend}
   \label{fig:seq_2e}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 3 — Autenticação do Administrador}
+\paragraph*{Parte 3 — Autenticação do Administrador}
 % ─────────────────────────────────────────────────────────────
 
 O módulo de autenticação é responsável por controlar o acesso à interface
@@ -3588,7 +3567,7 @@ O módulo de autenticação é responsável por controlar o acesso à interface
 
 A Figura~\ref{fig:seq_3a} apresenta o fluxo de \textit{login}. O frontend delega
 a operação ao \texttt{AuthContext}, que chama \texttt{authService.login()} e
-submete as credenciais ao endpoint \texttt{POST /auth/login}. O \textit{backend}
+submete as credenciais ao endpoint \path{POST /auth/login}. O \textit{backend}
 localiza o usuário pelo e-mail e valida a senha contra o \textit{hash} armazenado
 utilizando a biblioteca \texttt{bcryptjs} com \textit{salt rounds} igual a 10.
 Em caso de credenciais inválidas, a resposta HTTP 401 é propositalmente genérica —
@@ -3604,10 +3583,10 @@ interno da aplicação.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_3a.png}
+  \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_3a.pdf}
   \caption{Seq. 3a — Login do Administrador}
   \label{fig:seq_3a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_3b} ilustra a verificação de autenticidade nas rotas
@@ -3627,15 +3606,15 @@ antes que o prazo natural de 24 horas do token se esgote.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_3b.png}
+  \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_3b.pdf}
   \caption{Seq. 3b — Verificação de Rota Protegida}
   \label{fig:seq_3b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_3c} apresenta o fluxo de \textit{logout}. O
-\texttt{AuthContext} invoca \texttt{authService.logout()}, que envia
-\texttt{POST /auth/logout} ao \textit{backend} para marcar a sessão como inativa
+\texttt{AuthContext} invoca \path{authService.logout()}, que envia
+\path{POST /auth/logout} ao \textit{backend} para marcar a sessão como inativa
 no banco de dados. Independentemente do resultado dessa requisição, o bloco
 \texttt{finally} do \texttt{AuthContext} garante a limpeza completa do estado
 local: são removidas as entradas \texttt{'token'} e \texttt{'user'} do
@@ -3645,14 +3624,14 @@ residuais no navegador.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_3c.png}
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_3c.pdf}}
   \caption{Seq. 3c — Logout}
   \label{fig:seq_3c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 4 — Recuperação de Senha}
+\paragraph*{Parte 4 — Recuperação de Senha}
 % ─────────────────────────────────────────────────────────────
 
 O fluxo de recuperação de senha é composto por três etapas sequenciais que garantem
@@ -3674,14 +3653,14 @@ retornado na resposta da API para facilitar os testes. A validade de duas horas
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_4a.png}
+  \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4a.pdf}
   \caption{Seq. 4a — Solicitação do Token de Reset}
   \label{fig:seq_4a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_4b} apresenta a validação do token. O frontend chama
-\texttt{GET /auth/validar-token-reset/:token}, passando o token como parâmetro de
+\path{GET /auth/validar-token-reset/:token}, passando o token como parâmetro de
 rota. O \textit{backend} verifica simultaneamente a existência do token no banco e
 se o prazo de validade não foi ultrapassado, em uma única consulta que rejeita tokens
 expirados mesmo que ainda existam no registro. A resposta de sucesso retorna apenas
@@ -3689,10 +3668,10 @@ expirados mesmo que ainda existam no registro. A resposta de sucesso retorna ape
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_4b.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4b.pdf}}
   \caption{Seq. 4b — Validação do Token de Reset}
   \label{fig:seq_4b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_4c} detalha a redefinição da senha. O \textit{payload}
@@ -3706,14 +3685,14 @@ adicional, todas as sessões ativas do usuário são invalidadas no banco, exigi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_4c.png}
+  \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4c.pdf}
   \caption{Seq. 4c — Redefinição da Senha}
   \label{fig:seq_4c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 5 — Dashboard e Monitoramento em Tempo Real}
+\paragraph*{Parte 5 — Dashboard e Monitoramento em Tempo Real}
 % ─────────────────────────────────────────────────────────────
 
 O painel de monitoramento é a tela principal da interface \textit{web} e combina
@@ -3721,7 +3700,7 @@ carregamento inicial em paralelo com mecanismos de atualização contínua.
 
 A Figura~\ref{fig:seq_5a} apresenta o carregamento inicial do \textit{dashboard}.
 O componente \texttt{DashboardContent} dispara quatro requisições simultâneas via
-\texttt{Promise.all()} — estatísticas do sensor via \texttt{GET /sensor/estatisticas}
+\texttt{Promise.all()} — estatísticas do sensor via \path{GET /sensor/estatisticas}
 (sem parâmetro de período, retornando dados agregados padrão do serviço), estatísticas
 de usuários, últimas 50 leituras para o gráfico temporal e os 10 alertas mais recentes.
 Com os dados recebidos, são renderizados o card de situação atual com nível de alerta
@@ -3731,24 +3710,24 @@ seção de atividade recente.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_5a.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5a.pdf}}
   \caption{Seq. 5a — Carregamento Inicial do Dashboard}
   \label{fig:seq_5a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5b} ilustra os dois ciclos de \textit{polling} mantidos pelo
 componente \texttt{Header}, ativos em todas as páginas da aplicação. O primeiro
-consulta \texttt{GET /health} a cada 30 segundos para verificar a disponibilidade do
-\textit{backend} e do banco de dados. O segundo consulta \texttt{GET /sensor/alertas}
+consulta \path{GET /health} a cada 30 segundos para verificar a disponibilidade do
+\textit{backend} e do banco de dados. O segundo consulta \path{GET /sensor/alertas}
 a cada 60 segundos para atualizar o \textit{badge} do sino.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_5b.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5b.pdf}}
   \caption{Seq. 5b — Polling do Header (Health + Alertas)}
   \label{fig:seq_5b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5c} mostra a interação com o sino de notificações. Ao clicar
@@ -3758,10 +3737,10 @@ contabiliza apenas alertas críticos (VERMELHO ou RUPTURA) das últimas 24 horas
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_5c.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5c.pdf}}
   \caption{Seq. 5c — Sino de Notificações}
   \label{fig:seq_5c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5d} detalha o componente \texttt{RecentActivity}, que exibe
@@ -3771,29 +3750,29 @@ componente de origem (SENSOR, BNDMET, OWM, CONECTIVIDADE) e nível de criticidad
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_5d.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5d.pdf}}
   \caption{Seq. 5d — RecentActivity (Logs do Sistema)}
   \label{fig:seq_5d}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 6 — Tela de Sensores, Filtros e Relatórios}
+\paragraph*{Parte 6 — Tela de Sensores, Filtros e Relatórios}
 % ─────────────────────────────────────────────────────────────
 
 A tela de sensores e o módulo de relatórios oferecem acesso ao histórico completo
 de leituras com múltiplas formas de análise e exportação.
 
 A Figura~\ref{fig:seq_6a} apresenta o carregamento da tela de sensores, que por
-padrão exibe as leituras das últimas 24 horas via \texttt{GET /sensor/periodo}, com
+padrão exibe as leituras das últimas 24 horas via \path{GET /sensor/periodo}, com
 até mil registros paginados a 15 por página na interface.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_6a.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6a.pdf}}
   \caption{Seq. 6a — Carregamento da Tela de Sensores}
   \label{fig:seq_6a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6b} mostra os filtros de período e nível. A alteração de
@@ -3804,24 +3783,24 @@ o total geral.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_6b.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6b.pdf}}
   \caption{Seq. 6b — Filtros de Período e Nível}
   \label{fig:seq_6b}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6c} detalha a linha expandida, exibida ao clicar em qualquer
 registro da tabela. São apresentados quatro blocos: componentes individuais da
-Equação~5 com a soma do fator de risco; contexto meteorológico completo da leitura;
+Equação~\ref{eq:frisco} com a soma do fator de risco; contexto meteorológico completo da leitura;
 dados de diagnóstico do firmware extraídos do campo \texttt{dadosBrutos}; e a
 recomendação operacional gerada pelo firmware.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_6c.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6c.pdf}}
   \caption{Seq. 6c — Linha Expandida (Detalhamento da Leitura)}
   \label{fig:seq_6c}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6d} apresenta a exportação para CSV, que monta um arquivo com
@@ -3831,10 +3810,10 @@ sem nova requisição ao \textit{backend}.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_6d.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6d.pdf}}
   \caption{Seq. 6d — Exportação CSV}
   \label{fig:seq_6d}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6e} ilustra a geração de relatório pelo módulo
@@ -3845,14 +3824,14 @@ seções. O relatório pode ser exportado em CSV ou em HTML autossuficiente com 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_6e.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6e.pdf}}
   \caption{Seq. 6e — Geração de Relatório}
   \label{fig:seq_6e}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\subsubsubsection{Parte 7 — Gestão de Usuários e Central de Alertas}
+\paragraph*{Parte 7 — Gestão de Usuários e Central de Alertas}
 % ─────────────────────────────────────────────────────────────
 
 O módulo de gestão de usuários e a central de alertas compõem o conjunto de
@@ -3867,17 +3846,17 @@ exclusivamente pelo modal específico de inativos, não pela tabela principal.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_7a.png}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_7a.pdf}}
   \caption{Seq. 7a — Listagem e Estatísticas de Usuários}
   \label{fig:seq_7a}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
-A Figura~\ref{fig:seq_7b} detalha os fluxos de criação e edição de usuário. A
-criação de usuário básico utiliza o endpoint público \texttt{POST /auth/cadastro-basico},
+As Figuras~\ref{fig:seq_7b1} e~\ref{fig:seq_7b2} detalham os fluxos de criação e edição de usuário. A
+criação de usuário básico utiliza o endpoint público \path{POST /auth/cadastro-basico},
 que não requer autenticação, e inclui o campo \texttt{senha} no \textit{payload}
 além dos dados de perfil. A criação de administrador utiliza
-\texttt{POST /auth/cadastro-admin}, rota protegida pelo \textit{middleware}
+\path{POST /auth/cadastro-admin}, rota protegida pelo \textit{middleware}
 \texttt{verificarSuperAdmin} — somente administradores com perfil
 \texttt{super\_admin} podem criar novos administradores. Ambos os formulários
 são gerenciados pelo componente \texttt{UserForm}, reutilizado tanto para criação
@@ -3885,36 +3864,52 @@ são gerenciados pelo componente \texttt{UserForm}, reutilizado tanto para cria�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_7b.png}
-  \caption{Seq. 7b — Criação e Edição de Usuário}
-  \label{fig:seq_7b}
-  \fonte{Autora, 2025.}
+  \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_7b1.pdf}}
+  \caption{Seq. 7b — Criação de Usuário}
+  \label{fig:seq_7b1}
+  \fonte{Autora, 2026.}
 \end{figure}
 
-A Figura~\ref{fig:seq_7c} apresenta os fluxos de desativação e reativação de
-usuários. A desativação utiliza o verbo HTTP \texttt{DELETE}, porém implementa
+\begin{figure}[H]
+  \centering
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7b2.pdf}}
+  \caption{Seq. 7b — Edição de Usuário}
+  \label{fig:seq_7b2}
+  \fonte{Autora, 2026.}
+\end{figure}
+
+As Figuras~\ref{fig:seq_7c1} e~\ref{fig:seq_7c2} apresentam os fluxos de desativação e reativação de
+usuários. A desativação utiliza o verbo HTTP \path{DELETE}, porém implementa
 deleção lógica no banco de dados: o registro não é removido, apenas o campo
 \texttt{ativo} é atualizado para \texttt{false}, preservando o histórico de alertas
 recebidos pelo usuário. Para administradores, o serviço verifica se o alvo não é o
 último \texttt{super\_admin} ativo do sistema antes de prosseguir com a desativação,
 e impede que um administrador desative a própria conta. A reativação é feita pelo
-modal de usuários inativos, que carrega via \texttt{GET /auth/usuarios-inativos}
+modal de usuários inativos, que carrega via \path{GET /auth/usuarios-inativos}
 o conjunto unificado de usuários básicos e administradores com \texttt{ativo = false}.
 Após a reativação bem-sucedida, o usuário é removido da lista do modal localmente,
 sem nova requisição, e o componente pai recarrega as estatísticas.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_7c.png}
-  \caption{Seq. 7c — Desativação e Reativação de Usuários Inativos}
-  \label{fig:seq_7c}
-  \fonte{Autora, 2025.}
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7c1.pdf}}
+  \caption{Seq. 7c — Desativação de Usuários Inativos}
+  \label{fig:seq_7c1}
+  \fonte{Autora, 2026.}
 \end{figure}
 
-A Figura~\ref{fig:seq_7d} ilustra o carregamento da Central de Alertas e a expansão
+\begin{figure}[H]
+  \centering
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7c2.pdf}}
+  \caption{Seq. 7c — Reativação de Usuários Inativos}
+  \label{fig:seq_7c2}
+  \fonte{Autora, 2026.}
+\end{figure}
+
+As Figuras~\ref{fig:seq_7d1} e~\ref{fig:seq_7d2} ilustram o carregamento da Central de Alertas e a expansão
 de um alerta para visualização de detalhes. São carregados até 200 alertas ativos,
 com KPIs de contagem por categoria e paginação a 10 por página. Ao expandir um
-alerta, são exibidos os blocos de componentes da Equação~5, contexto meteorológico,
+alerta, são exibidos os blocos de componentes da Equação~\ref{eq:frisco}, contexto meteorológico,
 hardware e diagnóstico, e o cálculo detalhado de confiabilidade — com os descontos
 individuais por fonte de dados indisponível, ou a indicação de estado especial de
 RUPTURA quando a confiabilidade está fixada em 100\% por confirmação direta do
@@ -3922,10 +3917,18 @@ hardware.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_7d.png}
-  \caption{Seq. 7d — Central de Alertas: Carregamento e Expansão}
-  \label{fig:seq_7d}
-  \fonte{Autora, 2025.}
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7d1.pdf}}
+  \caption{Seq. 7d — Central de Alertas: Carregamento}
+  \label{fig:seq_7d1}
+  \fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7d2.pdf}}
+  \caption{Seq. 7d — Central de Alertas: Expansão}
+  \label{fig:seq_7d2}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_7e} detalha o envio de alerta em massa. Após confirmação pelo
@@ -3943,10 +3946,10 @@ de todas as notificações disparadas pelo sistema.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/image55_seq_7e.png}
+  \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7e.pdf}}
   \caption{Seq. 7e — Envio de Alerta em Massa}
   \label{fig:seq_7e}
-  \fonte{Autora, 2025.}
+  \fonte{Autora, 2026.}
 \end{figure}
 
 % -------------------------------------------------------------
@@ -3963,13 +3966,12 @@ as três camadas da arquitetura. A Figura~\ref{fig:fluxograma_visao_geral}
 apresenta o mapa geral com os identificadores e as relações entre
 os diagramas.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]
-    {figures/cap4_fluxograma_f0_visao_geral.png}
+\fbox{\includegraphics[width=\textwidth]{figures/cap4_fluxograma_f0_visao_geral.png}}
 \caption{Mapa geral dos fluxogramas de lógica do sistema}
 \label{fig:fluxograma_visao_geral}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 No \textit{firmware} embarcado: F1 —
@@ -3977,12 +3979,12 @@ loop principal (Figura~\ref{fig:fluxograma_loop}); F2 — análise
 de risco integrado (Figura~\ref{fig:fluxograma_risco}); F3 —
 protocolo de ruptura (Figura~\ref{fig:fluxograma_ruptura}); F4 —
 índice de confiabilidade (Figura~\ref{fig:fluxograma_confiabilidade});
-e F9 — simulação de nível via Serial
+e F8 — simulação de nível via Serial
 (Figura~\ref{fig:fluxograma_simulacao}).
 
 No \textit{backend}: F5 — recebimento e persistência de leitura
 (Figura~\ref{fig:fluxograma_backend_sensor}); F6 — autenticação
-JWT (Figura~\ref{fig:fluxograma_auth}); e F10 —
+JWT (Figura~\ref{fig:fluxograma_auth}); e F9 —
 envio de alerta em massa
 (Figura~\ref{fig:fluxograma_alerta_massa}).
 
@@ -3990,7 +3992,7 @@ No \textit{frontend}: F7 — detecção de status do sensor
 (Figura~\ref{fig:fluxograma_status_sensor}).
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma do Ciclo de Análise de Risco Integrado}
+\paragraph*{Fluxograma do Ciclo de Análise de Risco Integrado}
 \label{subsubsec:fluxograma-risco}
 % -------------------------------------------------------------
 
@@ -4000,13 +4002,13 @@ do ESP8266 a cada intervalo de análise de 10 segundos, sempre que
 o nível de umidade do solo está abaixo do limiar de ruptura e não
 há simulação ativa em andamento.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.75\textwidth]
-    {figures/cap4_fluxograma_f2_ciclo_analise_risco.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f2_ciclo_analise_risco.png}}
 \caption{Fluxograma do ciclo de análise de risco integrado}
 \label{fig:fluxograma_risco}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O ciclo tem início com o cálculo dos sete componentes da
@@ -4045,7 +4047,7 @@ intervalo $[0;\,1]$ pela função \texttt{constrain}, evitando que
 amplificações extremas produzam valores fora da escala do modelo.
 
 A classificação do nível de alerta é realizada em seguida, com base
-em três faixas definidas na Tabela~5 do trabalho: fator de risco
+em três faixas definidas na Tabela~\ref{tab:alertas}: fator de risco
 igual ou inferior a 0,45 corresponde ao nível VERDE (\textit{status}
 ``SEGURO''); acima de 0,45 e até 0,75, ao nível AMARELO
 (\textit{status} ``ATENÇÃO''); acima de 0,75, ao nível VERMELHO
@@ -4075,7 +4077,7 @@ qualquer ação adicional, garantindo que o LED vermelho e o
 durante o ciclo seguinte.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma do Protocolo de Ruptura e Desescalada}
+\paragraph*{Fluxograma do Protocolo de Ruptura e Desescalada}
 \label{subsubsec:fluxograma-ruptura}
 % -------------------------------------------------------------
 
@@ -4087,13 +4089,12 @@ precedência sobre ele: sempre que a condição de ruptura é detectada,
 o mecanismo de análise ponderada é integralmente substituído por um
 acionamento direto de emergência.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f3_protocolo_ruptura.png}
+\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap4_fluxograma_f3_protocolo_ruptura.png}
 \caption{Fluxograma do protocolo de ruptura e desescalada}
 \label{fig:fluxograma_ruptura}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O fluxo tem início com a verificação do limiar de ruptura: se a
@@ -4154,7 +4155,7 @@ mínima de 10 segundos de estabilidade antes da reabertura do ciclo
 analítico, conferindo robustez ao critério de desescalada.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma do Loop Principal de Orquestração}
+\paragraph*{Fluxograma do Loop Principal de Orquestração}
 \label{subsubsec:fluxograma-loop}
 % -------------------------------------------------------------
 
@@ -4170,14 +4171,14 @@ custo, nos quais a ausência de um sistema operacional dedicado
 exige que o próprio programa controle a ordem e o momento de
 execução de cada tarefa \cite{sommerville2011engenharia}.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.80\textwidth]
-    {figures/cap4_fluxograma_f1_loop_principal.png}
+\fbox{\includegraphics[width=\textwidth]
+    {figures/cap4_fluxograma_f1_loop_principal.png}}
 \caption{Fluxograma do \textit{loop} principal de orquestração do
 \textit{firmware}}
 \label{fig:fluxograma_loop}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O primeiro temporizador controla a leitura do higrômetro. O
@@ -4252,7 +4253,7 @@ manuais, executar calibração do sensor e acionar simulações de
 nível para fins de teste e demonstração.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma do Cálculo do Índice de Confiabilidade}
+\paragraph*{Fluxograma do Cálculo do Índice de Confiabilidade}
 \label{subsubsec:fluxograma-confiabilidade}
 % -------------------------------------------------------------
 
@@ -4265,13 +4266,13 @@ auditável. O índice expressa o grau de completude e atualidade dos
 dados que alimentaram o cálculo de risco naquele ciclo específico,
 variando de 0\% a 100\%.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f4_confiabilidade.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f4_confiabilidade.png}}
 \caption{Fluxograma do cálculo do índice de confiabilidade da análise}
 \label{fig:fluxograma_confiabilidade}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O fluxo se divide em dois caminhos desde o primeiro nó de decisão.
@@ -4349,27 +4350,27 @@ do tipo \texttt{jsonb} na tabela \texttt{leituras\_sensor}, tornando
 cada decisão de confiabilidade auditável pelo painel \textit{web}.
 
 % -------------------------------------------------------------
-\subsubsection{Fluxograma de Recebimento e Persistência de Leitura}
+\paragraph*{Fluxograma de Recebimento e Persistência de Leitura}
 \label{subsubsec:fluxograma-backend-sensor}
 % -------------------------------------------------------------
 
 A Figura~\ref{fig:fluxograma_backend_sensor} apresenta o fluxograma
 do processo de recebimento, validação e persistência de leituras
 do sensor, executado pelo \textit{backend} Node.js a cada requisição
-\texttt{POST /api/sensor/dados} enviada pelo \textit{firmware} do
+\path{POST /api/sensor/dados} enviada pelo \textit{firmware} do
 ESP8266.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f5_backend_sensor.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f5_backend_sensor.png}}
 \caption{Fluxograma de recebimento e persistência de leitura no
 \textit{backend}}
 \label{fig:fluxograma_backend_sensor}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
-A rota \texttt{POST /api/sensor/dados} é a única rota do sistema
+A rota \path{POST /api/sensor/dados} é a única rota do sistema
 que não exige autenticação JWT — uma decisão deliberada de projeto,
 pois o ESP8266 opera em rede local e não possui mecanismo nativo
 de gestão de tokens com renovação periódica. A requisição chega ao
@@ -4445,7 +4446,7 @@ retorna \texttt{HTTP 201} ao ESP8266 com o corpo
 \textit{firmware}.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma de Autenticação JWT e Validação de Sessão}
+\paragraph*{Fluxograma de Autenticação JWT e Validação de Sessão}
 \label{subsubsec:fluxograma-auth}
 % -------------------------------------------------------------
 
@@ -4455,13 +4456,13 @@ complementares: o login, que cria a sessão; a validação de token
 pelo \textit{middleware}, que protege as rotas autenticadas; e o
 \textit{logout}, que invalida a sessão no banco de dados.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f6_autenticacao_jwt.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f6_autenticacao_jwt.png}}
 \caption{Fluxograma de autenticação JWT e validação de sessão}
 \label{fig:fluxograma_auth}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O fluxo de login tem início com a validação dos campos de entrada
@@ -4527,7 +4528,7 @@ a consulta da etapa de validação não encontrará nenhuma sessão
 ativa, resultando em \texttt{HTTP 401} imediato.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma de Detecção de Status do Sensor no
+\paragraph*{Fluxograma de Detecção de Status do Sensor no
 \textit{Frontend}}
 \label{subsubsec:fluxograma-status-sensor}
 % -------------------------------------------------------------
@@ -4540,20 +4541,20 @@ exibidos no cabeçalho da aplicação: \textbf{Online},
 estados é relevante porque cada um é produzido por uma lógica
 diferente, com fontes de dados e critérios independentes.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f7_status_sensor.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f7_status_sensor.png}}
 \caption{Fluxograma de detecção de status do sensor no
 \textit{frontend}}
 \label{fig:fluxograma_status_sensor}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O componente \texttt{Header.js} executa um \textit{health check}
 a cada 30 segundos via \texttt{setInterval}, chamando
 \texttt{systemService.getHealth()} que acessa o \textit{endpoint}
-\texttt{GET /health} do \textit{backend}. Quando a requisição
+\path{GET /health} do \textit{backend}. Quando a requisição
 falha por erro de rede — tratado no bloco \texttt{catch} do
 \texttt{try-catch} —, o estado local é atualizado com
 \texttt{\{ status: 'unhealthy' \}}, o que resulta na exibição do
@@ -4600,7 +4601,7 @@ resultariam em ``Degradado'' —, sem que uma condição mascare a
 outra.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma do Modo de Simulação de Nível via
+\paragraph*{Fluxograma do Modo de Simulação de Nível via
 Serial}
 \label{subsubsec:fluxograma-simulacao}
 % -------------------------------------------------------------
@@ -4613,13 +4614,13 @@ dos três níveis de alerta durante a fase de testes do sistema,
 sem depender da ocorrência real das condições geotécnicas e
 meteorológicas que cada nível exige.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]
-    {figures/cap4_fluxograma_f9_simulacao_nivel.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f8_simulacao_nivel.png}}
 \caption{Fluxograma do modo de simulação de nível via Serial}
 \label{fig:fluxograma_simulacao}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O fluxo tem início com a leitura de um comando na porta Serial.
@@ -4686,7 +4687,7 @@ próximo ciclo de leitura do sensor, os valores reais do
 higrômetro e o ciclo analítico normal são retomados.
 
 % -------------------------------------------------------------
-\subsubsubsection{Fluxograma de Envio de Alerta em Massa}
+\paragraph*{Fluxograma de Envio de Alerta em Massa}
 \label{subsubsec:fluxograma-alerta-massa}
 % -------------------------------------------------------------
 
@@ -4694,15 +4695,15 @@ A Figura~\ref{fig:fluxograma_alerta_massa} apresenta o fluxograma
 do processo de envio de alerta em massa, acionado pelo Administrador
 pela Central de Alertas do painel \textit{web} e processado
 integralmente pelo \textit{backend} via \textit{endpoint}
-\texttt{POST /auth/enviar-alerta}.
+\path{POST /auth/enviar-alerta}.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]
-    {figures/cap4_fluxograma_f10_alerta_massa.png}
+\fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
+    {figures/cap4_fluxograma_f9_alerta_massa.png}}
 \caption{Fluxograma do processo de envio de alerta em massa}
 \label{fig:fluxograma_alerta_massa}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{figure}
 
 O processo tem início com a seleção dos destinatários, determinada
@@ -4757,3 +4758,299 @@ trilha de auditoria completa de todas as notificações enviadas pelo
 sistema. O \textit{frontend} exibe o resultado da operação via
 \textit{toast} de confirmação e recarrega o modal de Log de Envios
 para refletir o novo registro.
+
+% =============================================================
+\section{Protótipo de \textit{Hardware} Embarcado}
+\label{sec:hardware}
+% =============================================================
+
+O módulo de aquisição de dados foi implementado com o microcontrolador
+ESP8266 NodeMCU V3, escolhido pela disponibilidade de conectividade
+Wi-Fi integrada, suporte ao protocolo HTTPS, programação direta pela
+Arduino IDE e custo acessível. O protótipo é composto por quatro categorias de componentes
+eletrônicos, descritas a seguir: o microcontrolador, o sensor de
+umidade, os indicadores visuais (LEDs) e o indicador sonoro
+(\textit{buzzer}).
+
+% -------------------------------------------------------------
+\subsection{ESP8266 NodeMCU V3}
+\label{subsec:esp8266}
+% -------------------------------------------------------------
+
+O ESP8266 NodeMCU V3 é uma placa de desenvolvimento baseada no módulo
+ESP-12E, equipada com processador de arquitetura 32 \textit{bits},
+\textit{clock} de 80\,MHz, 4\,MB de memória \textit{flash} e 80\,KB
+de RAM. Opera com tensão de 3,3\,V a nível lógico, admitindo
+alimentação entre 5\,V e 9\,V via USB Tipo C. Possui 17 pinos GPIO,
+conversor ADC de 10 \textit{bits} (pino A0), suporte a Wi-Fi 802.11
+b/g/n em 2,4\,GHz com criptografia WPA/WPA2 e chip conversor USB-serial
+CH340. No protótipo, o ESP8266 é responsável pela leitura do sensor
+de umidade, pela consulta às APIs meteorológicas externas via HTTPS e
+pelo envio periódico dos dados ao \textit{backend}
+\cite{mercadolivre_esp8266}.
+
+% -------------------------------------------------------------
+\subsection{Sensor Higrômetro Resistivo}
+\label{subsec:higrometro}
+% -------------------------------------------------------------
+
+O módulo sensor de umidade de solo é baseado no comparador LM393 e
+possui saída analógica (A0) e digital (D0), com tensão de operação
+entre 3,3\,V e 5\,V. A sensibilidade é ajustável por potenciômetro
+integrado à placa de circuito impresso (PCB de 3$\times$1,5\,cm),
+acompanhada de sonda de 6$\times$2\,cm. No protótipo, apenas a saída
+analógica é utilizada, conectada ao pino A0 do ESP8266. As leituras
+brutas do ADC (0 a 1023) são mapeadas para o intervalo de umidade de
+0\% a 100\%, com os pontos extremos calibrados e persistidos na EEPROM
+do microcontrolador para garantir consistência entre reinicializações
+\cite{eletrogate_higrometro}.
+
+A leitura deste sensor segue frequência adaptativa conforme o nível 
+de risco vigente: o ADC do pino A0 é amostrado a cada 30 segundos no 
+nível VERDE, a cada 10 segundos no nível AMARELO e a cada 5 segundos 
+no nível VERMELHO ou durante o protocolo de ruptura, concentrando o 
+consumo de processamento nos períodos de maior criticidade. 
+O detalhamento completo dos cinco temporizadores do \textit{firmware} 
+é apresentado na Seção~\ref{subsec:arquitetura} 
+e no Fluxograma~\ref{fig:fluxograma_loop}.
+
+% -------------------------------------------------------------
+\subsection{LEDs Indicadores}
+\label{subsec:leds}
+% -------------------------------------------------------------
+
+Foram utilizados três LEDs difusos de 5\,mm para sinalização visual
+do nível de risco, conectados respectivamente aos pinos D1 (verde),
+D2 (amarelo) e D3 (vermelho). As especificações elétricas variam por
+cor: o LED verde opera com tensão de alimentação de 3,0 a 3,3\,V e
+corrente máxima de 20\,mA; o LED amarelo opera entre 2,0 e 2,2\,V,
+com corrente máxima de 20\,mA; e o LED vermelho opera a 1,8\,V com
+corrente máxima de 15\,mA. Todos possuem ângulo de abertura de 120°
+e diâmetro de 5\,mm. O nível lógico de 3,3\,V do ESP8266 é
+compatível com a operação direta dos três LEDs
+\cite{usinainfo_led_amarelo,usinainfo_led_vermelho}.
+
+% -------------------------------------------------------------
+\subsection{\textit{Buzzer} Passivo 5\,V}
+\label{subsec:buzzer}
+% -------------------------------------------------------------
+
+O \textit{buzzer} passivo modelo BPA5 é conectado ao pino D4 do
+ESP8266 e atua como sinalização sonora proporcional à severidade do
+risco. Por ser passivo, opera como um pequeno alto-falante e permite
+variar a frequência de emissão por software. No protótipo, a
+frequência é ajustada entre 2000\,Hz e 2400\,Hz conforme o índice
+de risco calculado. Especificações: tensão de trabalho de 5\,V,
+corrente máxima de 40\,mA, diâmetro de 12\,mm e altura de 8\,mm
+\cite{usinainfo_buzzer}.
+
+% -------------------------------------------------------------
+\subsection{Diagrama de Circuito e Conexões}
+\label{subsec:circuito}
+% -------------------------------------------------------------
+
+A Figura~\ref{fig:componentes_ligados} apresenta o diagrama de
+montagem do protótipo com os componentes conectados, elaborado no
+software Fritzing. A Figura~\ref{fig:esquematico} apresenta o
+esquemático elétrico correspondente, com a identificação dos pinos
+e das ligações entre os componentes.
+
+A transmissão dos dados coletados por este circuito ao restante do sistema 
+ocorre em dois estágios: primeiro, o \textit{firmware} calcula o 
+fator de risco (Equação~\ref{eq:frisco}) e serializa o resultado, os dados brutos 
+do sensor e o diagnóstico de \textit{hardware} em um objeto JSON; 
+em seguida, esse \textit{payload} é transmitido por requisição HTTP 
+ao \textit{backend}, em intervalo adaptativo por nível de risco, e 
+persistido em banco de séries temporais. A arquitetura completa desse 
+fluxo — módulos, formato do \textit{payload} e intervalos de envio — 
+é detalhada na Seção~\ref{sec:software}, particularmente na 
+Seção~\ref{subsec:arquitetura} e no caso de uso UC01.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]
+    {figures/image51_componentes_ligados_versao_2_bb.png}}
+\caption{Diagrama de montagem do protótipo embarcado}
+\label{fig:componentes_ligados}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]
+    {figures/image52_componentes_ligados_versao_2_Esquematico.png}}
+\caption{Esquemático elétrico do protótipo embarcado}
+\label{fig:esquematico}
+\fonte{Autora, 2026.}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{Especificações Técnicas e Custos}
+\label{subsec:specs-custos}
+% -------------------------------------------------------------
+
+A Tabela~\ref{tab:specs} consolida as principais especificações
+técnicas dos componentes utilizados.
+
+\begin{table}[htb]
+\centering
+\caption{Especificações técnicas dos componentes do protótipo}
+\label{tab:specs}
+\begin{tabular}{llll}
+\hline
+\textbf{Componente}      & \textbf{Tensão (V)} & \textbf{Corrente máx.} & \textbf{Interface} \\
+\hline
+ESP8266 NodeMCU V3       & 3,3 (lógico)        & 200\,mA                & Wi-Fi / GPIO / ADC \\
+Higrômetro LM393         & 3,3–5               & —                      & Analógica (A0)     \\
+LED verde 5\,mm          & 3,0–3,3             & 20\,mA                 & GPIO digital       \\
+LED amarelo 5\,mm        & 2,0–2,2             & 20\,mA                 & GPIO digital       \\
+LED vermelho 5\,mm       & 1,8                 & 15\,mA                 & GPIO digital       \\
+\textit{Buzzer} BPA5 5\,V & 5                  & 40\,mA                 & GPIO digital (PWM) \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora com base em \citeonline{mercadolivre_esp8266,eletrogate_higrometro,usinainfo_led_amarelo,usinainfo_led_vermelho,usinainfo_buzzer}.}
+\end{table}
+
+O custo total dos componentes do protótipo é de R\$\,70,30, conforme
+detalhado na Tabela~\ref{tab:custos}.
+
+\begin{table}[htb]
+\centering
+\caption{Componentes e custos do protótipo embarcado}
+\label{tab:custos}
+\begin{tabular}{lcc}
+\hline
+\textbf{Componente}              & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
+\hline
+ESP8266 NodeMCU V3               & 1             & 59,90                \\
+Higrômetro resistivo LM393       & 1             & 7,50                 \\
+\textit{Buzzer} passivo BPA5 5\,V & 1            & 2,30                 \\
+LEDs indicadores (conjunto)      & 1             & 0,60                 \\
+\hline
+\textbf{Total}                   &               & \textbf{70,30}       \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
+
+Quanto ao consumo de energia, o protótipo não incorpora sensor de 
+corrente ou de tensão dedicado à medição em tempo real, uma vez que 
+o dispositivo foi projetado para alimentação contínua via 
+fonte externa/USB (5,V a 9,V), e não por bateria — razão pela qual 
+não foi implementado mecanismo de alerta de substituição de bateria. 
+Uma estimativa teórica pode, contudo, ser obtida a partir das correntes 
+máximas informadas nos \textit{datasheets} dos componentes (Tabela~\ref{tab:specs}): 
+o pior caso ocorre no nível VERMELHO, quando o ESP8266 opera com Wi-Fi ativo (até 200,mA), 
+o LED vermelho está aceso (até 15,mA) e o \textit{buzzer} está ativo (até 40,mA), 
+resultando em corrente combinada de aproximadamente 255,mA em 3,3–5,V — da ordem de 1,3,W. 
+Essa estimativa é apresentada como referência de dimensionamento, não como medição instrumentada.
+
+% -------------------------------------------------------------
+\subsection{Emulação em Ambiente Virtual (Wokwi)}
+\label{subsec:wokwi}
+% -------------------------------------------------------------
+
+Como complemento ao protótipo físico descrito nas
+Seções~\ref{subsec:esp8266} a~\ref{subsec:circuito}, o sistema foi
+também reproduzido em ambiente de emulação virtual por meio da
+plataforma Wokwi, acessada diretamente pela extensão oficial do Wokwi
+para o Visual Studio Code. A escolha do Wokwi em detrimento de
+alternativas como o TinkerCad Circuits decorreu de uma limitação
+técnica desta última: o TinkerCad não emula conectividade Wi-Fi nem
+requisições HTTP/HTTPS para microcontroladores da família ESP, o que
+inviabiliza a simulação de qualquer parte do sistema que dependa de
+comunicação em rede --- exatamente o núcleo funcional deste trabalho
+(consulta às APIs BNDMET e OpenWeatherMap e envio de dados ao
+\textit{backend}). O Wokwi, por sua vez, disponibiliza uma rede
+virtual (\texttt{Wokwi-GUEST}) com \textit{gateway} de saída real
+para a internet, permitindo que o \textit{firmware} emulado realize
+as mesmas requisições HTTPS do protótipo físico.
+
+O projeto de emulação é definido por dois arquivos: o
+\texttt{diagram.json}, que descreve os componentes do circuito virtual
+e suas conexões, e o \textit{firmware} adaptado (arquivo
+\texttt{sketch.ino}), executado sobre um microcontrolador ESP32
+DevKit --- em vez do ESP8266 NodeMCU do protótipo físico --- devido à
+maior compatibilidade deste modelo com o simulador. A
+\autoref{fig:wokwi_diagrama} apresenta o diagrama de conexões
+resultante.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=0.9\textwidth]{figures/cap5_wokwi_diagrama.png}}
+\caption{Diagrama de circuito do ambiente de emulação Wokwi.}
+\label{fig:wokwi_diagrama}
+\fonte{Autora, 2026.}
+\end{figure}
+
+Duas adaptações foram necessárias para portar a lógica do
+\textit{firmware} ao ambiente simulado. Primeiro, o sensor higrômetro
+resistivo FC-28 foi substituído por um potenciômetro conectado ao pino
+GPIO34, cuja leitura analógica --- linear, no intervalo
+de 0 a 4095 --- permite ajustar manualmente e com precisão o valor de
+umidade do solo simulado. Segundo, a rede \texttt{Wokwi-GUEST} foi
+configurada com o endereço IP do \textit{gateway} apontando para o
+\textit{host} local, viabilizando que o dispositivo virtual enviasse
+seus dados ao mesmo \textit{backend} Node.js utilizado pelo protótipo
+físico, por meio do \textit{endpoint} \texttt{POST
+/api/sensor/dados} descrito na Seção~\ref{subsec:arquitetura}.
+
+O ambiente de emulação foi empregado como estratégia complementar de
+validação, permitindo reproduzir de forma determinística e repetível
+os três níveis de alerta e a condição de ruptura --- por meio do
+ajuste direto do potenciômetro virtual --- sem depender da ocorrência
+natural das condições geotécnicas correspondentes nem do desgaste do
+sensor físico. Os resultados obtidos nesse ambiente são apresentados
+na Seção~\ref{sec:wokwi-resultados} do
+\autoref{cap:resultados}.
+
+% =============================================================
+\section{Testes de Validação}
+\label{sec:testes-validacao}
+% =============================================================
+
+A validação do sistema foi conduzida de ponta a ponta, cobrindo o
+dispositivo embarcado, o \textit{backend} e a interface \textit{web},
+com o objetivo de verificar tanto os fluxos de sucesso quanto os
+cenários alternativos e de falha previstos no modelo de casos de uso
+(\autoref{subsubsec:casos-uso}). A estratégia de testes combinou
+quatro abordagens complementares.
+
+A primeira consistiu na inspeção do monitor serial do \textit{firmware}
+durante a operação contínua do protótipo, permitindo observar a
+sequência de inicialização, os ciclos de leitura do sensor, as
+consultas às APIs externas e o cálculo do fator de risco em tempo
+real. A segunda utilizou os comandos de simulação de nível
+(\texttt{alerta verde}, \texttt{alerta amarelo} e
+\texttt{alerta vermelho}), descritos na
+\autoref{subsubsec:fluxograma-simulacao}, para reproduzir de forma
+controlada e repetível os três níveis de alerta e o comportamento dos
+indicadores físicos e da interface \textit{web}, sem depender da
+ocorrência natural das condições geotécnicas e meteorológicas
+correspondentes. A terceira consistiu na indução deliberada de
+cenários de falha --- desconexão do sensor, indisponibilidade das
+APIs BNDMET e OpenWeatherMap, queda de conectividade Wi-Fi e de
+comunicação com o \textit{backend} --- para verificar se os mecanismos
+de tolerância a falhas e os descontos no índice de confiabilidade
+(\autoref{subsubsec:fluxograma-confiabilidade}) respondiam conforme o
+projetado.
+
+A quarta abordagem utilizou o ambiente de emulação virtual Wokwi,
+descrito na Seção~\ref{subsec:wokwi}, executado por meio da extensão
+oficial do Wokwi para o Visual Studio Code. Nesta etapa, o sensor
+higrômetro físico foi substituído por um potenciômetro virtual
+(\autoref{fig:wokwi_diagrama}), cujo valor foi ajustado manualmente
+para reproduzir, de forma determinística, cada uma das três faixas de
+alerta definidas na Tabela~\ref{tab:alertas} e o limiar de ruptura de
+30\%. Diferentemente da segunda abordagem --- que injeta valores
+predefinidos diretamente nas estruturas do \textit{firmware} por meio
+de comandos Serial ---, o ajuste do potenciômetro no ambiente Wokwi
+percorre o fluxo completo de leitura do sensor
+(\autoref{fig:fluxograma_loop}), da conversão do valor bruto do ADC
+até o cálculo da Equação~\ref{eq:frisco}, aproximando-se mais fielmente
+do comportamento do protótipo físico em campo. Essa abordagem foi
+particularmente útil para validar a integração com as APIs BNDMET e
+OpenWeatherMap a partir de um ambiente de execução distinto do
+\textit{hardware} físico, confirmando que a lógica de aquisição,
+cálculo de risco e comunicação com o \textit{backend} é independente
+do dispositivo físico ou virtual que a executa.

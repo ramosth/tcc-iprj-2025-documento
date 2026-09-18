@@ -26,7 +26,7 @@
 
 The failures of tailings dams in Mariana (2015) and Brumadinho (2019)
 exposed critical weaknesses in the monitoring and warning systems of the
-Brazilian mining sector, resulting in hundreds of deaths and
+Brazilian mining area, resulting in hundreds of deaths and
 environmental damage of historic proportions. In this context, this
 work proposes the development of an automated monitoring and alert
 system for mining tailings dams, based on IoT technology, with the
@@ -39,28 +39,34 @@ The firmware integrates the BNDMET/DECEA and OpenWeatherMap
 meteorological APIs to retrieve historical precipitation data and
 rainfall forecasts, transmitting readings to the backend at adaptive
 intervals according to the calculated risk level. The integrated risk
-assessment model combines seven weighted variables expressing geotechnical
+assessment model, developed by the author, calculates a risk factor
+through the weighted sum of seven variables expressing geotechnical
 conditions --- soil moisture and rate of change --- and meteorological
 conditions --- accumulated precipitation over multiple time windows,
-rainfall forecast and atmospheric pressure --- with an amplification
-mechanism triggered when high soil saturation coincides with forecast
-rainfall. The software platform adopts a three-layer client-server
+rainfall forecast and atmospheric pressure ---, with the rainfall
+thresholds calibrated based on \citeonline{rico2008mine} and on the
+criteria of the Alerta Rio System \cite{sistemaalertario2025}, and an
+amplification mechanism triggered when high soil saturation coincides
+with forecast rainfall. The software platform adopts a three-layer client-server
 architecture: embedded firmware, a backend developed in Node.js with
 TypeScript and a PostgreSQL database with the TimescaleDB extension for
 time-series data, and a React/Next.js frontend providing a real-time
 monitoring interface, reading history, user management and an alert
-center. The system classifies risk into three levels --- GREEN, YELLOW
-and RED ---, signalled physically by the LEDs and buzzer on the embedded
+center. The system classifies risk into three levels (green, yellow, red), 
+signalled physically by the LEDs and buzzer on the embedded
 device and displayed on the web platform. The administrator has access to
 an alert center that enables the manual dispatch of bulk e-mail
 notifications to registered users, accompanied by the corresponding
 analysis cycle report. The proposed solution demonstrates that it is
 possible to develop, using low-cost hardware and open-source technologies,
 a functional system for continuous geotechnical risk monitoring,
+which may include the measurement and use of other variables, 
+such as the water table level and soil pore pressure (piezometer) and the velocity, 
+direction, and depth of landslides (inclinometer),
 contributing to accident prevention in mining tailings dams.
 
 \vspace{\onelineskip}
-\noindent Keywords: Tailings dams. Internet of Things. Geotechnical monitoring. Arduino. ESP8266. Risk index. Alert systems. Dam safety. Mining. Brumadinho.
+\noindent Keywords: Alert systems; ESP8266; Geotechnical monitoring; Internet of Things; Tailings dams.
 
 \end{SingleSpace}
 \end{otherlanguage*}

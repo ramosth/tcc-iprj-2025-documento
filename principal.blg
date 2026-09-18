@@ -33,12 +33,18 @@ Reallocating 'name_of_file' (item size: 1) to 9 items.
 A level-1 auxiliary file: cap4.aux
 Reallocating 'name_of_file' (item size: 1) to 9 items.
 A level-1 auxiliary file: cap5.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+A level-1 auxiliary file: cap6.aux
 Reallocating 'name_of_file' (item size: 1) to 14 items.
 A level-1 auxiliary file: conclusao.aux
 Reallocating 'name_of_file' (item size: 1) to 11 items.
 A level-1 auxiliary file: nocite.aux
 Reallocating 'name_of_file' (item size: 1) to 16 items.
 Reallocating 'name_of_file' (item size: 1) to 4 items.
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: apendices.aux
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+A level-1 auxiliary file: anexos.aux
 Reallocating 'name_of_file' (item size: 1) to 12 items.
 The style file: abntex2-alf.bst
 Reallocating 'singl_function' (item size: 4) to 100 items.
@@ -50,7 +56,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'field_info' (item size: 4) to 14936 items.
+Reallocating 'field_info' (item size: 4) to 15074 items.
 Database file #1: abntex2-options.bib
 Database file #2: tcc.bib
 Warning--I didn't find a database entry for "abnt-emphasize=italic"
@@ -65,45 +71,45 @@ Reallocating 'global_strs' (item size: 1) to 4000000 items.
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 141 entries,
+You've used 143 entries,
             6711 wiz_defined-function locations,
-            1958 strings with 38606 characters,
-and the built_in function-call counts, 306395 in all, are:
-= -- 41312
-> -- 2516
-< -- 11443
-+ -- 12337
-- -- 810
-* -- 17472
-:= -- 36062
-add.period$ -- 732
-call.type$ -- 142
-change.case$ -- 1008
-chr.to.int$ -- 184
-cite$ -- 137
-duplicate$ -- 38168
-empty$ -- 8054
-format.name$ -- 3786
-if$ -- 56072
-int.to.chr$ -- 14
+            1981 strings with 39636 characters,
+and the built_in function-call counts, 302895 in all, are:
+= -- 40636
+> -- 2546
+< -- 11192
++ -- 12094
+- -- 820
+* -- 17279
+:= -- 35711
+add.period$ -- 739
+call.type$ -- 144
+change.case$ -- 1027
+chr.to.int$ -- 188
+cite$ -- 139
+duplicate$ -- 37491
+empty$ -- 8192
+format.name$ -- 3832
+if$ -- 55626
+int.to.chr$ -- 12
 int.to.str$ -- 3
-missing$ -- 2300
-newline$ -- 719
-num.names$ -- 686
-pop$ -- 2638
+missing$ -- 2343
+newline$ -- 727
+num.names$ -- 696
+pop$ -- 2708
 preamble$ -- 1
-purify$ -- 453
+purify$ -- 459
 quote$ -- 0
-skip$ -- 38541
+skip$ -- 37881
 stack$ -- 1
-substring$ -- 14138
-swap$ -- 13244
-text.length$ -- 155
+substring$ -- 13935
+swap$ -- 13022
+text.length$ -- 153
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 54
+type$ -- 51
 warning$ -- 0
-while$ -- 975
+while$ -- 985
 width$ -- 0
-write$ -- 2238
+write$ -- 2262
 (There were 3 warnings)

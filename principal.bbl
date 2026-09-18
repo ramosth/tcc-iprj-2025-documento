@@ -54,30 +54,25 @@ Brasília, 2022. Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/anuario-mineral/anuario-mineral-brasileiro/PreviaAMB2022.pdf}.
   Acesso em: 15 jun. 2024.}
 
-\bibitem[{ANM} 2023]{anm2023barragens}
+\bibitem[{ANM} 2023]{anm2023informe3}
 \abntrefinfo{{ANM}}{{ANM}}{2023a}
-{{ANM}. \emph{Boletim de Barragens de Mineração – Setembro de 2023}.
+{{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - A}: 3º
+  trimestre de 2023.
+[S.l.], 2023. 1--16~p. Dispon{\'\i}vel em:
+  \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/informe-mineral/publicacoes-nacionais/informe\_03tri2023.pdf}.
+  Acesso em: 14 jun. 2024.}
+
+\bibitem[{ANM} 2023]{anm2023boletim}
+\abntrefinfo{{ANM}}{{ANM}}{2023b}
+{{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - B}.
 Brasília, 2023. Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/barragens/boletim-de-barragens-de-mineracao/report\_trimestral\_set\_2023}.
   Acesso em: 19 maio 2025.}
 
-\bibitem[{ANM} 2023]{anm2023}
-\abntrefinfo{{ANM}}{{ANM}}{2023b}
-{{ANM}. \emph{Informe Mineral}: 3º trimestre de 2023.
-[S.l.], 2023. 1--16~p. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/informe-mineral/publicacoes-nacionais/informe\_03tri2023.pdf}.
-  Acesso em: 14 jun. 2024.}
-
-\bibitem[{ANM} 2023]{anm2023c}
+\bibitem[{ANM} 2023]{anm2023informe4}
 \abntrefinfo{{ANM}}{{ANM}}{2023c}
-{{ANM}. \emph{Informe Mineral}: 3º trimestre de 2023.
-[S.l.], 2023. 1--16~p. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/informe-mineral/publicacoes-nacionais/informe\_03tri2023.pdf}.
-  Acesso em: 14 jun. 2024.}
-
-\bibitem[{ANM} 2023]{anm2023d}
-\abntrefinfo{{ANM}}{{ANM}}{2023d}
-{{ANM}. \emph{Informe Mineral}: 4º trimestre de 2023.
+{{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - C}: 4º
+  trimestre de 2023.
 [S.l.], 2023. 1--18~p. Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/informe-mineral/publicacoes-nacionais/informe04tri2023.pdf}.
   Acesso em: 14 jun. 2024.}
@@ -194,6 +189,19 @@ Dispon{\'\i}vel em:
 Brasília, DF, 2010. Dispon{\'\i}vel em:
   \url{https://www.planalto.gov.br/ccivil\_03/\_ato2007-2010/2010/lei/l12334.htm}.
   Acesso em: 19 maio 2025.}
+
+\bibitem[{BRASIL} 2017]{brasil2017portaria70389}
+\abntrefinfo{{BRASIL}}{{BRASIL}}{2017}
+{{BRASIL}. \emph{Portaria nº 70.389, de 17 de maio de 2017. Cria o Cadastro
+  Nacional de Barragens de Mineração, o Sistema Integrado de Gestão em
+  Segurança de Barragens de Mineração e estabelece a periodicidade de
+  execução ou atualização, a qualificação dos responsáveis técnicos, o
+  conteúdo mínimo e o nível de detalhamento do Plano de Segurança da
+  Barragem, das Inspeções de Segurança Regular e Especial, da Revisão
+  Periódica de Segurança de Barragem e do Plano de Ação de Emergência para
+  Barragens de Mineração}. Brasília, DF: DNPM, 2017.
+  \url{https://www.gov.br/anm/pt-br/assuntos/barragens/portaria-dnpm-no-70-389-de-17-de-maio-de-2017}.
+Acesso em: 30 ago. 2026.}
 
 \bibitem[{BRASIL} 2018]{brasil2018}
 \abntrefinfo{{BRASIL}}{{BRASIL}}{2018}
@@ -327,22 +335,11 @@ Dispon{\'\i}vel em:
   Acesso em: 24 maio 2025.}
 
 \bibitem[Cruz 2024]{cruz2024iso}
-\abntrefinfo{Cruz}{CRUZ}{2024a}
+\abntrefinfo{Cruz}{CRUZ}{2024}
 {CRUZ, C. \emph{A ISO 31000 na mineração}. 2024.
 Dispon{\'\i}vel em:
   \url{https://www.linkedin.com/pulse/iso-31000-na-minera\%C3\%A7\%C3\%A3o-claudinei-cruz-gvkzf/}.
   Acesso em: 24 maio 2025.}
-
-\bibitem[Cruz 2024]{cruz2024}
-\abntrefinfo{Cruz}{CRUZ}{2024b}
-{CRUZ, C.~O.
-\emph{Classificação das barragens de rejeito baseada no risco de eventos
-  indesejáveis utilizando dados do SIGBM}.
-112~p. Disserta\c{c}\~{a}o (Dissertação (Mestrado Profissional em Engenharia
-  Geotécnica)) --- Universidade Federal de Ouro Preto, Ouro Preto, 2024.
-Dispon{\'\i}vel em:
-  \url{https://www.repositorio.ufop.br/items/8fcbd250-9240-410b-a826-fcecf9aa4c6c}.
-  Acesso em: 22 maio 2025.}
 
 \bibitem[{CTS UFSJ - CAP} 2017]{ctsufsj2017}
 \abntrefinfo{{CTS UFSJ - CAP}}{{CTS UFSJ - CAP}}{2017}
@@ -498,6 +495,11 @@ Dispon{\'\i}vel em:
   \url{https://www.frontiersin.org/journals/earth-science/articles/10.3389/feart.2022.800924/full}.
   Acesso em: 11 jun. 2025.}
 
+\bibitem[{Geokon Incorporated} 2025]{geokon2025instrumentation}
+\abntrefinfo{{Geokon Incorporated}}{{Geokon Incorporated}}{2025}
+{{Geokon Incorporated}. \emph{Earth Dam Instrumentation}. 2025.
+Disponível em: \url{https://www.geokon.com}. Acesso em: 31 ago. 2025.}
+
 \bibitem[GEOSCAN 2024]{geoscan2024sistema}
 \abntrefinfo{GEOSCAN}{GEOSCAN}{2024}
 {GEOSCAN. \emph{Sistema de monitoramento de barragem}. 2024.
@@ -558,15 +560,6 @@ Dispon{\'\i}vel em:
 Brasília, 2024. Dispon{\'\i}vel em:
   \url{https://ibram.org.br/wp-content/uploads/2025/02/DADOS\_Setor-Mineral\_2024\_5FEV2025.pdf}.
   Acesso em: 27 abr. 2025.}
-
-\bibitem[{Instituto Brasileiro de Mineração} 2023]{ibram2023coletiva}
-\abntrefinfo{{Instituto Brasileiro de Mineração}}{{Instituto Brasileiro de
-  Mineração}}{2023}
-{{Instituto Brasileiro de Mineração}. \emph{Coletiva de Imprensa: Resultados
-  1S23}.
-Brasília, 2023. Dispon{\'\i}vel em:
-  \url{https://ibram.org.br/wp-content/uploads/2023/07/20230718\_Coletiva-de-Imprensa-Resultados-1S23\_rev02.pdf}.
-  Acesso em: 1 jul. 2024.}
 
 \bibitem[{INSTITUTO CAMILA E LUIZ TALIBERTI} 2025]{taliberti2025tragedia}
 \abntrefinfo{{INSTITUTO CAMILA E LUIZ TALIBERTI}}{{INSTITUTO CAMILA E LUIZ
@@ -825,6 +818,16 @@ Dispon{\'\i}vel em:
   \url{https://repositorio.ufc.br/bitstream/riufc/49955/3/2019\_dis\_gcmoecke.pdf}.
   Acesso em: 22 maio 2025.}
 
+\bibitem[{National Oceanic and Atmospheric Administration}
+  2024]{noaa2024pressure}
+\abntrefinfo{{National Oceanic and Atmospheric Administration}}{{National
+  Oceanic and Atmospheric Administration}}{2024}
+{{National Oceanic and Atmospheric Administration}. \emph{Air Pressure}. 2024.
+  JetStream --- An Online School for Weather.
+Dispon{\'\i}vel em:
+  \url{https://www.noaa.gov/jetstream/atmosphere/air-pressure}. Acesso em: 02
+  set. 2026.}
+
 \bibitem[{NATURE COMMUNICATIONS} 2020]{naturecomm2020advanced}
 \abntrefinfo{{NATURE COMMUNICATIONS}}{{NATURE COMMUNICATIONS}}{2020}
 {{NATURE COMMUNICATIONS}. Advanced analysis of satellite data reveals ground
@@ -1069,6 +1072,12 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/sobre-barragens-e-rejeitos}.
   Acesso em: 19 maio 2025.}
 
+\bibitem[{Vale S.A.} 2026]{vale2026glossario}
+\abntrefinfo{{Vale S.A.}}{{Vale S.A.}}{2026}
+{{Vale S.A.} \emph{Glossário/{FAQ}}. 2026.
+  \url{https://vale.com/pt/esg/glossario-e-faq}.
+Acesso em: 30 ago. 2026.}
+
 \bibitem[Victorino et al. 2003]{victorino2003piezometro}
 \abntrefinfo{Victorino et al.}{VICTORINO et al.}{2003}
 {VICTORINO, D.~R.; GEHLING, W. Y.~Y.; RAMIRES, M. C.~P. Piezômetro e medidor
@@ -1121,6 +1130,14 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://pt.wikipedia.org/wiki/Rompimento\_de\_barragem\_em\_Brumadinho}.
   Acesso em: 26 maio 2025.}
+
+\bibitem[{World Meteorological Organization} 2014]{wmo2014guide}
+\abntrefinfo{{World Meteorological Organization}}{{World Meteorological
+  Organization}}{2014}
+{{World Meteorological Organization}. \emph{Guide to Meteorological Instruments
+  and Methods of Observation}.
+Geneva, 2014. Cap. 3: Measurement of Atmospheric Pressure; Tabela de Código
+  0200 (\textit{pressure tendency}).}
 
 \bibitem[{World Mining Data} 2024]{wpr2024mineral}
 \abntrefinfo{{World Mining Data}}{{World Mining Data}}{2024}
