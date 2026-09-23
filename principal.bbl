@@ -486,6 +486,15 @@ Dispon{\'\i}vel em:
   \url{https://www.pimentacultural.com/wp-content/uploads/2024/05/eBook\_Rejeitos-minerio-Brasil.pdf}.
   Acesso em: 7 maio 2025.}
 
+\bibitem[Freitas 2019]{freitas2019dissertacao}
+\abntrefinfo{Freitas}{FREITAS}{2019}
+{FREITAS, R. \emph{Dissertação de 2010 na {Ufop} apontava possibilidade de
+  liquefação em barragem de {Brumadinho}}. Belo Horizonte: [s.n.], 2019. G1
+  Minas.
+Dispon{\'\i}vel em:
+  \url{https://g1.globo.com/mg/minas-gerais/noticia/2019/02/06/dissertacao-de-2010-na-ufop-apontava-possibilidade-de-liquefacao-em-barragem-de-brumadinho.ghtml}.
+  Acesso em: 23 set. 2026.}
+
 \bibitem[FRONTIERS 2022]{frontiers2022visualization}
 \abntrefinfo{FRONTIERS}{FRONTIERS}{2022}
 {FRONTIERS. 3d visualization monitoring and early warning system of a tailings
@@ -519,6 +528,22 @@ Dispon{\'\i}vel em:
 \abntrefinfo{Guedes}{GUEDES}{2011}
 {GUEDES, G. T.~A. \emph{UML 2 -- Uma Abordagem Prática}. 2. ed. São Paulo:
   Novatec, 2011.}
+
+\bibitem[Guitarrara 2026]{guitarrara2026rompimento_mariana}
+\abntrefinfo{Guitarrara}{GUITARRARA}{2026a}
+{GUITARRARA, P. \emph{Impactos ambientais do acidente em {Mariana} ({MG})}.
+  São Paulo: [s.n.], 2026. Brasil Escola.
+Dispon{\'\i}vel em:
+  \url{https://brasilescola.uol.com.br/biologia/impactos-ambientais-acidente-mariana-mg.htm}.
+  Acesso em: 23 set. 2026.}
+
+\bibitem[Guitarrara 2026]{guitarrara2026rompimento}
+\abntrefinfo{Guitarrara}{GUITARRARA}{2026b}
+{GUITARRARA, P. \emph{Rompimento da barragem de {Brumadinho} ({MG})}. São
+  Paulo: [s.n.], 2026. Brasil Escola.
+Dispon{\'\i}vel em:
+  \url{https://brasilescola.uol.com.br/biologia/rompimento-barragem-brumadinho.htm}.
+  Acesso em: 23 set. 2026.}
 
 \bibitem[Hartman e Mutmansky 2019]{jr2019}
 \abntrefinfo{Hartman e Mutmansky}{HARTMAN; MUTMANSKY}{2019}
@@ -672,6 +697,17 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://klohn.com/blog/tailings-dam-surveillance-technology-kcbs-experience/}.
   Acesso em: 11 jun. 2025.}
+
+\bibitem[Lara 2016]{lara2016metodologia}
+\abntrefinfo{Lara}{LARA}{2016}
+{LARA, P.~G. de.
+\emph{Metodologia probabilística de previsão de brecha de ruptura de
+  barragens/{Probabilistic} approach to dam breach modeling}.
+Disserta\c{c}\~{a}o (Dissertação (Mestrado em Engenharia Ambiental)) ---
+  Universidade Federal de Santa Catarina, Florianópolis, 2016.
+Dispon{\'\i}vel em:
+  \url{https://www.researchgate.net/publication/304011831\_Metodologia\_probabilistica\_de\_previsao\_de\_brecha\_de\_ruptura\_de\_barragensProbabilistic\_approach\_to\_dam\_breach\_modeling}.
+  Acesso em: 23 set. 2026.}
 
 \bibitem[Larman 2007]{larman2007utilizando}
 \abntrefinfo{Larman}{LARMAN}{2007}
@@ -1114,22 +1150,6 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://periodicorease.pro.br/rease/article/view/11650}. Acesso em: 19
   maio 2025.}
-
-\bibitem[{WIKIPÉDIA} 2015]{wikipedia2015mariana}
-\abntrefinfo{{WIKIPÉDIA}}{{WIKIPÉDIA}}{2015}
-{{WIKIPÉDIA}. \emph{Rompimento de barragem em Mariana}. [S.l.]: [s.n.], 2015.
-  WIKIPÉDIA: a enciclopédia livre.
-Dispon{\'\i}vel em:
-  \url{https://pt.wikipedia.org/wiki/Rompimento\_de\_barragem\_em\_Mariana}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[{WIKIPÉDIA} 2019]{wikipedia2019brumadinho}
-\abntrefinfo{{WIKIPÉDIA}}{{WIKIPÉDIA}}{2019}
-{{WIKIPÉDIA}. \emph{Rompimento de barragem em Brumadinho}. [S.l.]: [s.n.],
-  2019. WIKIPÉDIA: a enciclopédia livre.
-Dispon{\'\i}vel em:
-  \url{https://pt.wikipedia.org/wiki/Rompimento\_de\_barragem\_em\_Brumadinho}.
-  Acesso em: 26 maio 2025.}
 
 \bibitem[{World Meteorological Organization} 2014]{wmo2014guide}
 \abntrefinfo{{World Meteorological Organization}}{{World Meteorological

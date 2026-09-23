@@ -1,12 +1,10 @@
 \chapter{DISCUSSÕES}
 \label{cap:discussoes}
 
-% =============================================================
-\section{Cobertura dos Objetivos Específicos}
-\label{sec:cobertura}
-% =============================================================
-
-A \autoref{tab:cobertura_objetivos} relaciona cada objetivo específico
+Este capítulo relaciona os resultados apresentados no
+\autoref{cap:resultados} aos objetivos propostos e discute as
+implicações e as limitações do sistema desenvolvido. A
+\autoref{tab:cobertura_objetivos} relaciona cada objetivo específico
 definido no \autoref{cap:objetivos} ao resultado observado no sistema
 implementado.
 
@@ -60,122 +58,122 @@ destinatários \\
 \fonte{Elaborado pela autora.}
 \end{table}
 
-% =============================================================
-\section{Discussão dos Resultados}
-\label{sec:discussao}
-% =============================================================
+Como mostra a \autoref{tab:cobertura_objetivos}, todos os objetivos
+específicos foram atendidos, e os resultados alcançados confirmam a
+viabilidade técnica e econômica da solução proposta. O custo total do
+protótipo de \textit{hardware} --- R\$~70,30 --- é expressivamente
+inferior ao de instrumentos geotécnicos profissionais, como piezômetros
+elétricos automatizados e inclinômetros de corda vibrante, cujos valores
+de aquisição e instalação podem superar dezenas de milhares de reais por
+ponto de monitoramento \cite{quispe2018instrumentacao}. Tecnologias de
+baixo custo, quando bem integradas, são capazes de produzir fluxo
+contínuo de dados geotécnicos e meteorológicos --- funcionalidade
+ausente nos sistemas manuais que predominavam em Mariana e Brumadinho no
+momento dos acidentes \cite{taliberti2025tragedia}.
 
-Os resultados alcançados confirmam a viabilidade técnica e econômica
-da solução proposta. O custo total do protótipo de \textit{hardware}
---- R\$~70,30 --- é expressivamente inferior ao de instrumentos
-geotécnicos profissionais como piezômetros elétricos automatizados e
-inclinômetros de corda vibrante, cujos valores de aquisição e instalação
-podem superar dezenas de milhares de reais por ponto de monitoramento
-\cite{quispe2018instrumentacao}. Tecnologias de baixo custo, quando bem
-integradas, são capazes de produzir fluxo contínuo de dados geotécnicos
-e meteorológicos --- funcionalidade ausente nos sistemas manuais que
-predominavam em Mariana e Brumadinho no momento dos acidentes
-\cite{taliberti2025tragedia}.
-
-A abordagem multidimensional do modelo de risco tem respaldo direto
-na literatura. \citeonline{rico2008mine} identificaram que 39\% dos
+A abordagem multidimensional do modelo de risco tem respaldo direto na
+literatura. \citeonline{rico2008mine} identificaram que 39\% dos
 rompimentos documentados resultaram da combinação de múltiplos fatores,
-não de uma causa isolada --- o que justifica integrar variáveis
+e não de uma causa isolada, o que justifica integrar variáveis
 geotécnicas, pluviométricas históricas, prospectivas e atmosféricas em
 um único índice. O peso maior atribuído à variável de lençol freático,
-correspondente a 40\% do índice, está alinhado à preponderância de
-causas de saturação do maciço nos acidentes documentados
-\cite{robertson2019feijaoson2019}. A inclusão da pressão atmosférica
-como indicador antecipatório representa uma contribuição específica do
-modelo, fundamentada no estudo de sistemas de monitoramento integrado
-discutido no \autoref{cap1Revisao}.
+correspondente a 40\% do índice, foi definido pela autora por ser o
+indicador mais direto da estabilidade do maciço, escolha coerente com o
+nível d'água interno persistentemente elevado observado antes do colapso
+de Brumadinho \cite{robertson2019feijaoson2019}. A inclusão da queda de
+pressão atmosférica como indicador antecipatório representa uma
+contribuição específica do modelo, fundamentada na relação entre queda
+de pressão e aproximação de sistemas de mau tempo
+\cite{noaa2024pressure, wmo2014guide}. Por se tratar de um sinal
+indireto, recebeu o menor peso do modelo (5\%).
 
-O índice de confiabilidade auditável diferencia o sistema da maioria
-das soluções de baixo custo descritas na literatura, que emitem alertas
-sem qualificar a incerteza dos dados subjacentes. Para qualquer leitura
+O índice de confiabilidade auditável diferencia o sistema da maioria das
+soluções de baixo custo descritas na literatura, que emitem alertas sem
+qualificar a incerteza dos dados subjacentes. Para qualquer leitura
 histórica, o administrador pode consultar quais fontes estavam
 indisponíveis e qual o impacto quantitativo de cada indisponibilidade
 --- propriedade alinhada às recomendações do ICOLD sobre transparência
-em sistemas de monitoramento \cite{icold2022tailings}. A decisão de
-processar o cálculo de risco integralmente no microcontrolador garante
-que a análise continue ocorrendo localmente mesmo diante de falhas de
-conectividade, o que é crítico para sistemas destinados a ambientes
-industriais remotos.
+em sistemas de monitoramento \cite{icold2022tailings}. Além disso, a
+decisão de processar o cálculo de risco integralmente no
+microcontrolador garante que a análise continue ocorrendo localmente
+mesmo diante de falhas de conectividade, o que é crítico para sistemas
+destinados a ambientes industriais remotos.
 
-Sete limitações precisam ser registradas, distribuídas entre o
-\textit{firmware}, o modelo de risco e a operação da plataforma.
+Apesar desses resultados, sete limitações precisam ser registradas,
+distribuídas entre o \textit{hardware}, o \textit{firmware}, o modelo de
+risco e a operação da plataforma.
 
-A primeira é espacial: o modelo atribui 40% do índice de risco à
-variável de lençol freático, estimada a partir de um único sensor em
-um único ponto do maciço. Barragens de rejeitos reais têm extensão de
-centenas de metros, e o nível de umidade varia de um ponto para outro
-da estrutura --- regiões próximas a drenos internos ou a camadas de
-solo com granulometria diferente podem estar em estados de saturação
+A primeira é espacial: o modelo atribui 40\% do índice de risco à
+variável de lençol freático, estimada a partir de um único sensor em um
+único ponto do maciço. Barragens de rejeitos reais têm extensão de
+centenas de metros, e o nível de umidade varia de um ponto para outro da
+estrutura --- regiões próximas a drenos internos ou a camadas de solo
+com granulometria diferente podem estar em estados de saturação
 completamente distintos do ponto monitorado. Uma leitura isolada não
-captura esse comportamento distribuído, e é exatamente essa variação ao
+captura esse comportamento distribuído, e é exatamente a variação ao
 longo de toda a estrutura que determina se ela está estável ou em risco.
 Um único ponto de medição, por mais representativo que seja na média,
-não oferece essa visão completa \cite{rico2008mine}.
+não oferece essa visão completa \cite{machado2007}.
 
 A segunda envolve o sensor e sua calibração. O higrômetro resistivo
 FC-28 é um componente voltado a aplicações educacionais: a eletrólise
 acelerada nos eletrodos em solo permanentemente úmido compromete sua
-longevidade em instalações de longa duração. Agrava essa condição o
-fato de que a setagem é feita manualmente via monitor serial, sem
-procedimento periódico de verificação contra instrumento de referência
-e sem registro de data da última setagem. Em uma condição real de
-operação, o instrumento seria cadastrado no sistema com suas
-informações completas, incluindo os períodos de aferição, manutenção,
-calibração e substituição previstos pelo fabricante. Com o
-envelhecimento dos eletrodos, a curva de resposta se desloca
-progressivamente, e o sistema não possui mecanismo para detectar nem
-sinalizar esse desvio ao administrador. Em uma implantação real, o
-sensor deveria ser substituído por instrumento com certificação
-metrológica, e o sistema estaria posicionado como camada complementar
-à instrumentação geotécnica convencional prevista pela
-Lei~n.º~14.066/2020 e pela NBR~13028:2017
+longevidade em instalações de longa duração. Agrava essa condição o fato
+de a calibração ser feita manualmente via monitor serial, sem
+procedimento periódico de verificação contra instrumento de referência e
+sem registro da data da última calibração. Com o envelhecimento dos
+eletrodos, a curva de resposta se desloca progressivamente, e o sistema
+não possui mecanismo para detectar nem sinalizar esse desvio ao
+administrador. Em uma implantação real, o instrumento seria cadastrado
+no sistema com suas informações completas, incluindo os períodos de
+aferição, manutenção, calibração e substituição previstos pelo
+fabricante, e o sensor deveria ser substituído por instrumento com
+certificação metrológica. Nesse cenário, o sistema estaria posicionado
+como camada complementar à instrumentação geotécnica convencional
+prevista pela Lei~n.º~14.066/2020 e pela NBR~13028:2017
 \cite{brasil2020lei14066, abnt2017}.
 
 A terceira é metodológica e incide sobre a equação do componente de
-previsão pluviométrica. O fator~$F_{int}$, que compõe~$V_{ch.fut}$,
-é um valor discreto em cinco classes (0,00 / 0,25 / 0,50 / 0,75 /
-1,00), o que introduz descontinuidades abruptas no índice: uma previsão
-de 4,9\,mm e outra de 0,1\,mm produzem o mesmo fator zero, enquanto
-o salto de 4,9\,mm para 5,0\,mm causa um incremento instantâneo de
-0,038 no índice, independentemente das demais variáveis. Uma equação
-com interpolação linear dentro de cada faixa, mantendo os valores
-extremos atuais como âncoras, reduziria esse efeito sem alterar a
-estrutura conceitual do modelo.
+previsão pluviométrica. O fator~$F_{int}$, que compõe~$V_{ch.fut}$, é um
+valor discreto em cinco classes (0,00 / 0,25 / 0,50 / 0,75 / 1,00), o
+que introduz descontinuidades abruptas no índice: uma previsão de
+4,9\,mm e outra de 0,1\,mm produzem o mesmo fator zero, enquanto o salto
+de 4,9\,mm para 5,0\,mm causa um incremento instantâneo de 0,038 no
+índice, independentemente das demais variáveis. Uma equação com
+interpolação linear dentro de cada faixa, mantendo os valores extremos
+atuais como âncoras, reduziria esse efeito sem alterar a estrutura
+conceitual do modelo.
 
-A quarta decorre do ciclo de vida do \textit{firmware}. Os buffers
-históricos --- o circular de umidade, usado em~$V_{taxa}$, e o de
-pressão atmosférica, usado em~$V_{press}$ --- são inicializados com
-zeros a cada reinicialização do dispositivo. Reinicializações
-involuntárias, por estouro de \textit{heap} ou interrupção de energia,
-fazem com que os primeiros ciclos pós-\textit{boot} calculem taxas de
-variação e quedas de pressão comparando leituras reais contra zeros
-históricos, podendo gerar valores artificialmente elevados para esses
-dois componentes até que os buffers completem um ciclo completo ---
-período que pode chegar a três horas no caso do histórico de pressão,
-dado o intervalo de 30 minutos entre consultas ao OWM.
+A quarta decorre do ciclo de vida do \textit{firmware}. Os \textit{buffers}
+históricos --- o circular de umidade, usado em~$V_{taxa}$, e o de pressão
+atmosférica, usado em~$V_{press}$ --- são inicializados com zeros a cada
+reinicialização do dispositivo. Reinicializações involuntárias, por
+estouro de \textit{heap} ou interrupção de energia, fazem com que os
+primeiros ciclos pós-\textit{boot} calculem taxas de variação e quedas de
+pressão comparando leituras reais contra zeros históricos, podendo gerar
+valores artificialmente elevados para esses dois componentes até que os
+\textit{buffers} completem um ciclo completo --- período que pode chegar a
+três horas no caso do histórico de pressão.
 
 A quinta diz respeito ao escopo de validação do modelo. Os pesos das
-sete variáveis foram definidos com base na literatura técnica
-especializada \cite{rico2008mine, robertson2019feijaoson2019}, mas não
-passaram por processo de calibração estatística sobre casos históricos
-de ruptura em barragens de rejeitos brasileiras. Os limiares de 25\%,
-30\%, 50\,mm, 150\,mm e 300\,mm têm respaldo bibliográfico, mas foram
-adotados sem ajuste para as características específicas dos rejeitos de
-minério de ferro predominantes no contexto de referência. A
-representatividade da estação D6594 para um ponto específico de
-monitoramento, a localização ideal da sonda no perfil do maciço e a
-calibração dos limiares para diferentes tipos de rejeito demandariam
-validação geotécnica especializada antes de qualquer aplicação
-operacional.
+sete variáveis foram arbitrados pela autora a partir da abordagem
+multidimensional de \citeonline{rico2008mine} e não passaram por processo
+de calibração estatística sobre casos históricos de ruptura em barragens
+de rejeitos brasileiras. Quanto aos limiares, o de 24 horas apoia-se em
+\citeonline{rico2008mine} e no Sistema Alerta Rio; o de 30 dias foi
+definido a partir do histórico da estação D6594; e os limiares de 25\%
+e 30\% de umidade, de 7 dias (150\,mm) e as faixas de intensidade da
+previsão foram adotados pela autora, sem ajuste às características
+específicas dos rejeitos de minério de ferro predominantes no contexto
+de referência. A representatividade da estação D6594 para um ponto
+específico de monitoramento, a localização ideal da sonda no perfil do
+maciço e a calibração dos limiares para diferentes tipos de rejeito
+demandariam validação geotécnica especializada antes de qualquer
+aplicação operacional.
 
 A sexta afeta a operação cotidiana da plataforma. Quando o dispositivo
-perde conectividade, os ciclos de leitura são calculados localmente mas
-não persistidos para envio posterior --- o que gera lacunas na série
+perde conectividade, os ciclos de leitura são calculados localmente, mas
+não persistidos para envio posterior, o que gera lacunas na série
 temporal registrada no banco. Além disso, o sistema não emite
 notificação automática ao administrador quando o nível de alerta evolui
 de AMARELO para VERMELHO: o sino no \textit{header} exibe o
@@ -184,9 +182,10 @@ da atualização periódica. Em um cenário operacional real, em que o
 responsável pelo monitoramento não permanece continuamente diante da
 interface, isso representa um risco de resposta tardia. Conectividade
 redundante --- Wi-Fi associada a módulo 4G --- e mecanismos de alerta
-proativo por \textit{push} ou SMS mitigariam as duas fragilidades.
+proativo por \textit{push} ou SMS mitigariam essas duas fragilidades.
 
-A sétima envolve a ausência de monitoramento de consumo energético: o protótipo 
-não incorpora sensor de corrente/tensão, o que impede alertas de bateria baixa 
-em cenários de alimentação autônoma (painel solar), aplicáveis fora do escopo 
-de teste em bancada aqui validado.
+Por fim, a sétima envolve a ausência de monitoramento de consumo
+energético: o protótipo não incorpora sensor de corrente ou tensão, o
+que impede alertas de bateria baixa em cenários de alimentação autônoma
+(por exemplo, painel solar), aplicáveis fora do escopo de teste em
+bancada aqui validado.

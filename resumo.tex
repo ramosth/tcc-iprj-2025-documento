@@ -57,16 +57,21 @@ ESP8266 NodeMCU com sensor higrômetro resistivo, LEDs indicadores e
 \textit{firmware} integra as APIs meteorológicas BNDMET/DECEA e
 OpenWeatherMap para obtenção de dados de precipitação histórica e
 previsão pluviométrica, e transmite as leituras ao \textit{backend} em
-intervalos adaptativos conforme o nível de risco calculado. O modelo de
-avaliação de risco integrado, desenvolvido pela autora, calcula um
-fator de risco por meio da soma ponderada de sete variáveis que
-expressam condições geotécnicas --- umidade do solo e taxa de variação
---- e meteorológicas --- precipitações acumuladas em diferentes janelas
-temporais, previsão pluviométrica e pressão atmosférica ---, com os
-limiares pluviométricos calibrados a partir de \citeonline{rico2008mine} 
-e dos critérios do Sistema Alerta Rio \cite{sistemaalertario2025}, e mecanismo de
-amplificação ativado em situações de saturação elevada concomitante a
-previsão de chuva. A plataforma de \textit{software}
+intervalos adaptativos conforme o nível de risco calculado. O modelo de avaliação de risco integrado, desenvolvido pela autora,
+fundamenta-se na abordagem multidimensional de \citeonline{rico2008mine},
+segundo a qual 39\% dos 147 casos documentados de ruptura de barragens
+de rejeitos resultaram da combinação de múltiplos fatores, e não de
+uma causa isolada. Partindo dessa premissa, o modelo calcula um fator
+de risco por meio da soma ponderada de sete variáveis que expressam
+condições geotécnicas --- umidade do solo e taxa de variação da
+umidade --- e meteorológicas --- precipitações acumuladas em três
+janelas temporais, previsão pluviométrica e queda de pressão
+atmosférica. O limiar de 24 horas apoia-se em \citeonline{rico2008mine}
+e nos critérios do Sistema Alerta Rio \cite{sistemaalertario2025}, o de
+30 dias foi definido a partir do histórico da estação D6594, e os
+demais limiares e pesos foram arbitrados pela autora. O modelo inclui
+ainda um mecanismo de amplificação, ativado quando a saturação elevada
+do solo coincide com previsão de chuva moderada ou superior. A plataforma de \textit{software}
 adota arquitetura cliente-servidor em três camadas: \textit{firmware}
 embarcado, \textit{backend} desenvolvido em Node.js com TypeScript e
 banco de dados PostgreSQL com extensão TimescaleDB para séries temporais,
