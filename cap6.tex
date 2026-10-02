@@ -99,6 +99,24 @@ microcontrolador garante que a análise continue ocorrendo localmente
 mesmo diante de falhas de conectividade, o que é crítico para sistemas
 destinados a ambientes industriais remotos.
 
+A escolha por classificar o risco automaticamente a cada ciclo e
+persistir o histórico completo em banco de dados auditável também
+encontra precedente fora do contexto de barragens: o sistema GeoRisco,
+desenvolvido pela TRANSPETRO em parceria com o CENPES para o
+monitoramento geotécnico de dutos em encostas instáveis, já adotava,
+desde 2004, um programa (GeoAlerta) que compara automaticamente cada
+leitura de piezômetro e inclinômetro contra limiares críticos
+cadastrados e dispara alerta por e-mail quando um limite é ultrapassado
+\cite{rocha2004georisco}. A mesma iniciativa combinou modelo
+tridimensional do terreno, instrumentação de encosta e estação
+meteorológica para correlacionar precipitação e movimentos de solo
+\cite{costa2004pipeline}, aproximando-se da lógica de integração entre
+dados pluviométricos e sensoriamento local adotada na
+Equação~\ref{eq:frisco} deste trabalho. Esses precedentes reforçam que
+a arquitetura de sensor, banco de dados e alerta automatizado, embora
+aqui aplicada a barragens de rejeitos, já é prática consolidada na
+engenharia geotécnica nacional para outros tipos de estrutura.
+
 Apesar desses resultados, sete limitações precisam ser registradas,
 distribuídas entre o \textit{hardware}, o \textit{firmware}, o modelo de
 risco e a operação da plataforma.
@@ -113,7 +131,11 @@ completamente distintos do ponto monitorado. Uma leitura isolada não
 captura esse comportamento distribuído, e é exatamente a variação ao
 longo de toda a estrutura que determina se ela está estável ou em risco.
 Um único ponto de medição, por mais representativo que seja na média,
-não oferece essa visão completa \cite{machado2007}.
+não oferece essa visão completa \cite{machado2007}. Sistemas de
+referência do setor de dutos, como o GeoRisco da TRANSPETRO, contornam
+essa limitação distribuindo centenas de instrumentos --- inclinômetros,
+piezômetros e extensômetros --- por dezenas de pontos ao longo da mesma
+estrutura monitorada \cite{rocha2004georisco}.
 
 A segunda envolve o sensor e sua calibração. O higrômetro resistivo
 FC-28 é um componente voltado a aplicações educacionais: a eletrólise

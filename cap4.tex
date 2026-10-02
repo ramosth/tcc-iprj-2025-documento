@@ -13,15 +13,13 @@ que realiza a coleta física dos dados em campo. Ao final do capítulo,
 descreve-se ainda a metodologia adotada para os testes de validação do
 sistema, cujos resultados são detalhados no Capítulo~\ref{cap:resultados}.
 
-Conforme orientação da Coordenação de Aperfeiçoamento de Pessoal de
-Nível Superior (CAPES) quanto à transparência no uso de ferramentas de
-inteligência artificial em trabalhos acadêmicos, registra-se que
-ferramentas de IA generativa foram utilizadas em duas frentes deste
-trabalho: (i) auxílio à depuração e ao desenvolvimento do código-fonte
-do \textit{firmware}, do \textit{backend} e do \textit{frontend} do
-sistema; e (ii) revisão textual e de formatação deste documento. Em
-ambos os casos, a autoria intelectual do modelo de risco, das decisões
-de arquitetura e das análises apresentadas é da autora.
+Conforme orientação da Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) quanto à transparência no uso de ferramentas de inteligência artificial em trabalhos acadêmicos, registra-se que a ferramenta de inteligência artificial generativa Claude, desenvolvida pela Anthropic, foi utilizada como recurso auxiliar ao longo do desenvolvimento deste trabalho.
+
+O uso da ferramenta ocorreu de forma delimitada em três frentes principais: (i) desenvolvimento e depuração do código-fonte, incluindo auxílio na análise de trechos de código, identificação de inconsistências, elaboração e revisão de funções e estruturas utilizadas no \textit{firmware} embarcado, no \textit{backend} e no \textit{frontend} do sistema; (ii) apoio à documentação e à representação do sistema, incluindo a elaboração e revisão de códigos para diagramas e sua organização em partes, bem como auxílio na descrição das relações entre os componentes apresentados; e (iii) revisão textual deste documento, abrangendo aspectos de clareza, coesão, coerência, organização dos parágrafos, adequação da linguagem acadêmica e revisão de formatação.
+
+No desenvolvimento do sistema, a ferramenta foi utilizada como recurso de apoio técnico, sendo as sugestões geradas analisadas, testadas e, quando pertinentes, adaptadas pela autora ao contexto e às características da implementação desenvolvida. A utilização da ferramenta não substituiu a análise, a validação dos resultados ou as decisões técnicas tomadas durante o desenvolvimento.
+
+A concepção do modelo de risco, a definição de seus parâmetros e critérios, as decisões de arquitetura e implementação, a execução e validação dos testes, a interpretação dos resultados e as conclusões apresentadas neste trabalho são de responsabilidade e autoria da autora.
 
 % =============================================================
 \section{Modelo de Avaliação de Risco Integrado}
@@ -402,7 +400,7 @@ A estação selecionada para o estudo foi a D6594 (Alberto Flores),
 integrante da rede ANA e localizada na região de Brumadinho (MG),
 referência do maior acidente de barragem de rejeitos do Brasil em
 termos de vítimas \cite{robertson2019feijaoson2019}. O acesso se dá pelo
-\textit{endpoint} \texttt{/v1/estacoes/D6594/fenomenos/\{codigo\}},
+\textit{endpoint} \path{/v1/estacoes/D6594/fenomenos/{codigo}},
 com autenticação por chave estática (\textit{API key}) transmitida
 no cabeçalho \texttt{x-api-key}.
 
@@ -446,11 +444,13 @@ conjuntos de dados complementares:
     de chuva futura do modelo de risco.
 \end{itemize}
 
-Ambos os \textit{endpoints} são acessados por HTTPS, com
-autenticação por chave de API transmitida como parâmetro de
-\textit{query}. As coordenadas utilizadas foram as da região de
-Brumadinho — Córrego do Feijão
-(latitude~$-$20,1433; longitude~$-$44,1997).
+Ambos os \textit{endpoints} são acessados por HTTPS, com autenticação por chave de API transmitida 
+como parâmetro de \textit{query}. As coordenadas geográficas utilizadas nas consultas foram obtidas por 
+meio do serviço de geocodificação da própria OpenWeatherMap, a partir da identificação da localidade de Brumadinho. 
+Para a região de estudo, correspondente a Córrego do Feijão, foram utilizadas as coordenadas retornadas pela API, 
+com latitude $-20,1433$ e longitude $-44,1997$, expressas em graus decimais. A documentação da OpenWeatherMap 
+caracteriza os campos \texttt{lat} e \texttt{lon} como coordenadas geográficas, não especificando, entretanto, 
+o \textit{datum} geodésico de referência.
 
 % =============================================================
 \section{Plataforma de \textit{Software}}
@@ -526,35 +526,75 @@ da equação de risco.
 \label{subsec:uml}
 % =============================================================
 
-A modelagem do sistema foi realizada por meio de diagramas UML
-(\textit{Unified Modeling Language}), contemplando o diagrama de
-casos de uso, o diagrama de classes e o diagrama de sequência. Esta
-abordagem permite uma representação estruturada das funcionalidades,
-das entidades de dados e dos fluxos de comunicação entre os
-componentes \cite{sommerville2011engenharia,larman2007utilizando}.
+A modelagem do sistema foi realizada por meio de diagramas UML (\textit{Unified Modeling Language}), 
+contemplando os diagramas de casos de uso, de classes e de sequência. Também foram elaborados fluxogramas 
+para representar a lógica de funcionamento do sistema. Essa abordagem permite uma representação estruturada 
+das funcionalidades, das entidades de dados, dos fluxos de comunicação e da lógica de processamento entre 
+os componentes \cite{sommerville2011engenharia,larman2007utilizando}.
+
+Os diagramas de casos de uso, de classes e os fluxogramas foram inicialmente avaliados e estruturados com o auxílio da ferramenta \textit{PlantUML}, utilizando descrições textuais dos elementos e relacionamentos por meio de código. Posteriormente, as versões desses diagramas foram elaboradas e ajustadas no \textit{draw.io} (diagrams.net), com utilização da linguagem de descrição \textit{Mermaid}. Essa abordagem proporcionou maior flexibilidade na organização dos elementos gráficos, no reposicionamento das caixas, no ajuste dos relacionamentos e na padronização visual das representações.
+
+Os diagramas de sequência foram elaborados diretamente no \textit{draw.io} (diagrams.net), de acordo com os fluxos de interação definidos para o sistema. A ferramenta também foi utilizada para a organização e edição das representações gráficas finais, permitindo manter um padrão visual entre os diferentes diagramas apresentados neste trabalho.
 
 % -------------------------------------------------------------
 \subsubsection{Diagramas de Casos de Uso}
 \label{subsubsec:casos-uso}
 % -------------------------------------------------------------
 
-O diagrama de casos de uso descreve as interações entre os atores do
-sistema e as funcionalidades disponíveis. O sistema conta com seis atores:
-três humanos — \textbf{Usuário Básico} (cadastra-se para receber alertas),
-\textbf{Administrador} (responsável pelo monitoramento e gestão da
-plataforma) e \textbf{Super Administrador} (herda todas as permissões do
-Administrador e pode gerenciar outros administradores) — e três de sistema
-— \textbf{ESP8266} (coleta e envia leituras), \textbf{API BNDMET} (fonte
-de precipitação histórica) e \textbf{API OpenWeatherMap} (previsão
-meteorológica e pressão atmosférica). Em razão do volume de
-funcionalidades, os diagramas foram divididos em quatro partes,
-apresentadas nas Figuras~\ref{fig:uc-parte1} a~\ref{fig:uc-parte4}.
+O diagrama de casos de uso é o diagrama comportamental da UML que
+representa, de forma sintética, o que um sistema faz sob o ponto de
+vista de quem interage com ele. Cada caso de uso corresponde a uma
+funcionalidade completa, disparada por um ator e concluída com um
+resultado de valor observável para esse ator \cite{guedes2011uml}.
+ 
+O sistema modelado neste trabalho conta com seis atores. Três são
+humanos: o Usuário Básico, que se cadastra para receber alertas; o
+Administrador, responsável pelo monitoramento e pela gestão da
+plataforma; e o Super Administrador, que herda todas as permissões do
+Administrador e, adicionalmente, gerencia outras contas
+administrativas.
+ 
+Três atores são de sistema: o ESP8266, que coleta e envia as leituras;
+a API BNDMET, fonte de precipitação histórica; e a API
+OpenWeatherMap, fonte de previsão meteorológica e de pressão
+atmosférica.
+ 
+Em razão do volume de funcionalidades — 38 casos de uso ao todo —, o
+conjunto foi dividido em quatro partes, cada uma correspondente a uma
+camada ou a um momento de uso do sistema: (1) Sistema Embarcado, com
+os casos UC01 a UC07; (2) Acesso Público e Autenticação, com UC08 a
+UC15; (3) Monitoramento e Alertas, com UC16 a UC29; e (4) Gestão de
+Usuários e Área Super Administrador, com UC30 a UC38. A numeração
+sequencial permite referenciar cada caso de uso de forma unívoca ao
+longo do texto e nos demais diagramas.
 
 % ══════════════════════════════════════════════════════════════
-\paragraph*{Parte 1 --- Sistema Embarcado (ESP8266)}\hfill\break
+\subsubsubsection{Parte 1 --- Sistema Embarcado (ESP8266)}\hfill\break
 % ══════════════════════════════════════════════════════════════
-Esta parte, ilustrada na Figura~\ref{fig:uc-parte1}, reúne os casos de
-uso relativos ao dispositivo embarcado.
+Esta parte, Sistema Embarcado, reúne os casos de uso relacionados às funcionalidades executadas pelo ESP8266, abrangendo a aquisição das informações provenientes dos sensores e das fontes externas, o processamento dos dados e a comunicação com o backend. Os casos de uso UC01 a UC07 são apresentados no Quadro~\ref{quadro:resumo_uc_parte1}, que identifica o objetivo de cada funcionalidade e seu ator principal. A representação gráfica correspondente é apresentada na Figura~\ref{fig:uc-parte1}, permitindo visualizar as relações entre o ator e as funcionalidades do sistema embarcado.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos casos de uso da Parte 1 --- Sistema Embarcado}
+\label{quadro:resumo_uc_parte1}
+\footnotesize
+\begin{tabular}{p{1.3cm}p{8.0cm}p{3.0cm}}
+\hline
+\textbf{Código} & \textbf{Caso de uso} & \textbf{Ator principal} \\
+\hline
+
+UC01 & Enviar leitura ao backend & ESP8266 \\
+UC02 & Calcular fator de risco & ESP8266 \\
+UC03 & Acionar sinalização & ESP8266 \\
+UC04 & Consultar precipitação (BNDMET) & ESP8266 \\
+UC05 & Consultar previsão e pressão (OWM) & ESP8266 \\
+UC06 & Consultar status da API & ESP8266 \\
+UC07 & Ler umidade do solo & ESP8266 \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
 \centering
@@ -562,7 +602,7 @@ uso relativos ao dispositivo embarcado.
     {figures/image53_diagrama_caso_de_uso_versao_3_pt1.png}}
 \caption{Diagrama de casos de uso --- Parte 1: Sistema Embarcado}
 \label{fig:uc-parte1}
-\fonte{Autora, 2026.}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
@@ -579,7 +619,7 @@ Administrador: consumir os dados registrados via
 \textit{dashboard} e tela de sensores.
 
 \textbf{Pré-condição:} dispositivo conectado à rede Wi-Fi; endereço
-\texttt{192.168.1.108:3001} acessível na rede local; NTP
+\path{192.168.1.108:3001} acessível na rede local; NTP
 sincronizado com data posterior a 2001.
 
 \textbf{Cenário de Sucesso Principal (Fluxo Básico):}
@@ -609,7 +649,7 @@ sincronizado com data posterior a 2001.
   \item O \textit{firmware} serializa os dados em JSON com
         aproximadamente 35 campos e envia via
         \path{POST /api/sensor/dados} com cabeçalho
-        \texttt{Content-Type: application/json}.
+        \path{Content-Type: application/json}.
   \item O \textit{backend} persiste a leitura em
         \texttt{leituras\_sensor} e retorna HTTP 201 com
         \texttt{\{"success": true\}}.
@@ -641,7 +681,7 @@ sincronizado com data posterior a 2001.
   \item Umidade retorna abaixo de 30\% após ruptura
   \begin{enumerate}
   \item O sistema aguarda três leituras consecutivas seguras
-        via \texttt{contagemRetornoRuptura} antes de recalcular
+        via \textit{contagemRetornoRuptura} antes de recalcular
         normalmente.
   \item Durante esse período, \texttt{aguardandoResetRuptura = true}
         é serializado no JSON enviado ao \textit{backend}.
@@ -744,8 +784,8 @@ risco: 60\,s (VERDE), 20\,s (AMARELO) e 10\,s (VERMELHO).
 ESP8266: determinar o nível de risco atual para acionar a
 sinalização correta e compor o JSON enviado ao \textit{backend}.
 
-\textbf{Pré-condição:} pelo menos uma leitura do higrômetro
-realizada; estruturas \texttt{dadosLocais}, \texttt{dadosBNDMET},
+\textbf{Pré-condição:} pelo menos uma execução bem-sucedida do UC07 (Ler umidade do solo); 
+estruturas \texttt{dadosLocais}, \texttt{dadosBNDMET},
 \texttt{dadosMeteo} e \texttt{previsao} inicializadas.
 
 \textbf{Cenário de Sucesso Principal (Fluxo Básico):}
@@ -872,7 +912,7 @@ data posterior a 2001.
   \item O sistema envia
         \path{GET https://api-bndmet.decea.mil.br/v1/%
         estacoes/D6594/fenomenos/I006?dataInicio=\&dataFinal=}
-        com cabeçalho \texttt{x-api-key}.
+        com cabeçalho \textit{x-api-key}.
   \item O sistema parseia o \textit{array} \texttt{data.data}
         de pares \texttt{[timestamp\_ms, valor]}, acumulando
         os valores dos últimos 7 e 30 dias e identificando
@@ -918,10 +958,10 @@ data posterior a 2001.
   \end{enumerate}
 \end{enumerate}
 
-\textbf{Pós-Condições:} campos \texttt{precipitacao24h},
-\texttt{precipitacao7d}, \texttt{precipitacao30d},
-\texttt{precipitacaoAtual} e \texttt{qualidadeDados} populados
-em \texttt{dadosBNDMET}.
+\textbf{Pós-Condições:} campos \textit{precipitacao24h},
+\textit{precipitacao7d}, \textit{precipitacao30d},
+\textit{precipitacaoAtual} e \textit{qualidadeDados} populados
+em \textit{dadosBNDMET}.
 
 \textbf{Requisitos especiais:} chave de API BNDMET válida
 (\texttt{x-api-key}); NTP sincronizado para geração correta
@@ -1055,11 +1095,109 @@ com o estado real do \textit{backend}.
 \textbf{Frequência:} executado na inicialização do sistema e a
 cada verificação de conectividade (a cada 30 segundos).
 
+\paragraph*{UC07 --- Ler umidade do solo}\hfill\break
+ 
+\textbf{Ator Principal:} ESP8266 (Firmware).
+ 
+\textbf{Interessado e Interesse:}
+ 
+ESP8266: obter uma leitura atualizada e validada da umidade do solo,
+insumo primário do modelo de risco e pré-requisito dos demais casos de
+uso do sistema embarcado.
+ 
+\textbf{Pré-condição:} sensor higrômetro conectado ao pino analógico
+A0; parâmetros de calibração \texttt{SENSOR\_SECO} e
+\texttt{SENSOR\_UMIDO} carregados, seja da EEPROM, seja dos valores
+padrão de fábrica.
+ 
+\textbf{Cenário de Sucesso Principal (Fluxo Básico):}
+\begin{enumerate}
+  \item O sistema verifica se o intervalo definido por
+        \texttt{obterIntervaloSensor()} já decorreu desde a última
+        leitura --- 30\,s no nível VERDE, 10\,s no AMARELO ou 5\,s no
+        VERMELHO.
+  \item O sistema realiza a leitura bruta do conversor
+        analógico-digital (\texttt{analogRead()}) no pino A0,
+        obtendo um valor no intervalo de 0 a 1023.
+  \item O sistema mapeia o valor bruto para o intervalo de 0\% a
+        100\% de umidade, utilizando os parâmetros de calibração
+        \texttt{SENSOR\_SECO} e \texttt{SENSOR\_UMIDO}.
+  \item O sistema calcula o fator do lençol freático normalizado
+        ($F_{len\c{c}ol}$) pela Equação~\ref{eq:flencol}.
+  \item O sistema valida a leitura, definindo \texttt{sensorOK =
+        true} sempre que o valor ADC estiver fora dos extremos 0 e
+        1023.
+  \item O sistema grava o novo valor no \textit{buffer} circular de
+        dez posições e incrementa o contador não-circular
+        \texttt{totalLeiturasSensor}.
+\end{enumerate}
+ 
+\textbf{Extensões (Fluxo Alternativo):}
+ 
+\begin{enumerate}
+  \renewcommand{\theenumi}{1a}
+  \renewcommand{\labelenumi}{\theenumi.}
+  \item Modo manual ativo (\texttt{modoManual = true}) no passo 1
+  \begin{enumerate}
+  \item A leitura é suspensa e a função retorna imediatamente,
+        preservando os valores injetados por uma simulação de nível
+        em andamento.
+  \end{enumerate}
+\end{enumerate}
+ 
+\begin{enumerate}
+  \renewcommand{\theenumi}{2a}
+  \renewcommand{\labelenumi}{\theenumi.}
+  \item Valor ADC igual a 0 ou a 1023 no passo 2
+  \begin{enumerate}
+  \item O sistema define \texttt{sensorOK = false}, indicando
+        curto-circuito (0) ou desconexão da sonda (1023).
+  \item O cálculo de umidade prossegue normalmente com o valor
+        obtido, mas a leitura passa a ser sinalizada como não
+        confiável para fins de auditoria e de desconto na
+        confiabilidade (F4).
+  \end{enumerate}
+\end{enumerate}
+ 
+\textbf{Pós-Condições:} \texttt{dadosLocais.umidadeSolo},
+\texttt{dadosLocais.valorADC}, \texttt{dadosLocais.fatorLocal} e
+\texttt{dadosLocais.sensorOK} atualizados; \textit{buffer} circular de
+umidade e \texttt{totalLeiturasSensor} atualizados.
+ 
+\textbf{Requisitos especiais:} calibração prévia do sensor (comando
+\texttt{calibrar}).
+ 
+\textbf{Frequência:} adaptativa por nível de risco --- a cada 30\,s
+(VERDE), 10\,s (AMARELO) ou 5\,s (VERMELHO/ruptura).
+
 % ══════════════════════════════════════════════════════════════
-\paragraph*{Parte 2 --- Acesso Público e Autenticação}\hfill\break
+\subsubsubsection{Parte 2 --- Acesso Público e Autenticação}\hfill\break
 % ══════════════════════════════════════════════════════════════
-Esta parte, ilustrada na Figura~\ref{fig:uc-parte2}, reúne os casos de
-uso relativos ao cadastro público e à autenticação do administrador.
+Esta parte, Acesso Público e Autenticação, concentra os casos de uso relacionados ao cadastro de usuários, autenticação, gerenciamento de sessão e recuperação ou alteração de credenciais. Os casos de uso UC08 a UC15 são sintetizados no Quadro~\ref{quadro:resumo_uc_parte2}, enquanto a Figura~\ref{fig:uc-parte2} apresenta graficamente as interações entre os atores e as funcionalidades correspondentes.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos casos de uso da Parte 2 --- Acesso Público e Autenticação}
+\label{quadro:resumo_uc_parte2}
+\footnotesize
+\begin{tabular}{p{1.3cm}p{8.0cm}p{3.0cm}}
+\hline
+\textbf{Código} & \textbf{Caso de uso} & \textbf{Ator principal} \\
+\hline
+
+UC08 & Cadastrar-se para receber alertas & Usuário Básico \\
+UC09 & Fazer login & Administrador \\
+UC10 & Fazer logout & Administrador \\
+UC11 & Alterar própria senha & Administrador \\
+UC12 & Solicitar reset de senha & Administrador \\
+UC13 & Validar token de reset & Administrador \\
+UC14 & Redefinir senha com token & Administrador \\
+UC15 & Visualizar perfil e configurações & Administrador \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
 \centering
@@ -1068,11 +1206,11 @@ uso relativos ao cadastro público e à autenticação do administrador.
 \caption{Diagrama de casos de uso --- Parte 2: Acesso Público e
 Autenticação}
 \label{fig:uc-parte2}
-\fonte{Autora, 2026.}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC07 --- Cadastrar-se para receber alertas}\hfill\break
+\paragraph*{UC08 --- Cadastrar-se para receber alertas}\hfill\break
 
 \textbf{Ator Principal:} Usuário Básico.
 
@@ -1149,7 +1287,7 @@ preferências de notificação salvas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC08 --- Fazer \textit{login}}\hfill\break
+\paragraph*{UC09 --- Fazer \textit{login}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1231,7 +1369,7 @@ Administrador autenticado e redirecionado ao \textit{dashboard}.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC09 --- Fazer \textit{logout}}\hfill\break
+\paragraph*{UC10 --- Fazer \textit{logout}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1282,7 +1420,7 @@ do \texttt{localStorage}; Administrador desconectado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC10 --- Alterar própria senha}\hfill\break
+\paragraph*{UC11 --- Alterar própria senha}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1357,7 +1495,7 @@ invalidadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC11 --- Solicitar \textit{reset} de senha}\hfill\break
+\paragraph*{UC12 --- Solicitar \textit{reset} de senha}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1384,7 +1522,7 @@ conta em \texttt{usuarios\_admin} com \texttt{ativo = true}.
         de 64 caracteres via
         \texttt{crypto.randomBytes(32).toString('hex')},
         define expiração em 2 horas e persiste em
-        \texttt{tokenReset} e \\ \texttt{tokenResetExpira}.
+        \textit{tokenReset} e \textit{tokenResetExpira}.
   \item O \textit{backend} retorna o token diretamente
         na resposta (fase de desenvolvimento; em produção
         seria enviado por e-mail).
@@ -1415,7 +1553,7 @@ e \texttt{tokenResetExpira} (+2 horas) persistidos em
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC12 --- Validar \textit{token} de \textit{reset}}\hfill\break
+\paragraph*{UC13 --- Validar \textit{token} de \textit{reset}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1424,7 +1562,7 @@ e \texttt{tokenResetExpira} (+2 horas) persistidos em
 Administrador: confirmar a validade do \textit{token} de
 \textit{reset} antes de definir a nova senha.
 
-\textbf{Pré-condição:} token de 64 caracteres obtido no UC11.
+\textbf{Pré-condição:} token de 64 caracteres obtido no UC12.
 
 \textbf{Cenário de Sucesso Principal (Fluxo Básico):}
 \begin{enumerate}
@@ -1463,7 +1601,7 @@ formulário de nova senha exibido.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC13 --- Redefinir senha com \textit{token}}\hfill\break
+\paragraph*{UC14 --- Redefinir senha com \textit{token}}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1473,7 +1611,7 @@ Administrador: definir uma nova senha e recuperar o acesso
 à conta após processo de \textit{reset}.
 
 \textbf{Pré-condição:} token de \textit{reset} validado com
-sucesso no UC12.
+sucesso no UC13.
 
 \textbf{Cenário de Sucesso Principal (Fluxo Básico):}
 \begin{enumerate}
@@ -1525,8 +1663,8 @@ sucesso no UC12.
 \end{enumerate}
 
 \textbf{Pós-Condições:} nova senha persistida com
-\textit{bcrypt}; \texttt{tokenReset} e
-\texttt{tokenResetExpira} limpos; todas as sessões ativas
+\textit{bcrypt}; \textit{tokenReset} e
+\textit{tokenResetExpira} limpos; todas as sessões ativas
 invalidadas.
 
 \textbf{Requisitos especiais:} Nenhum.
@@ -1534,7 +1672,7 @@ invalidadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC14 --- Visualizar perfil e configurações}\hfill\break
+\paragraph*{UC15 --- Visualizar perfil e configurações}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1612,10 +1750,39 @@ técnicas do sistema em tempo real.
 \textbf{Frequência:} Raramente.
 
 % ══════════════════════════════════════════════════════════════
-\paragraph*{Parte 3 --- Monitoramento e Alertas}\hfill\break
+\subsubsubsection{Parte 3 --- Monitoramento e Alertas}\hfill\break
 % ══════════════════════════════════════════════════════════════
-Esta parte, ilustrada na Figura~\ref{fig:uc-parte3}, reúne os casos de
-uso relativos ao monitoramento em tempo real e à central de alertas.
+Esta parte, Monitoramento e Alertas, reúne as funcionalidades destinadas ao acompanhamento das condições da barragem, à consulta e análise das leituras, à geração e exportação de informações e ao gerenciamento de alertas. Os casos de uso UC16 a UC29 são apresentados no Quadro~\ref{quadro:resumo_uc_parte3}, com seus respectivos atores principais e objetivos. A Figura~\ref{fig:uc-parte3} complementa essa representação ao apresentar graficamente as interações relacionadas ao monitoramento e aos alertas.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos casos de uso da Parte 3 --- Monitoramento e Alertas}
+\label{quadro:resumo_uc_parte3}
+\footnotesize
+\begin{tabular}{p{1.3cm}p{8.0cm}p{3.0cm}}
+\hline
+\textbf{Código} & \textbf{Caso de uso} & \textbf{Ator principal} \\
+\hline
+
+UC16 & Visualizar dashboard em tempo real & Administrador \\
+UC17 & Consultar alertas críticos & Administrador \\
+UC18 & Consultar histórico de leituras & Administrador \\
+UC19 & Selecionar período fixo de visualização & Administrador \\
+UC20 & Filtrar leituras por nível de alerta & Administrador \\
+UC21 & Filtrar leituras por período & Administrador \\
+UC22 & Consultar estatísticas e qualidade & Administrador \\
+UC23 & Exportar leituras de sensor em CSV & Administrador \\
+UC24 & Gerar relatório & Administrador \\
+UC25 & Exportar relatório em CSV & Administrador \\
+UC26 & Exportar relatório em HTML & Administrador \\
+UC27 & Enviar alerta manual em massa & Administrador \\
+UC28 & Receber alerta por e-mail & Usuário Básico \\
+UC29 & Consultar log de alertas enviados & Administrador \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
 \centering
@@ -1624,11 +1791,11 @@ uso relativos ao monitoramento em tempo real e à central de alertas.
 \caption{Diagrama de casos de uso --- Parte 3: Monitoramento e
 Alertas}
 \label{fig:uc-parte3}
-\fonte{Autora, 2026.}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC15 --- Visualizar \textit{dashboard} em tempo real}\hfill\break
+\paragraph*{UC16 --- Visualizar \textit{dashboard} em tempo real}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1712,7 +1879,7 @@ a tela permanece aberta.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC16 --- Consultar alertas críticos}\hfill\break
+\paragraph*{UC17 --- Consultar alertas críticos}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1759,7 +1926,7 @@ no passo 5
   \item O sistema abre o formulário \texttt{AlertForm}
         pré-preenchido com título e mensagem gerados a
         partir dos dados do sensor daquele ciclo,
-        iniciando o UC26.
+        iniciando o UC27.
   \end{enumerate}
 \end{enumerate}
 
@@ -1771,7 +1938,7 @@ com filtros e paginação ativos.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC17 --- Consultar histórico de leituras}\hfill\break
+\paragraph*{UC18 --- Consultar histórico de leituras}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1821,8 +1988,8 @@ para identificar tendências de risco ao longo do tempo.
 \end{enumerate}
 
 \textbf{Pós-Condições:} leituras do período selecionado
-exibidas com KPIs calculados. Os filtros UC18, UC19 e
-UC20 disparam nova requisição ao
+exibidas com KPIs calculados. Os filtros UC19, UC20 e
+UC21 disparam nova requisição ao
 \textit{backend}.
 
 \textbf{Requisitos especiais:} Nenhum.
@@ -1830,7 +1997,7 @@ UC20 disparam nova requisição ao
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC18 --- Selecionar período fixo de visualização}\hfill\break
+\paragraph*{UC19 --- Selecionar período fixo de visualização}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1886,7 +2053,7 @@ do período fixo selecionado; filtro customizado de datas
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC19 --- Filtrar leituras por nível de alerta}\hfill\break
+\paragraph*{UC20 --- Filtrar leituras por nível de alerta}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1939,7 +2106,7 @@ refletem o subconjunto filtrado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC20 --- Filtrar leituras por período}\hfill\break
+\paragraph*{UC21 --- Filtrar leituras por período}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -1996,7 +2163,7 @@ exibidas com KPIs recalculados.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC21 --- Consultar estatísticas e qualidade}\hfill\break
+\paragraph*{UC22 --- Consultar estatísticas e qualidade}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2043,7 +2210,7 @@ nos painéis de \textit{dashboard} e sensores.
 \textbf{Frequência:} Frequentemente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC22 --- Exportar leituras de sensor em CSV}\hfill\break
+\paragraph*{UC23 --- Exportar leituras de sensor em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2096,7 +2263,7 @@ ativos na tela de Sensores no momento da exportação.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC23 --- Gerar relatório}\hfill\break
+\paragraph*{UC24 --- Gerar relatório}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2189,15 +2356,15 @@ de Relatórios acessada.
 
 \textbf{Pós-Condições:} relatório gerado e exibido na
 tela com estatísticas calculadas para o período
-informado; botões de exportação em CSV (UC24) e HTML
-(UC25) habilitados.
+informado; botões de exportação em CSV (UC25) e HTML
+(UC26) habilitados.
 
 \textbf{Requisitos especiais:} Nenhum.
 
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC24 --- Exportar relatório em CSV}\hfill\break
+\paragraph*{UC25 --- Exportar relatório em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2256,7 +2423,7 @@ gerado no UC23.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC25 --- Exportar relatório em HTML}\hfill\break
+\paragraph*{UC26 --- Exportar relatório em HTML}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2326,7 +2493,7 @@ externas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC26 --- Enviar alerta manual em massa}\hfill\break
+\paragraph*{UC27 --- Enviar alerta manual em massa}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2408,7 +2575,7 @@ via \texttt{SMTP\_HOST}, \texttt{SMTP\_USER} e
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC27 --- Receber alerta por e-mail}\hfill\break
+\paragraph*{UC28 --- Receber alerta por e-mail}\hfill\break
 
 \textbf{Ator Principal:} Usuário Básico (destinatário passivo).
 
@@ -2463,7 +2630,7 @@ ativa e acessível pelo Usuário Básico.
 
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC28 --- Consultar log de alertas enviados}\hfill\break
+\paragraph*{UC29 --- Consultar log de alertas enviados}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2517,11 +2684,34 @@ estado no banco de dados.
 \textbf{Frequência:} Ocasionalmente.
 
 % ══════════════════════════════════════════════════════════════
-\paragraph*{Parte 4 --- Gestão de Usuários e Área Super Administrador}\hfill\break
+\subsubsubsection{Parte 4 --- Gestão de Usuários e Área Super Administrador}\hfill\break
 % ══════════════════════════════════════════════════════════════
-Esta parte, ilustrada na Figura~\ref{fig:uc-parte4}, reúne os casos de
-uso relativos à gestão de usuários básicos, administradores e às
-funcionalidades exclusivas do \textit{super\_admin}.
+Esta parte, Gestão de Usuários e Área Super Administrador, contempla as funcionalidades destinadas ao gerenciamento dos usuários da plataforma e das contas administrativas. Os casos de uso UC30 a UC38 são organizados no Quadro~\ref{quadro:resumo_uc_parte4}, enquanto a Figura~\ref{fig:uc-parte4} apresenta as respectivas interações entre os atores e as funcionalidades do sistema.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos casos de uso da Parte 4 --- Gestão de Usuários e Área Super Administrador}
+\label{quadro:resumo_uc_parte4}
+\footnotesize
+\begin{tabular}{p{1.3cm}p{8.0cm}p{3.0cm}}
+\hline
+\textbf{Código} & \textbf{Caso de uso} & \textbf{Ator principal} \\
+\hline
+
+UC30 & Gerenciar usuários básicos & Administrador \\
+UC31 & Cadastrar usuário básico (pelo Administrador) & Administrador \\
+UC32 & Editar usuário básico & Administrador \\
+UC33 & Ativar / Desativar usuário & Administrador / Super Administrador \\
+UC34 & Filtrar usuários por nome ou e-mail & Administrador \\
+UC35 & Alternar aba de usuários & Administrador \\
+UC36 & Exportar usuários em CSV & Administrador \\
+UC37 & Gerenciar administradores & Super Administrador \\
+UC38 & Cadastrar administrador & Super Administrador \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
 \centering
@@ -2530,11 +2720,11 @@ funcionalidades exclusivas do \textit{super\_admin}.
 \caption{Diagrama de casos de uso --- Parte 4: Gestão de Usuários e
 Área Super Administrador}
 \label{fig:uc-parte4}
-\fonte{Autora, 2026.}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC29 --- Gerenciar usuários básicos}\hfill\break
+\paragraph*{UC30 --- Gerenciar usuários básicos}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2568,17 +2758,7 @@ sistema.
 \begin{enumerate}
   \renewcommand{\theenumi}{4a}
   \renewcommand{\labelenumi}{\theenumi.}
-  \item Criação de usuário (UC30) no passo 4
-  \begin{enumerate}
-  \item O sistema executa o fluxo do UC30.
-  \item O sistema retorna ao passo 5 do fluxo básico.
-  \end{enumerate}
-\end{enumerate}
-
-\begin{enumerate}
-  \renewcommand{\theenumi}{4b}
-  \renewcommand{\labelenumi}{\theenumi.}
-  \item Edição de usuário (UC31) no passo 4
+  \item Criação de usuário (UC31) no passo 4
   \begin{enumerate}
   \item O sistema executa o fluxo do UC31.
   \item O sistema retorna ao passo 5 do fluxo básico.
@@ -2586,11 +2766,21 @@ sistema.
 \end{enumerate}
 
 \begin{enumerate}
-  \renewcommand{\theenumi}{4c}
+  \renewcommand{\theenumi}{4b}
   \renewcommand{\labelenumi}{\theenumi.}
-  \item Desativação ou reativação (UC32) no passo 4
+  \item Edição de usuário (UC32) no passo 4
   \begin{enumerate}
   \item O sistema executa o fluxo do UC32.
+  \item O sistema retorna ao passo 5 do fluxo básico.
+  \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}
+  \renewcommand{\theenumi}{4c}
+  \renewcommand{\labelenumi}{\theenumi.}
+  \item Desativação ou reativação (UC33) no passo 4
+  \begin{enumerate}
+  \item O sistema executa o fluxo do UC33.
   \item O sistema retorna ao passo 5 do fluxo básico.
   \end{enumerate}
 \end{enumerate}
@@ -2603,7 +2793,7 @@ atualizada refletindo as operações realizadas.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC30 --- Cadastrar usuário básico (pelo Administrador)}\hfill\break
+\paragraph*{UC31 --- Cadastrar usuário básico (pelo Administrador)}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2657,7 +2847,7 @@ e listado no painel.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC31 --- Editar usuário básico}\hfill\break
+\paragraph*{UC32 --- Editar usuário básico}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2708,7 +2898,7 @@ atualizados em \texttt{usuarios\_basicos}.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC32 --- Ativar / Desativar usuário}\hfill\break
+\paragraph*{UC33 --- Ativar / Desativar usuário}\hfill\break
 
 \textbf{Ator Principal:} Administrador (usuários básicos);
 Super Administrador (administradores).
@@ -2749,7 +2939,7 @@ Desativação:}
   \item O ator localiza o usuário e clica em
         ``Reativar''.
   \item O \textit{frontend} envia
-        \texttt{PATCH /auth/usuarios-basicos/:id/status}
+        \path{PATCH /auth/usuarios-basicos/:id/status}
         com \texttt{\{ativo: true\}}.
   \item O \textit{backend} atualiza \texttt{ativo = true}
         em \texttt{usuarios\_basicos}.
@@ -2782,7 +2972,7 @@ de alertas conforme o caso.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC33 --- Filtrar usuários por nome ou e-mail}\hfill\break
+\paragraph*{UC34 --- Filtrar usuários por nome ou e-mail}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2837,7 +3027,7 @@ para o conjunto filtrado.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC34 --- Alternar aba de usuários}\hfill\break
+\paragraph*{UC35 --- Alternar aba de usuários}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2894,7 +3084,7 @@ de usuário correspondente; filtros anteriores limpos.
 \textbf{Frequência:} Ocasionalmente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC35 --- Exportar usuários em CSV}\hfill\break
+\paragraph*{UC36 --- Exportar usuários em CSV}\hfill\break
 
 \textbf{Ator Principal:} Administrador.
 
@@ -2962,7 +3152,7 @@ corrente.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC36 --- Gerenciar administradores}\hfill\break
+\paragraph*{UC37 --- Gerenciar administradores}\hfill\break
 
 \textbf{Ator Principal:} Super Administrador.
 
@@ -3026,7 +3216,7 @@ atualizada refletindo as operações realizadas.
 \textbf{Frequência:} Raramente.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{UC37 --- Cadastrar administrador}\hfill\break
+\paragraph*{UC38 --- Cadastrar administrador}\hfill\break
 
 \textbf{Ator Principal:} Super Administrador.
 
@@ -3105,27 +3295,66 @@ O diagrama de classes representa a estrutura estática do sistema, evidenciando
 classes, atributos, métodos e relacionamentos \cite{guedes2011uml}. No contexto
 deste trabalho, permite visualizar como banco de dados, serviços de negócio,
 camada de controle e sistema embarcado se organizam para compor a solução.
+
 Dado o escopo do projeto, o diagrama foi dividido em quatro partes: (1) modelos
 de dados persistidos no banco PostgreSQL com TimescaleDB; (2) modelos de
 autenticação, controle de acesso e gestão de usuários; (3) serviços e
 controladores do \textit{backend}; e (4) estruturas de dados e funções do
 sistema embarcado ESP8266.
 
+A Figura~\ref{fig:mapa_classes} apresenta a relação entre as quatro partes.
+As Figuras~\ref{fig:diagrama_classes_parte1} a~\ref{fig:diagrama_classes_parte4} detalham, respectivamente, os modelos de dados, os elementos de
+autenticação e usuários, os serviços e controladores do backend e as estruturas do
+sistema embarcado.
+
+\begin{figure}[H]
+\centering
+% Diagrama gerado a partir do código Mermaid "DIAGRAMA 2"
+\fbox{\includegraphics[width=0.8\textwidth]{figures/cap4_mapa_geral_classes.png}}
+\caption{Mapa geral da organização dos diagramas de classes}
+\label{fig:mapa_classes}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
+\end{figure}
+
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 1 — Modelos de Dados}
+\subsubsubsection{Parte 1 — Modelos de Dados}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte reúne as classes responsáveis pelo armazenamento e registro das informações 
+produzidas durante a operação do sistema. O Quadro~\ref{quadro:resumo_classes_parte1} apresenta as classes 
+pertencentes a esse agrupamento e sintetiza sua função na arquitetura. 
 
 A Figura~\ref{fig:diagrama_classes_parte1} apresenta os modelos de dados gerenciados
 pelo \textit{Prisma ORM} e persistidos no banco de dados PostgreSQL com
-TimescaleDB. Esses modelos representam diretamente as tabelas do banco e encapsulam
-toda a informação produzida pelo sistema em operação.
+TimescaleDB.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo das classes da Parte 1 --- Persistência e Registro de Dados}
+\label{quadro:resumo_classes_parte1}
+\footnotesize
+\begin{tabular}{p{3.2cm}p{8.4cm}}
+\hline
+\textbf{Classe} & \textbf{Papel na arquitetura} \\
+\hline
+
+LeiturasSensor & Registro central de cada ciclo de coleta e análise \\
+
+LogsSistema & Eventos operacionais classificados por criticidade \\
+
+Configuracoes & Parâmetros de configuração em chave-valor \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
   \centering
   \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte1.pdf}}
   \caption{Diagrama de Classes — Parte 1: Modelos de Dados}
   \label{fig:diagrama_classes_parte1}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 A classe central é \texttt{LeiturasSensor}, que concentra todos os dados produzidos
@@ -3150,19 +3379,43 @@ parâmetros de configuração do sistema em formato chave–valor, permitindo aj
 operacionais sem necessidade de recompilação do código.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 2 — Modelos de Autenticação e Usuários}
+\subsubsubsection{Parte 2 — Modelos de Autenticação e Usuários}
 % ─────────────────────────────────────────────────────────────
 
-A Figura~\ref{fig:diagrama_classes_parte2} apresenta o modelo de dados responsável
-pelo controle de acesso, gestão de usuários e registro de alertas enviados pelo
-sistema.
+Esta parte concentra as classes associadas ao gerenciamento das contas de usuários, ao controle das sessões autenticadas 
+e ao registro das operações relacionadas aos alertas. Conforme apresentado no Quadro~\ref{quadro:resumo_classes_parte2}, 
+essas classes possuem responsabilidades relacionadas ao acesso à aplicação e à manutenção das informações de usuários e 
+notificações. A estrutura e os relacionamentos entre essas classes são representados na Figura~\ref{fig:diagrama_classes_parte2}.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo das classes da Parte 2 --- Usuários, Sessões e Alertas}
+\label{quadro:resumo_classes_parte2}
+\footnotesize
+\begin{tabular}{p{3.2cm}p{8.4cm}}
+\hline
+\textbf{Classe} & \textbf{Papel na arquitetura} \\
+\hline
+
+UsuariosAdmin & Contas com acesso ao painel web \\
+
+UsuariosBasicos & Destinatários de alertas \\
+
+SessoesUsuario & Controle de sessões JWT ativas \\
+
+LogsAlertas & Histórico de disparos de alerta em massa \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
   \centering
   \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte2.pdf}}
   \caption{Diagrama de Classes — Parte 2: Autenticação e Usuários}
   \label{fig:diagrama_classes_parte2}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 A classe \texttt{UsuariosAdmin} representa os administradores, os únicos usuários com
@@ -3189,19 +3442,48 @@ o número de destinatários, os resultados individuais de envio e o nível de cr
 da mensagem.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 3 — Camada de Serviços e Controladores}
+\subsubsubsection{Parte 3 — Camada de Serviços e Controladores}
 % ─────────────────────────────────────────────────────────────
 
-A Figura~\ref{fig:diagrama_classes_parte3} apresenta as classes da camada de negócio
+Esta parte reúne as classes responsáveis pela implementação das regras de negócio, autenticação, envio de mensagens 
+e intermediação das requisições HTTP. O Quadro~\ref{quadro:resumo_classes_parte3} sintetiza as responsabilidades 
+dessas classes na arquitetura, enquanto a Figura~\ref{fig:diagrama_classes_parte3} apresenta as classes da camada de negócio
 e da camada de controle HTTP do \textit{backend} desenvolvido em Node.js com
 TypeScript.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo das classes da Parte 3 --- Serviços e Controladores}
+\label{quadro:resumo_classes_parte3}
+\footnotesize
+\begin{tabular}{p{3.2cm}p{8.4cm}}
+\hline
+\textbf{Classe} & \textbf{Papel na arquitetura} \\
+\hline
+
+SensorService & Regra de negócio das leituras do sensor \\
+
+AuthService & Autenticação, sessão e recuperação de senha \\
+
+EmailService & Envio de e-mails de alerta e de reset de senha \\
+
+SensorController & Intermediação HTTP entre rotas e o serviço de sensores \\
+
+AuthController & Intermediação HTTP entre rotas e o serviço de autenticação \\
+
+AuthMiddleware & Proteção de rotas via verificação de JWT \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
   \centering
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image54_diagrama_classes_parte3.pdf}}
   \caption{Diagrama de Classes — Parte 3: Serviços e Controladores}
   \label{fig:diagrama_classes_parte3}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
 A arquitetura do \textit{backend} segue o padrão MVC (\textit{Model-View-Controller}),
@@ -3251,72 +3533,94 @@ validade do token JWT em cada requisição às rotas autenticadas e controlando 
 a funcionalidades restritas a administradores com perfil \texttt{superadmin}.
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 4 — Sistema Embarcado}
+\subsubsubsection{Parte 4 — Sistema Embarcado}
 % ─────────────────────────────────────────────────────────────
 
-A Figura~\ref{fig:diagrama_classes_parte4} apresenta as estruturas de dados e as
-funções do firmware embarcado no microcontrolador ESP8266 NodeMCU, implementado
-em linguagem C++ para o ambiente Arduino.
+Esta parte reúne as estruturas de dados e as funções utilizadas pelo ESP8266 para aquisição, organização e processamento das informações
+empregadas na avaliação do risco. O Quadro~\ref{quadro:resumo_classes_parte4} apresenta as principais estruturas e seus respectivos 
+papéis na arquitetura, enquanto a Figura~\ref{fig:diagrama_classes_parte4} apresenta as relações entre essas estruturas e o conjunto 
+de funções do firmware embarcado no microcontrolador ESP8266 NodeMCU, implementado em linguagem C++ para o ambiente Arduino.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo das classes e estruturas da Parte 4 --- Sistema Embarcado}
+\label{quadro:resumo_classes_parte4}
+\footnotesize
+\begin{tabular}{p{3.2cm}p{8.4cm}}
+\hline
+\textbf{Classe / Estrutura} & \textbf{Papel na arquitetura} \\
+\hline
+DadosLocais & Armazenamento dos dados provenientes do sensor de umidade do solo, incluindo umidade, valor ADC e fator local \\
+DadosBNDMET & Armazenamento dos dados de precipitação obtidos da estação meteorológica utilizada pelo sistema \\
+DadosMeteorologicos / PrevisaoTempo & Armazenamento das condições meteorológicas atuais e das informações de previsão obtidas via OpenWeatherMap \\
+AnaliseRisco & Armazenamento do resultado do cálculo do risco integrado e de seus respectivos componentes \\
+ConfiabilidadeDetalhes & Registro dos fatores e descontos considerados no cálculo do índice de confiabilidade \\
+SistemaBarragem & Representação do conjunto de funções globais que compõem e coordenam o firmware \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 \begin{figure}[H]
   \centering
   \fbox{\includegraphics[width=\textwidth]{figures/image54_diagrama_classes_parte4.pdf}}
   \caption{Diagrama de Classes — Parte 4: Sistema Embarcado (ESP8266)}
   \label{fig:diagrama_classes_parte4}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
 \end{figure}
 
-O firmware não adota o paradigma de orientação a objetos com classes formais
-instanciáveis, padrão do ambiente Arduino em C++. A encapsulação é realizada por
-meio de estruturas (\textit{structs}), variáveis globais e funções, organizadas de
-forma coesa por domínio funcional. Para fins de representação no diagrama, as
-estruturas são modeladas como classes com o estereótipo \texttt{<<struct>>} e as
-funções globais são agrupadas na classe representativa \texttt{SistemaBarragem}
-com o estereótipo \texttt{<<sketch>>}, seguindo convenção adotada em trabalhos
-similares \cite{guedes2011uml}.
+O firmware não adota o paradigma de orientação a objetos com classes formais 
+instanciáveis, padrão do ambiente Arduino em C++. A organização dos dados e comportamentos é realizada por 
+meio de estruturas (\textit{structs}), variáveis globais e funções agrupadas de acordo com seus respectivos 
+domínios funcionais. Para fins de representação no diagrama, as estruturas são modeladas como classes com o 
+estereótipo \texttt{<<struct>>}, enquanto o conjunto de funções globais do \textit{sketch} é representado 
+pelo elemento \texttt{SistemaBarragem}, com o estereótipo \texttt{<<sketch>>}, seguindo a convenção adotada em 
+trabalhos relacionados à modelagem UML \cite{guedes2011uml}.
 
-A estrutura \texttt{DadosLocais} agrupa as informações coletadas diretamente pelo
-higrômetro capacitivo conectado ao pino analógico A0: a umidade do solo em
-percentual, o valor ADC bruto (inteiro entre 0 e 1023), o fator do lençol freático
+A estrutura \texttt{DadosLocais} agrupa as informações obtidas diretamente do sensor de umidade do solo conectado ao pino analógico A0, 
+incluindo o percentual de umidade, o valor bruto de leitura do conversor analógico-digital (ADC), 
+o fator do lençol freático
 normalizado ($F_{len\c{c}ol} = umidade / UMIDADE\_CRITICA$, conforme a
-Equação~\ref{eq:flencol}) e uma \textit{flag} indicando se o sensor está operacional. A estrutura
-\texttt{DadosBNDMET} armazena as precipitações pluviométricas obtidas da API
-BNDMET/DECEA para a estação D6594 (Alberto Flores, ANA): acumulados em 24 horas,
-7 dias e 30 dias, além do status da última requisição e do percentual de qualidade
-dos dados retornados. A estrutura \texttt{DadosMeteorologicos} consolida os dados
-meteorológicos atuais provenientes da API OpenWeatherMap: temperatura,
-umidade relativa do ar, pressão atmosférica, velocidade do vento, precipitação atual
-e descrição textual das condições. A estrutura \texttt{PrevisaoTempo} armazena a
-precipitação total prevista para as próximas 24 horas, obtida a partir da soma dos
+Equação~\ref{eq:flencol}) e uma \textit{flag} que indica se o sensor está operacional.
+
+A estrutura \texttt{DadosBNDMET} armazena os dados de precipitação obtidos da API 
+BNDMET/DECEA para a estação meteorológica D6594 (Alberto Flores, ANA). 
+São mantidos os acumulados de precipitação em 24 horas, 7 dias e 30 dias, além de informações 
+relacionadas ao status da última requisição, à disponibilidade da API e à qualidade dos dados obtidos. 
+Esses valores são posteriormente utilizados como entradas para a avaliação do risco.
+
+A estrutura \texttt{DadosMeteorologicos} consolida as condições meteorológicas atuais obtidas por meio da API OpenWeatherMap, 
+incluindo temperatura, umidade relativa do ar, pressão atmosférica, velocidade do vento, precipitação atual e 
+descrição textual das condições meteorológicas. Complementarmente, a estrutura \texttt{PrevisaoTempo} armazena as informações 
+utilizadas para caracterizar a precipitação prevista para as próximas 24 horas, obtida a partir da soma dos
 blocos de previsão do endpoint \texttt{/forecast} da mesma API.
 
 A estrutura \texttt{AnaliseRisco} é a mais complexa do firmware e representa o
-resultado completo do cálculo da Equação~\ref{eq:frisco}. Além do fator de risco integrado
-e do nível de alerta, ela armazena os sete componentes individuais da equação já
+resultado completo do cálculo da Equação~\ref{eq:frisco}. 
+Além do fator de risco integrado e do nível de alerta, essa estrutura armazena os sete componentes individuais da equação já
 com seus respectivos pesos aplicados: $V_{len\c{c}ol}$ (peso 0,40),
 $V_{ch.atual}$ (peso 0,08), $V_{ch.hist.}$ (peso 0,12), $V_{ch.mensal}$
 (peso 0,10), $V_{ch.fut.}$ (peso 0,15), $V_{taxa}$ (peso 0,10) e
-$V_{press\~ao}$ (peso 0,05), totalizando soma de pesos igual a 1,00. Esses
-componentes são serializados no \textit{payload} JSON enviado ao \textit{backend}
-e persistidos individualmente no banco de dados, permitindo auditoria detalhada
-de cada ciclo de análise.
+$V_{press\~ao}$ (peso 0,05), totalizando soma de pesos igual a 1,00. Esses componentes são serializados 
+individualmente no \textit{payload} JSON enviado ao \textit{backend}, permitindo o registro e a posterior auditoria dos fatores 
+considerados em cada ciclo de análise.
 
-A estrutura \texttt{ConfiabilidadeDetalhes} registra os descontos aplicados no cálculo
-do índice de confiabilidade da análise, conforme tabela de pesos documentada no
-capítulo de metodologia: falha do sensor físico ($-40\%$), API BNDMET indisponível
-($-25\%$), qualidade BNDMET inferior a 80\% ($-10\%$), API OWM indisponível
-($-15\%$), WiFi desconectado ($-10\%$) e buffer histórico insuficiente ($-10\%$).
+A estrutura \texttt{ConfiabilidadeDetalhes} registra os descontos considerados no cálculo 
+do índice de confiabilidade da análise, conforme os critérios definidos na metodologia: 
+falha do sensor físico ($-40\%$), indisponibilidade da API BNDMET ($-25\%$), qualidade dos dados BNDMET inferior a 80\% ($-10\%$),
+indisponibilidade da API OWM ($-15\%$), desconexão do WiFi ($-10\%$) e histórico insuficiente para a análise ($-10\%$). 
 No estado especial de ruptura, a confiabilidade é fixada em 100\%
 independentemente dos descontos, pois o hardware confirma diretamente o estado
-crítico. Os detalhes desta estrutura são serializados dentro do campo
-\texttt{dadosBrutos} de cada registro no banco de dados, tornando auditável cada
-decisão de confiabilidade pelo painel \textit{web}.
+crítico. Os detalhes dessa avaliação são incluídos no campo \texttt{dadosBrutos} 
+do \textit{payload} enviado ao \textit{backend}, permitindo o registro das condições consideradas no cálculo da confiabilidade.
 
-A classe \texttt{SistemaBarragem} agrupa as funções globais do \textit{sketch} em
-grupos funcionais: funções de cálculo das equações do TCC, funções de análise de
-risco (incluindo o tratamento de ruptura e o cálculo de confiabilidade), funções de
-comunicação HTTP com o \textit{backend} e com as APIs externas, funções de controle
-de hardware (LEDs, buzzer) e funções de conectividade WiFi. O ciclo de operação é
+O elemento \texttt{SistemaBarragem}, representado com o estereótipo \texttt{<<sketch>>}, 
+agrupa as funções globais que compõem o firmware. Entre essas funções estão os cálculos das equações 
+utilizadas no TCC, a análise integrada de risco, o tratamento da condição de ruptura, o cálculo da confiabilidade, 
+a comunicação HTTP com o \textit{backend} e com as APIs externas, funções de controle
+de hardware (LEDs, buzzer) e funções de conectividade WiFi.
+
+O ciclo de operação é
 controlado pela função \texttt{loop()}, que verifica temporizadores individuais para
 cada subsistema — leitura de sensor, consulta BNDMET, consulta OWM, análise de risco
 e envio para o \textit{backend} — e aciona cada um no intervalo adequado ao nível de
@@ -3338,27 +3642,75 @@ meteorológica e a comunicação com o \textit{backend} nos cenários de maior c
 O diagrama de sequência é um dos diagramas comportamentais da UML e tem por
 finalidade representar a troca de mensagens entre os objetos de um sistema ao longo
 do tempo, evidenciando a ordem cronológica das interações e os atores envolvidos em
-cada fluxo \cite{guedes2011uml}. Diferentemente do diagrama de classes, que descreve
-a estrutura estática do sistema, o diagrama de sequência descreve o comportamento
-dinâmico, sendo especialmente útil para detalhar como as camadas da arquitetura
-colaboram para produzir um resultado.
+cada fluxo \cite{guedes2011uml}. Diferentemente
+do diagrama de classes, que descreve a estrutura estática, ele
+descreve o comportamento dinâmico das camadas em colaboração.
 
-Dado o escopo do sistema desenvolvido — que integra hardware embarcado, APIs
-externas, banco de dados e interface \textit{web} — o conjunto de interações é extenso
-e variado. Para garantir legibilidade e facilitar a compreensão de cada fluxo, o diagrama
-foi organizado em sete grupos lógicos, cada um subdividido em partes que cobrem um
-bloco de interação específico: (1) inicialização do ESP8266; (2) ciclo de coleta e envio
-de dados; (3) autenticação do administrador; (4) recuperação de senha; (5) monitoramento
-via \textit{dashboard}; (6) tela de sensores, filtros e relatórios; e (7) gestão de
-usuários e central de alertas.
+Dado o volume de interações do sistema desenvolvido — hardware
+embarcado, APIs externas, banco de dados e interface web —, o conjunto
+foi organizado em sete partes, cada uma cobrindo um bloco lógico de
+interação: (1) inicialização do ESP8266; (2) ciclo de coleta e envio
+de dados; (3) autenticação do administrador; (4) recuperação de
+senha; (5) monitoramento via dashboard; (6) tela de sensores, filtros
+e relatórios; e (7) gestão de usuários e central de alertas.
+
+Cada parte é subdividida em diagramas individuais, identificados por
+letras (por exemplo, Seq.~1a, Seq.~1b), totalizando 33 diagramas de
+sequência.
+
+A Figura~\ref{fig:mapa_sequencia} apresenta essa organização geral, enquanto os quadros correspondentes 
+a cada parte sintetizam seus temas, diagramas associados e camadas predominantes.
+A divisão adotada permite apresentar separadamente os processos relacionados à inicialização 
+e operação do sistema embarcado, à autenticação e recuperação de credenciais e às funcionalidades 
+de monitoramento, relatórios, gerenciamento de usuários e alertas da aplicação web.
+
+\begin{figure}[H]
+\centering
+% Diagrama gerado a partir do código Mermaid "DIAGRAMA 3"
+\includegraphics[width=0.8\textwidth]{figures/cap4_mapa_geral_sequencia.png}
+\caption{Mapa geral da organização dos diagramas de sequência}
+\label{fig:mapa_sequencia}
+\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net) e da linguagem Mermaid, 2026.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 1 — Boot e Inicialização do ESP8266}
+\subsubsubsection{Parte 1 — Boot e Inicialização do ESP8266}
 % ─────────────────────────────────────────────────────────────
+
+Esta parterepresenta os procedimentos executados desde a inicialização do dispositivo até o estabelecimento das condições necessárias para o início da operação. 
+O Quadro~\ref{quadro:resumo_seq_parte1} sintetiza os diagramas que compõem essa parte e identifica o firmware como sua camada predominante. 
+A sequência temporal das etapas é apresentada nos diagramas Figura~\ref{fig:seq_1a} a Figura~\ref{fig:seq_1e}, conforme detalhado nas respectivas figuras.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 1 --- Boot e inicialização do ESP8266}
+\label{quadro:resumo_seq_parte1}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+1a & Inicialização do ESP8266 e configuração dos componentes & Firmware \\
+
+1b & Conexão do ESP8266 à rede Wi-Fi & Firmware \\
+
+1c & Sincronização do horário por NTP & Firmware \\
+
+1d & Verificação da disponibilidade do backend & Firmware \\
+
+1e & Primeira coleta e preparação do ciclo de monitoramento & Firmware \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O processo de inicialização do ESP8266 ocorre automaticamente ao energizar o
-dispositivo, seja por conexão USB ou por fonte de alimentação independente na tomada,
-e é executado integralmente pela função \texttt{setup()}, única no ambiente Arduino.
+dispositivo, seja por conexão USB, por fonte de alimentação independente na tomada
+ou, na ausência da rede elétrica, pela bateria de reserva
+(Seção~\ref{subsec:energia}), e é executado integralmente pela função
+\texttt{setup()}, única no ambiente Arduino.
 
 A Figura~\ref{fig:seq_1a} apresenta a inicialização de hardware. A primeira ação do
 \texttt{setup()} é a leitura da calibração persistida na EEPROM: se os valores de
@@ -3375,7 +3727,7 @@ comunicação de rede.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1a.pdf}}
   \caption{Seq. 1a — Inicialização de Hardware (ESP8266)}
   \label{fig:seq_1a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1b} ilustra a conexão Wi-Fi. O firmware configura o modo
@@ -3392,7 +3744,7 @@ reconexão ocorra em ciclo posterior.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1b.pdf}}
   \caption{Seq. 1b — Conexão Wi-Fi}
   \label{fig:seq_1b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1c} mostra a sincronização com o servidor NTP
@@ -3411,7 +3763,7 @@ contaminem as métricas de qualidade dos dados pluviométricos no banco de dados
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1c.pdf}}
   \caption{Seq. 1c — Sincronização NTP}
   \label{fig:seq_1c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_1d} apresenta a verificação do \textit{backend} local. O
@@ -3426,7 +3778,7 @@ sem \textit{backend}.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1d.pdf}}
   \caption{Seq. 1d — Verificação do Backend}
   \label{fig:seq_1d}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 Por fim, a Figura~\ref{fig:seq_1e} apresenta a primeira coleta completa de dados.
@@ -3448,12 +3800,42 @@ disponível no código-fonte, porém comentado na versão em uso.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_1e.pdf}}
   \caption{Seq. 1e — Primeira Coleta Inicial}
   \label{fig:seq_1e}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 2 — Ciclo de Coleta, Análise de Risco e Envio}
+\subsubsubsection{Parte 2 — Ciclo de Coleta, Análise de Risco e Envio}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte apresenta a sequência de operações realizada pelo sistema embarcado durante cada ciclo de monitoramento. 
+O Quadro~\ref{quadro:resumo_seq_parte2} identifica os cinco diagramas que compõem essa parte e sua predominância na camada de firmware. 
+Os diagramas das Figuras~\ref{fig:seq_2a} a \ref{fig:seq_2e} detalham a aquisição das informações, o processamento dos dados, 
+a análise do risco e o envio dos resultados ao backend.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 2 --- Ciclo de coleta, análise de risco e envio}
+\label{quadro:resumo_seq_parte2}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+2a & Aquisição das leituras do sensor & Firmware \\
+
+2b & Consulta e obtenção dos dados meteorológicos & Firmware \\
+
+2c & Processamento das informações e cálculo do risco & Firmware \\
+
+2d & Classificação do nível de risco e acionamento das respostas & Firmware \\
+
+2e & Envio dos dados processados ao backend & Firmware \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O ciclo principal de operação autônoma é executado continuamente pela função
 \texttt{loop()}, com temporizadores individuais controlando o intervalo de cada
@@ -3475,7 +3857,7 @@ confiabilidade quando inferior a 5, indicando buffer histórico insuficiente.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2a.pdf}}
   \caption{Seq. 2a — Leitura do Sensor Local}
   \label{fig:seq_2a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2b} ilustra a consulta à API BNDMET/DECEA para a estação D6594
@@ -3494,7 +3876,7 @@ característica fundamental para operação embarcada, incompatível com o model
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2b.pdf}}
   \caption{Seq. 2b — Consulta BNDMET}
   \label{fig:seq_2b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2c} apresenta as duas consultas ao OpenWeatherMap, realizadas
@@ -3515,7 +3897,7 @@ Tabela~\ref{tab:intensidade}: Fraca ($<5$ mm, fator 0,00), Moderada (5–25 mm, 
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2c.pdf}}
   \caption{Seq. 2c — Consulta OpenWeatherMap}
   \label{fig:seq_2c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2d} detalha o cálculo da análise de risco pela Equação~\ref{eq:frisco}.
@@ -3536,7 +3918,7 @@ confirma diretamente o estado crítico.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2d.pdf}}
   \caption{Seq. 2d — Cálculo da Análise de Risco (Equação~\ref{eq:frisco})}
   \label{fig:seq_2d}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_2e} mostra o envio do \textit{payload} JSON ao \textit{backend} 
@@ -3555,12 +3937,37 @@ reinicia o módulo Wi-Fi ou o dispositivo conforme a gravidade da situação.
   \fbox{\includegraphics[width=\textwidth]{figures/image55_seq_2e.pdf}}
   \caption{Seq. 2e — Envio de Dados para o Backend}
   \label{fig:seq_2e}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 3 — Autenticação do Administrador}
+\subsubsubsection{Parte 3 — Autenticação do Administrador}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte representa o fluxo de acesso à aplicação por usuários com privilégios administrativos. 
+O Quadro~\ref{quadro:resumo_seq_parte3} apresenta os três diagramas que compõem essa parte e identifica a interação entre as camadas de backend e frontend. 
+Os diagramas nas Figuras~\ref{fig:seq_3a} a \ref{fig:seq_3c} detalham as etapas envolvidas no processo de autenticação e no estabelecimento da sessão do administrador.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 3 --- Autenticação do administrador}
+\label{quadro:resumo_seq_parte3}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+3a & Solicitação de autenticação pelo administrador & Backend / Frontend \\
+
+3b & Validação das credenciais e geração da sessão & Backend / Frontend \\
+
+3c & Retorno da autenticação e acesso ao sistema & Backend / Frontend \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O módulo de autenticação é responsável por controlar o acesso à interface
 \textit{web} de monitoramento, restrita exclusivamente aos administradores cadastrados.
@@ -3586,7 +3993,7 @@ interno da aplicação.
   \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_3a.pdf}
   \caption{Seq. 3a — Login do Administrador}
   \label{fig:seq_3a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_3b} ilustra a verificação de autenticidade nas rotas
@@ -3609,7 +4016,7 @@ antes que o prazo natural de 24 horas do token se esgote.
   \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_3b.pdf}
   \caption{Seq. 3b — Verificação de Rota Protegida}
   \label{fig:seq_3b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_3c} apresenta o fluxo de \textit{logout}. O
@@ -3627,12 +4034,37 @@ residuais no navegador.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_3c.pdf}}
   \caption{Seq. 3c — Logout}
   \label{fig:seq_3c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 4 — Recuperação de Senha}
+\subsubsubsection{Parte 4 — Recuperação de Senha}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte apresenta o fluxo utilizado para recuperação das credenciais de acesso à aplicação. 
+O Quadro~\ref{quadro:resumo_seq_parte4} sintetiza os três diagramas correspondentes e indica a participação das camadas de backend e frontend. 
+Os diagramas nas Figuras~\ref{fig:seq_4a} a \ref{fig:seq_4c} representam, em sequência, as etapas necessárias para solicitação, validação e redefinição da senha.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 4 --- Recuperação de senha}
+\label{quadro:resumo_seq_parte4}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+4a & Solicitação de recuperação de senha & Backend / Frontend \\
+
+4b & Validação do token de recuperação & Backend / Frontend \\
+
+4c & Redefinição da senha com token válido & Backend / Frontend \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O fluxo de recuperação de senha é composto por três etapas sequenciais que garantem
 a identidade do solicitante antes de permitir a alteração da credencial.
@@ -3656,7 +4088,7 @@ retornado na resposta da API para facilitar os testes. A validade de duas horas
   \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4a.pdf}
   \caption{Seq. 4a — Solicitação do Token de Reset}
   \label{fig:seq_4a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_4b} apresenta a validação do token. O frontend chama
@@ -3671,7 +4103,7 @@ expirados mesmo que ainda existam no registro. A resposta de sucesso retorna ape
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4b.pdf}}
   \caption{Seq. 4b — Validação do Token de Reset}
   \label{fig:seq_4b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_4c} detalha a redefinição da senha. O \textit{payload}
@@ -3688,12 +4120,39 @@ adicional, todas as sessões ativas do usuário são invalidadas no banco, exigi
   \includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_4c.pdf}
   \caption{Seq. 4c — Redefinição da Senha}
   \label{fig:seq_4c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 5 — Dashboard e Monitoramento em Tempo Real}
+\subsubsubsection{Parte 5 — Dashboard e Monitoramento em Tempo Real}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte representa as interações envolvidas na apresentação e atualização das informações de monitoramento na interface web. 
+O Quadro~\ref{quadro:resumo_seq_parte5} reúne os quatro diagramas dessa parte e identifica o frontend como camada predominante. 
+Os diagramas nas Figuras~\ref{fig:seq_5a} a \ref{fig:seq_5d} detalham as etapas de carregamento das informações, atualização dos dados e apresentação dos indicadores de monitoramento.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 5 --- Dashboard e monitoramento em tempo real}
+\label{quadro:resumo_seq_parte5}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+5a & Carregamento inicial do dashboard & Frontend \\
+
+5b & Consulta das informações de monitoramento & Frontend \\
+
+5c & Atualização das informações em tempo real & Frontend \\
+
+5d & Apresentação de notificações e indicadores de alerta & Frontend \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O painel de monitoramento é a tela principal da interface \textit{web} e combina
 carregamento inicial em paralelo com mecanismos de atualização contínua.
@@ -3713,7 +4172,7 @@ seção de atividade recente.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5a.pdf}}
   \caption{Seq. 5a — Carregamento Inicial do Dashboard}
   \label{fig:seq_5a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5b} ilustra os dois ciclos de \textit{polling} mantidos pelo
@@ -3727,7 +4186,7 @@ a cada 60 segundos para atualizar o \textit{badge} do sino.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5b.pdf}}
   \caption{Seq. 5b — Polling do Header (Health + Alertas)}
   \label{fig:seq_5b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5c} mostra a interação com o sino de notificações. Ao clicar
@@ -3740,7 +4199,7 @@ contabiliza apenas alertas críticos (VERMELHO ou RUPTURA) das últimas 24 horas
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5c.pdf}}
   \caption{Seq. 5c — Sino de Notificações}
   \label{fig:seq_5c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_5d} detalha o componente \texttt{RecentActivity}, que exibe
@@ -3753,12 +4212,41 @@ componente de origem (SENSOR, BNDMET, OWM, CONECTIVIDADE) e nível de criticidad
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_5d.pdf}}
   \caption{Seq. 5d — RecentActivity (Logs do Sistema)}
   \label{fig:seq_5d}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 6 — Tela de Sensores, Filtros e Relatórios}
+\subsubsubsection{Parte 6 — Tela de Sensores, Filtros e Relatórios}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte contempla as interações relacionadas à consulta detalhada das informações dos sensores, aplicação de filtros e geração ou exportação de relatórios. 
+O Quadro~\ref{quadro:resumo_seq_parte6} apresenta os cinco diagramas que compõem essa parte, cuja camada predominante é o frontend. 
+Os diagramas nas Figuras~\ref{fig:seq_6a} a \ref{fig:seq_6e} detalham as sequências de interação correspondentes a essas funcionalidades.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 6 --- Tela de sensores, filtros e relatórios}
+\label{quadro:resumo_seq_parte6}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+6a & Consulta detalhada das leituras dos sensores & Frontend \\
+
+6b & Aplicação de filtros nas leituras & Frontend \\
+
+6c & Consulta e apresentação das estatísticas & Frontend \\
+
+6d & Geração de relatório de monitoramento & Frontend \\
+
+6e & Exportação de dados e relatórios & Frontend \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 A tela de sensores e o módulo de relatórios oferecem acesso ao histórico completo
 de leituras com múltiplas formas de análise e exportação.
@@ -3772,7 +4260,7 @@ até mil registros paginados a 15 por página na interface.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6a.pdf}}
   \caption{Seq. 6a — Carregamento da Tela de Sensores}
   \label{fig:seq_6a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6b} mostra os filtros de período e nível. A alteração de
@@ -3786,7 +4274,7 @@ o total geral.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6b.pdf}}
   \caption{Seq. 6b — Filtros de Período e Nível}
   \label{fig:seq_6b}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6c} detalha a linha expandida, exibida ao clicar em qualquer
@@ -3800,7 +4288,7 @@ recomendação operacional gerada pelo firmware.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6c.pdf}}
   \caption{Seq. 6c — Linha Expandida (Detalhamento da Leitura)}
   \label{fig:seq_6c}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6d} apresenta a exportação para CSV, que monta um arquivo com
@@ -3813,7 +4301,7 @@ sem nova requisição ao \textit{backend}.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6d.pdf}}
   \caption{Seq. 6d — Exportação CSV}
   \label{fig:seq_6d}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_6e} ilustra a geração de relatório pelo módulo
@@ -3827,12 +4315,47 @@ seções. O relatório pode ser exportado em CSV ou em HTML autossuficiente com 
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_6e.pdf}}
   \caption{Seq. 6e — Geração de Relatório}
   \label{fig:seq_6e}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────
-\paragraph*{Parte 7 — Gestão de Usuários e Central de Alertas}
+\subsubsubsection{Parte 7 — Gestão de Usuários e Central de Alertas}
 % ─────────────────────────────────────────────────────────────
+
+Esta parte reúne as sequências relacionadas ao gerenciamento das contas de usuários e às funcionalidades de consulta e envio de alertas. 
+O Quadro~\ref{quadro:resumo_seq_parte7} sintetiza os diagramas correspondentes e identifica a participação das camadas de backend e frontend. 
+Os diagramas nas Figuras~\ref{fig:seq_7a} a \ref{fig:seq_7h} apresentam, em sequência, as interações necessárias para o gerenciamento dos usuários e para as operações relacionadas à central de alertas.
+
+\begin{table}[htb]
+\centering
+\caption{Resumo dos diagramas de sequência da Parte 7 --- Gestão de usuários e central de alertas}
+\label{quadro:resumo_seq_parte7}
+\footnotesize
+\begin{tabular}{p{1.0cm}p{6.0cm}p{3.0cm}}
+\hline
+\textbf{Diagrama} & \textbf{Tema} & \textbf{Camada predominante} \\
+\hline
+
+7a & Consulta e apresentação dos usuários básicos & Backend / Frontend \\
+
+7b & Cadastro de usuário básico pelo administrador & Backend / Frontend \\
+
+7c & Edição dos dados de usuário básico & Backend / Frontend \\
+
+7d & Ativação e desativação de usuário & Backend / Frontend \\
+
+7e & Filtragem e consulta de usuários & Backend / Frontend \\
+
+7f & Gerenciamento de administradores & Backend / Frontend \\
+
+7g & Consulta e gerenciamento dos alertas & Backend / Frontend \\
+
+7h & Envio de alerta manual em massa & Backend / Frontend \\
+
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
 
 O módulo de gestão de usuários e a central de alertas compõem o conjunto de
 funcionalidades administrativas do sistema.
@@ -3849,7 +4372,7 @@ exclusivamente pelo modal específico de inativos, não pela tabela principal.
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_7a.pdf}}
   \caption{Seq. 7a — Listagem e Estatísticas de Usuários}
   \label{fig:seq_7a}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 As Figuras~\ref{fig:seq_7b1} e~\ref{fig:seq_7b2} detalham os fluxos de criação e edição de usuário. A
@@ -3867,7 +4390,7 @@ são gerenciados pelo componente \texttt{UserForm}, reutilizado tanto para cria�
   \fbox{\includegraphics[width=\textwidth, keepaspectratio]{figures/image55_seq_7b1.pdf}}
   \caption{Seq. 7b — Criação de Usuário}
   \label{fig:seq_7b1}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 \begin{figure}[H]
@@ -3875,7 +4398,7 @@ são gerenciados pelo componente \texttt{UserForm}, reutilizado tanto para cria�
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7b2.pdf}}
   \caption{Seq. 7b — Edição de Usuário}
   \label{fig:seq_7b2}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 As Figuras~\ref{fig:seq_7c1} e~\ref{fig:seq_7c2} apresentam os fluxos de desativação e reativação de
@@ -3895,7 +4418,7 @@ sem nova requisição, e o componente pai recarrega as estatísticas.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7c1.pdf}}
   \caption{Seq. 7c — Desativação de Usuários Inativos}
   \label{fig:seq_7c1}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 \begin{figure}[H]
@@ -3903,7 +4426,7 @@ sem nova requisição, e o componente pai recarrega as estatísticas.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7c2.pdf}}
   \caption{Seq. 7c — Reativação de Usuários Inativos}
   \label{fig:seq_7c2}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 As Figuras~\ref{fig:seq_7d1} e~\ref{fig:seq_7d2} ilustram o carregamento da Central de Alertas e a expansão
@@ -3920,7 +4443,7 @@ hardware.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7d1.pdf}}
   \caption{Seq. 7d — Central de Alertas: Carregamento}
   \label{fig:seq_7d1}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 \begin{figure}[H]
@@ -3928,7 +4451,7 @@ hardware.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7d2.pdf}}
   \caption{Seq. 7d — Central de Alertas: Expansão}
   \label{fig:seq_7d2}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 A Figura~\ref{fig:seq_7e} detalha o envio de alerta em massa. Após confirmação pelo
@@ -3949,7 +4472,7 @@ de todas as notificações disparadas pelo sistema.
   \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/image55_seq_7e.pdf}}
   \caption{Seq. 7e — Envio de Alerta em Massa}
   \label{fig:seq_7e}
-  \fonte{Autora, 2026.}
+  \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
 % -------------------------------------------------------------
@@ -3961,10 +4484,25 @@ Os fluxogramas apresentados nesta seção representam processos do
 sistema que envolvem decisões condicionais relevantes para a
 compreensão do comportamento operacional. 
 
-Foram elaborados nove fluxogramas, distribuídos entre
-as três camadas da arquitetura. A Figura~\ref{fig:fluxograma_visao_geral}
-apresenta o mapa geral com os identificadores e as relações entre
-os diagramas.
+A lógica do sistema é distribuída em três camadas principais: firmware embarcado,
+backend e frontend. Essa divisão acompanha a arquitetura da solução e permite localizar
+cada decisão no componente responsável por sua execução.
+
+A camada de firmware é executada no ESP8266 e concentra a aquisição das informações,
+o processamento dos dados, o cálculo do risco, o tratamento da condição de ruptura,
+o cálculo da confiabilidade e os mecanismos de simulação. Nessa camada estão os
+fluxogramas F1, F2, F3, F4 e F8.
+
+A camada de backend é responsável pelo recebimento e persistência das leituras, pela
+autenticação das requisições e pelo processamento do envio de alertas. Nessa camada
+estão os fluxogramas F5, F6 e F9.
+
+A camada de frontend representa a interface web utilizada pelo administrador. Nesse
+nível, o fluxo modelado concentra-se na interpretação do estado de disponibilidade do
+sistema e do sensor para apresentação ao operador. Nessa camada está o fluxograma F7.
+
+A Figura~\ref{fig:fluxograma_visao_geral} apresenta o mapa geral dos nove fluxogramas
+e sua distribuição entre as três camadas.
 
 \begin{figure}[H]
 \centering
@@ -3974,25 +4512,55 @@ os diagramas.
 \fonte{Autora, 2026.}
 \end{figure}
 
-No \textit{firmware} embarcado: F1 —
-loop principal (Figura~\ref{fig:fluxograma_loop}); F2 — análise
-de risco integrado (Figura~\ref{fig:fluxograma_risco}); F3 —
-protocolo de ruptura (Figura~\ref{fig:fluxograma_ruptura}); F4 —
-índice de confiabilidade (Figura~\ref{fig:fluxograma_confiabilidade});
-e F8 — simulação de nível via Serial
-(Figura~\ref{fig:fluxograma_simulacao}).
+Os nove fluxogramas possuem funções complementares. O F1 representa o loop principal de
+orquestração do firmware e define quando cada subsistema é executado. O F2 representa
+o ciclo de análise de risco integrado e mostra o cálculo e a classificação do risco.
+O F3 representa o protocolo de ruptura e desescalada, responsável por tratar a condição
+crítica de forma prioritária e controlar o retorno ao funcionamento normal. O F4
+representa o cálculo do índice de confiabilidade da análise, considerando a
+disponibilidade e a qualidade das fontes de dados.
 
-No \textit{backend}: F5 — recebimento e persistência de leitura
-(Figura~\ref{fig:fluxograma_backend_sensor}); F6 — autenticação
-JWT (Figura~\ref{fig:fluxograma_auth}); e F9 —
-envio de alerta em massa
-(Figura~\ref{fig:fluxograma_alerta_massa}).
+O F5 representa o recebimento e a persistência das leituras no backend. O F6 representa
+a autenticação JWT e a validação das sessões utilizadas nas rotas protegidas. O F7
+representa a detecção e classificação do estado do sensor apresentada no frontend.
 
-No \textit{frontend}: F7 — detecção de status do sensor
-(Figura~\ref{fig:fluxograma_status_sensor}).
+O F8 representa o modo de simulação de nível por meio da porta Serial do ESP8266,
+utilizado para testar os comportamentos associados aos diferentes níveis de alerta.
+O F9 representa o processo de envio de alertas em massa, incluindo a consulta dos
+destinatários, o processamento dos envios e o registro da operação.
+
+A organização pode ser resumida da seguinte forma:
+
+\begin{itemize}
+    \item \textbf{Firmware:}
+    \begin{itemize}
+        \item F1 --- Loop principal de orquestração;
+        \item F2 --- Ciclo de análise de risco integrado;
+        \item F3 --- Protocolo de ruptura e desescalada;
+        \item F4 --- Índice de confiabilidade;
+        \item F8 --- Simulação de nível via Serial.
+    \end{itemize}
+
+    \item \textbf{Backend:}
+    \begin{itemize}
+        \item F5 --- Recebimento e persistência de leitura;
+        \item F6 --- Autenticação JWT e validação de sessão;
+        \item F9 --- Envio de alerta em massa.
+    \end{itemize}
+
+    \item \textbf{Frontend:}
+    \begin{itemize}
+        \item F7 --- Detecção de status do sensor.
+    \end{itemize}
+\end{itemize}
+
+A sequência de apresentação das figuras não segue necessariamente a ordem numérica
+F1--F9. Ela acompanha a dependência lógica dos processos e a organização do capítulo.
+Por esse motivo, o leitor deve utilizar a Figura~\ref{fig:mapa_fluxogramas} como mapa de
+orientação e, em seguida, consultar cada fluxograma conforme sua função.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma do Ciclo de Análise de Risco Integrado}
+\paragraph*{F2 - Fluxograma do Ciclo de Análise de Risco Integrado}
 \label{subsubsec:fluxograma-risco}
 % -------------------------------------------------------------
 
@@ -4006,7 +4574,7 @@ há simulação ativa em andamento.
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f2_ciclo_analise_risco.png}}
-\caption{Fluxograma do ciclo de análise de risco integrado}
+\caption{F2 - Fluxograma do ciclo de análise de risco integrado}
 \label{fig:fluxograma_risco}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4077,7 +4645,7 @@ qualquer ação adicional, garantindo que o LED vermelho e o
 durante o ciclo seguinte.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma do Protocolo de Ruptura e Desescalada}
+\paragraph*{F3 - Fluxograma do Protocolo de Ruptura e Desescalada}
 \label{subsubsec:fluxograma-ruptura}
 % -------------------------------------------------------------
 
@@ -4092,7 +4660,7 @@ acionamento direto de emergência.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap4_fluxograma_f3_protocolo_ruptura.png}
-\caption{Fluxograma do protocolo de ruptura e desescalada}
+\caption{F3 - Fluxograma do protocolo de ruptura e desescalada}
 \label{fig:fluxograma_ruptura}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4155,7 +4723,7 @@ mínima de 10 segundos de estabilidade antes da reabertura do ciclo
 analítico, conferindo robustez ao critério de desescalada.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma do Loop Principal de Orquestração}
+\paragraph*{F1 - Fluxograma do Loop Principal de Orquestração}
 \label{subsubsec:fluxograma-loop}
 % -------------------------------------------------------------
 
@@ -4175,7 +4743,7 @@ execução de cada tarefa \cite{sommerville2011engenharia}.
 \centering
 \fbox{\includegraphics[width=\textwidth]
     {figures/cap4_fluxograma_f1_loop_principal.png}}
-\caption{Fluxograma do \textit{loop} principal de orquestração do
+\caption{F1 - Fluxograma do \textit{loop} principal de orquestração do
 \textit{firmware}}
 \label{fig:fluxograma_loop}
 \fonte{Autora, 2026.}
@@ -4253,7 +4821,7 @@ manuais, executar calibração do sensor e acionar simulações de
 nível para fins de teste e demonstração.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma do Cálculo do Índice de Confiabilidade}
+\paragraph*{F4 - Fluxograma do Cálculo do Índice de Confiabilidade}
 \label{subsubsec:fluxograma-confiabilidade}
 % -------------------------------------------------------------
 
@@ -4270,7 +4838,7 @@ variando de 0\% a 100\%.
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f4_confiabilidade.png}}
-\caption{Fluxograma do cálculo do índice de confiabilidade da análise}
+\caption{F4 - Fluxograma do cálculo do índice de confiabilidade da análise}
 \label{fig:fluxograma_confiabilidade}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4350,7 +4918,7 @@ do tipo \texttt{jsonb} na tabela \texttt{leituras\_sensor}, tornando
 cada decisão de confiabilidade auditável pelo painel \textit{web}.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma de Recebimento e Persistência de Leitura}
+\paragraph*{F5 - Fluxograma de Recebimento e Persistência de Leitura}
 \label{subsubsec:fluxograma-backend-sensor}
 % -------------------------------------------------------------
 
@@ -4364,7 +4932,7 @@ ESP8266.
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f5_backend_sensor.png}}
-\caption{Fluxograma de recebimento e persistência de leitura no
+\caption{F5 - Fluxograma de recebimento e persistência de leitura no
 \textit{backend}}
 \label{fig:fluxograma_backend_sensor}
 \fonte{Autora, 2026.}
@@ -4401,7 +4969,7 @@ serviço interpreta sua ausência como \texttt{true}, sinalizando ao
 banco que aquela leitura não foi gerada pelo ciclo automático.
 
 A persistência é realizada via Prisma ORM com o método
-\texttt{prisma.leiturasSensor.create()}, que insere um registro
+\path{prisma.leiturasSensor.create()}, que insere um registro
 com aproximadamente 40 colunas na tabela \texttt{leituras\_sensor},
 gerenciada pelo TimescaleDB como hipertabela particionada por
 \texttt{timestamp}. O campo \texttt{dadosBrutos}, de tipo
@@ -4446,7 +5014,7 @@ retorna \texttt{HTTP 201} ao ESP8266 com o corpo
 \textit{firmware}.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma de Autenticação JWT e Validação de Sessão}
+\paragraph*{F6 - Fluxograma de Autenticação JWT e Validação de Sessão}
 \label{subsubsec:fluxograma-auth}
 % -------------------------------------------------------------
 
@@ -4460,7 +5028,7 @@ pelo \textit{middleware}, que protege as rotas autenticadas; e o
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f6_autenticacao_jwt.png}}
-\caption{Fluxograma de autenticação JWT e validação de sessão}
+\caption{F6 - Fluxograma de autenticação JWT e validação de sessão}
 \label{fig:fluxograma_auth}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4528,7 +5096,7 @@ a consulta da etapa de validação não encontrará nenhuma sessão
 ativa, resultando em \texttt{HTTP 401} imediato.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma de Detecção de Status do Sensor no
+\paragraph*{F7 - Fluxograma de Detecção de Status do Sensor no
 \textit{Frontend}}
 \label{subsubsec:fluxograma-status-sensor}
 % -------------------------------------------------------------
@@ -4545,7 +5113,7 @@ diferente, com fontes de dados e critérios independentes.
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f7_status_sensor.png}}
-\caption{Fluxograma de detecção de status do sensor no
+\caption{F7 - Fluxograma de detecção de status do sensor no
 \textit{frontend}}
 \label{fig:fluxograma_status_sensor}
 \fonte{Autora, 2026.}
@@ -4601,7 +5169,7 @@ resultariam em ``Degradado'' —, sem que uma condição mascare a
 outra.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma do Modo de Simulação de Nível via
+\paragraph*{F8 - Fluxograma do Modo de Simulação de Nível via
 Serial}
 \label{subsubsec:fluxograma-simulacao}
 % -------------------------------------------------------------
@@ -4618,7 +5186,7 @@ meteorológicas que cada nível exige.
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f8_simulacao_nivel.png}}
-\caption{Fluxograma do modo de simulação de nível via Serial}
+\caption{F8 - Fluxograma do modo de simulação de nível via Serial}
 \label{fig:fluxograma_simulacao}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4687,7 +5255,7 @@ próximo ciclo de leitura do sensor, os valores reais do
 higrômetro e o ciclo analítico normal são retomados.
 
 % -------------------------------------------------------------
-\paragraph*{Fluxograma de Envio de Alerta em Massa}
+\paragraph*{F9 - Fluxograma de Envio de Alerta em Massa}
 \label{subsubsec:fluxograma-alerta-massa}
 % -------------------------------------------------------------
 
@@ -4701,7 +5269,7 @@ integralmente pelo \textit{backend} via \textit{endpoint}
 \centering
 \fbox{\includegraphics[width=\textheight, height=\textwidth, keepaspectratio, angle=-90]
     {figures/cap4_fluxograma_f9_alerta_massa.png}}
-\caption{Fluxograma do processo de envio de alerta em massa}
+\caption{F9 - Fluxograma do processo de envio de alerta em massa}
 \label{fig:fluxograma_alerta_massa}
 \fonte{Autora, 2026.}
 \end{figure}
@@ -4764,13 +5332,13 @@ para refletir o novo registro.
 \label{sec:hardware}
 % =============================================================
 
-O módulo de aquisição de dados foi implementado com o microcontrolador
-ESP8266 NodeMCU V3, escolhido pela disponibilidade de conectividade
-Wi-Fi integrada, suporte ao protocolo HTTPS, programação direta pela
-Arduino IDE e custo acessível. O protótipo é composto por quatro categorias de componentes
+O protótipo é composto por quatro categorias de componentes
 eletrônicos, descritas a seguir: o microcontrolador, o sensor de
 umidade, os indicadores visuais (LEDs) e o indicador sonoro
-(\textit{buzzer}).
+(\textit{buzzer}). A alimentação redundante, exigida de um sistema de alerta,
+é tratada na Seção~\ref{subsec:energia}, na qual é especificada uma arquitetura
+de reserva por bateria, dimensionada por cálculo e representada funcionalmente
+na simulação.
 
 % -------------------------------------------------------------
 \subsection{ESP8266 NodeMCU V3}
@@ -4787,7 +5355,7 @@ b/g/n em 2,4\,GHz com criptografia WPA/WPA2 e chip conversor USB-serial
 CH340. No protótipo, o ESP8266 é responsável pela leitura do sensor
 de umidade, pela consulta às APIs meteorológicas externas via HTTPS e
 pelo envio periódico dos dados ao \textit{backend}
-\cite{mercadolivre_esp8266}.
+\cite{mercadolivre_esp8266, espressif_esp8266_spec2013}.
 
 % -------------------------------------------------------------
 \subsection{Sensor Higrômetro Resistivo}
@@ -4900,7 +5468,7 @@ técnicas dos componentes utilizados.
 \hline
 \textbf{Componente}      & \textbf{Tensão (V)} & \textbf{Corrente máx.} & \textbf{Interface} \\
 \hline
-ESP8266 NodeMCU V3       & 3,3 (lógico)        & 200\,mA                & Wi-Fi / GPIO / ADC \\
+ESP8266 NodeMCU V3       & 3,3 (lógico)        & 80\,mA (média); até 215\,mA (TX contínuo)  & Wi-Fi / GPIO / ADC \\
 Higrômetro LM393         & 3,3–5               & —                      & Analógica (A0)     \\
 LED verde 5\,mm          & 3,0–3,3             & 20\,mA                 & GPIO digital       \\
 LED amarelo 5\,mm        & 2,0–2,2             & 20\,mA                 & GPIO digital       \\
@@ -4908,10 +5476,10 @@ LED vermelho 5\,mm       & 1,8                 & 15\,mA                 & GPIO d
 \textit{Buzzer} BPA5 5\,V & 5                  & 40\,mA                 & GPIO digital (PWM) \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{mercadolivre_esp8266,eletrogate_higrometro,usinainfo_led_amarelo,usinainfo_led_vermelho,usinainfo_buzzer}.}
+\fonte{Elaborado pela autora com base em \citeonline{espressif_esp8266ex,espressif_esp8266_spec2013,aithinker_esp12e,eletrogate_higrometro,usinainfo_led_amarelo,usinainfo_led_vermelho,usinainfo_buzzer}.}
 \end{table}
 
-O custo total dos componentes do protótipo é de R\$\,70,30, conforme
+O custo total dos componentes do protótipo foi de R\$\,70,30, conforme
 detalhado na Tabela~\ref{tab:custos}.
 
 \begin{table}[htb]

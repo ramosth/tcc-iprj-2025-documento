@@ -37,6 +37,12 @@
 %% Comando para inserir sigla
 \newcommand{\sigla}[2][]{\item[#1] \textit{#2}}
 
+%% ============================================================
+%% Equações
+%% ============================================================
+
+\counterwithout{equation}{chapter}
+\renewcommand{\theequation}{\arabic{equation}}
 
 %% Comando para inserir simbolo
 %\newcommand{\simbolo}[2][]{
@@ -61,13 +67,9 @@
 %\renewcommand{\ABNTEXsubsubsubsectionfont}{\normalfont\itshape\selectfont}
 %\renewcommand{\ABNTEXsubsubsubsectionfontsize}{\normalsize}
 
-
-
 %% Redefinição da formatação de Parágrafos 
 \setlength{\parindent}{1.3cm}
 \setlength{\parskip}{0cm}
-
-
 
 %% Sumário
 \makeatletter

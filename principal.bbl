@@ -40,6 +40,11 @@ Brasília, DF, 2025. Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/barragens/boletim-de-barragens-de-mineracao/boletim-mensal-fevereiro-2025.pdf}.
   Acesso em: 23 maio 2025.}
 
+\bibitem[{Ai-Thinker} 2015]{aithinker_esp12e}
+\abntrefinfo{{Ai-Thinker}}{{Ai-Thinker}}{2015}
+{{Ai-Thinker}. \emph{{ESP-12E} {WiFi} Module (\textit{datasheet})}. 2015.
+Dispon{\'\i}vel em: \url{http://www.ai-thinker.com}. Acesso em: 1 out. 2026.}
+
 \bibitem[Alvim 2023]{BBC2023}
 \abntrefinfo{Alvim}{ALVIM}{2023}
 {ALVIM, M. \emph{'A indústria virou pó': como agro e mineração já superam
@@ -200,8 +205,9 @@ Brasília, DF, 2010. Dispon{\'\i}vel em:
   Barragem, das Inspeções de Segurança Regular e Especial, da Revisão
   Periódica de Segurança de Barragem e do Plano de Ação de Emergência para
   Barragens de Mineração}. Brasília, DF: DNPM, 2017.
+Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/barragens/portaria-dnpm-no-70-389-de-17-de-maio-de-2017}.
-Acesso em: 30 ago. 2026.}
+  Acesso em: 30 ago. 2026.}
 
 \bibitem[{BRASIL} 2018]{brasil2018}
 \abntrefinfo{{BRASIL}}{{BRASIL}}{2018}
@@ -216,7 +222,7 @@ Brasília, 2018. Dispon{\'\i}vel em:
 \bibitem[BRASIL 2020]{brasil2020lei14066}
 \abntrefinfo{BRASIL}{BRASIL}{2020}
 {BRASIL. \emph{Lei nº 14.066, de 30 de setembro de 2020}. Brasília, DF:
-  [s.n.], 2020.
+  [s.n.], 2020. Diário Oficial da União.
 Dispon{\'\i}vel em:
   \url{https://www.planalto.gov.br/ccivil\_03/\_ato2019-2022/2020/lei/l14066.htm}.
   Acesso em: 31 maio 2025.}
@@ -264,7 +270,7 @@ Dispon{\'\i}vel em:
 \abntrefinfo{Carvalho et al.}{CARVALHO et al.}{2012}
 {CARVALHO, C.~G. et al. A dependência da arrecadação do município de {Ouro
   Preto} do setor mineral.
-\emph{REM: Revista Escola de Minas}, v.~65, n.~3, set 2012.
+\emph{REM: Revista Escola de Minas}, v.~65, n.~3, set. 2012.
 Dispon{\'\i}vel em:
   \url{https://www.scielo.br/j/rem/a/JY6LcTRRJy9mhK3k5Ysgqvc/}. Acesso em: 30
   mar. 2026.}
@@ -334,9 +340,16 @@ Dispon{\'\i}vel em:
   \url{https://ppggrd.propesp.ufpa.br/ARQUIVOS/dissertacoes/disserta\%C3\%A7oes\%20ppggrd/Disserta\%C3\%A7\%C3\%A3o\%20Almir.pdf}.
   Acesso em: 24 maio 2025.}
 
+\bibitem[Costa et al. 2004]{costa2004pipeline}
+\abntrefinfo{Costa et al.}{COSTA et al.}{2004}
+{COSTA, A.~M. et al. Pipeline visualization, simulation and monitoring in
+  unstable areas affected by soil movements at serra do mar – brazil. In:
+  \emph{Proceedings of ISL 2004}. Rio de Janeiro, Brazil: A. A. Balkema, 2004.
+  p. 1287--1292.}
+
 \bibitem[Cruz 2024]{cruz2024iso}
 \abntrefinfo{Cruz}{CRUZ}{2024}
-{CRUZ, C. \emph{A ISO 31000 na mineração}. 2024.
+{CRUZ, C. \emph{A ISO 31000 na mineração}. 2024. LinkedIn.
 Dispon{\'\i}vel em:
   \url{https://www.linkedin.com/pulse/iso-31000-na-minera\%C3\%A7\%C3\%A3o-claudinei-cruz-gvkzf/}.
   Acesso em: 24 maio 2025.}
@@ -400,6 +413,21 @@ Dispon{\'\i}vel em:
   \url{https://www.eletrogate.com/modulo-sensor-de-umidade-de-solo}. Acesso em:
   20 mar. 2026.}
 
+\bibitem[{Espressif Systems} 2013]{espressif_esp8266_spec2013}
+\abntrefinfo{{Espressif Systems}}{{Espressif Systems}}{2013}
+{{Espressif Systems}. \emph{{ESP8266} 802.11bgn Smart Device (especificação
+  preliminar, 12 out. 2013)}. 2013.
+Dispon{\'\i}vel em:
+  \url{https://cdn-shop.adafruit.com/datasheets/ESP8266\_Specifications\_English.pdf}.
+  Acesso em: 1 out. 2026.}
+
+\bibitem[{Espressif Systems} 2025]{espressif_esp8266ex}
+\abntrefinfo{{Espressif Systems}}{{Espressif Systems}}{2025}
+{{Espressif Systems}. \emph{{ESP8266EX} Datasheet, versão 7.1}. 2025.
+Dispon{\'\i}vel em:
+  \url{https://documentation.espressif.com/0a-esp8266ex\_datasheet\_en.pdf}.
+  Acesso em: 1 out. 2026.}
+
 \bibitem[{ESTADO DE MINAS} 2016]{estadominas2016irregular}
 \abntrefinfo{{ESTADO DE MINAS}}{{ESTADO DE MINAS}}{2016}
 {{ESTADO DE MINAS}. \emph{Obras da barragem do Fundão começaram de forma
@@ -424,15 +452,8 @@ Dispon{\'\i}vel em:
   \url{https://feam.br/w/minas-avanca-na-descaracterizacao-das-barragens-alteadas-a-montante}.
   Acesso em: 22 maio 2025. Atualizado em: 12 nov. 2024.}
 
-\bibitem[Fernandes e Araujo 2016]{fernandes2016mineracao}
-\abntrefinfo{Fernandes e Araujo}{FERNANDES; ARAUJO}{2016a}
-{FERNANDES, F. R.~C.; ARAUJO, E.~R. \emph{Mineração no Brasil}: crescimento
-  econômico e conflitos ambientais. CETEM/MCTI, 2016. Dispon{\'\i}vel em:
-  \url{http://mineralis.cetem.gov.br/bitstream/cetem/1909/1/conflitos\_ambientais\_cap.2\%20p65.pdf}.
-  Acesso em: 27 abr. 2025.}
-
 \bibitem[Fernandes e Araujo 2016]{fernandes2016}
-\abntrefinfo{Fernandes e Araujo}{FERNANDES; ARAUJO}{2016b}
+\abntrefinfo{Fernandes e Araujo}{FERNANDES; ARAUJO}{2016}
 {FERNANDES, F. R.~C.; ARAUJO, E.~R. \emph{Mineração no Brasil}: crescimento
   econômico e conflitos ambientais. CETEM/MCTI, 2016. Dispon{\'\i}vel em:
   \url{http://mineralis.cetem.gov.br/bitstream/cetem/1909/1/conflitos\_ambientais\_cap.2\%20p65.pdf}.
@@ -464,7 +485,7 @@ Dispon{\'\i}vel em:
 \abntrefinfo{Fonseca}{FONSECA}{2024}
 {FONSECA, E. Os resultados da mineração no ano de 2023 conforme dados do
   ibram.
-\emph{Synergia Editora}, feb 2024.
+\emph{Synergia Editora}, 1 fev. 2024.
 Dispon{\'\i}vel em:
   \url{https://synergiaeditora.com.br/os-resultados-da-mineracao-no-ano-de-2023-conforme-dados-do-ibram/}.
   Acesso em: 2 jul. 2024.}
@@ -507,7 +528,7 @@ Dispon{\'\i}vel em:
 \bibitem[{Geokon Incorporated} 2025]{geokon2025instrumentation}
 \abntrefinfo{{Geokon Incorporated}}{{Geokon Incorporated}}{2025}
 {{Geokon Incorporated}. \emph{Earth Dam Instrumentation}. 2025.
-Disponível em: \url{https://www.geokon.com}. Acesso em: 31 ago. 2025.}
+Dispon{\'\i}vel em: \url{https://www.geokon.com}. Acesso em: 31 ago. 2025.}
 
 \bibitem[GEOSCAN 2024]{geoscan2024sistema}
 \abntrefinfo{GEOSCAN}{GEOSCAN}{2024}
@@ -574,7 +595,7 @@ Dispon{\'\i}vel em: \url{https://www.hrwallingford.com/projects/damsat}. Acesso
 \bibitem[IBRAM 2020]{ibram2020tecnologias}
 \abntrefinfo{IBRAM}{IBRAM}{2020}
 {IBRAM. \emph{As mais recentes tecnologias para o gerenciamento de riscos em
-  minas}. 2020.
+  minas}. 2020. IBRAM – Instituto Brasileiro de Mineração.
 Dispon{\'\i}vel em:
   \url{https://ibram.org.br/noticia/as-mais-recentes-tecnologias-para-o-gerenciamento-de-riscos-em-minas/}.
   Acesso em: 1 jun. 2025.}
@@ -590,7 +611,7 @@ Brasília, 2024. Dispon{\'\i}vel em:
 \abntrefinfo{{INSTITUTO CAMILA E LUIZ TALIBERTI}}{{INSTITUTO CAMILA E LUIZ
   TALIBERTI}}{2025}
 {{INSTITUTO CAMILA E LUIZ TALIBERTI}. \emph{6 anos da tragédia de Brumadinho}.
-  2025.
+  2025. Somos Sementes.
 Dispon{\'\i}vel em:
   \url{https://somossementes.org.br/6-anos-da-tragedia-de-brumadinho/}. Acesso
   em: 1 jun. 2025.}
@@ -668,13 +689,13 @@ Dispon{\'\i}vel em:
 {JING, Z.; GAO, X. Monitoring and early warning of a metal mine tailings pond
   based on a deep learning bidirectional recurrent long and short memory
   network.
-\emph{PLoS One}, United States, v.~17, n.~10, p. e0273073, out 2022.
+\emph{PLoS One}, United States, v.~17, n.~10, p. e0273073, out. 2022.
 Dispon{\'\i}vel em: \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC9562152/}.
   Acesso em: 11 jun. 2025.}
 
 \bibitem[Júnior et al. 2018]{desouzajunior2018}
 \abntrefinfo{Júnior et al.}{JúNIOR et al.}{2018}
-{JúNIOR, T.~F. D.~S.; MOREIRA, E.~B.; HEINECK, K.~S. Barragens de contenção
+{JúNIOR, T. F.~d. S.; MOREIRA, E.~B.; HEINECK, K.~S. Barragens de contenção
   de rejeitos de mineração no brasil.
 \emph{HOLOS}, v.~5, p. 2--39, 2018.
 Dispon{\'\i}vel em:
@@ -715,7 +736,7 @@ Dispon{\'\i}vel em:
   projeto orientados a objetos}. 3. ed. Porto Alegre: Bookman, 2007.
   Dispon{\'\i}vel em:
   \url{https://www.kufunda.net/publicdocs/Utilizando\%20UML\%20e\%20padr\%C3\%B5es\%20(Craig\%20Larman).pdf}.
-  Acesso em: 02 jul. 2025.}
+  Acesso em: 2 jul. 2025.}
 
 \bibitem[Leão e Rabelo 2023]{leao2023}
 \abntrefinfo{Leão e Rabelo}{LEãO; RABELO}{2023}
@@ -861,14 +882,14 @@ Dispon{\'\i}vel em:
 {{National Oceanic and Atmospheric Administration}. \emph{Air Pressure}. 2024.
   JetStream --- An Online School for Weather.
 Dispon{\'\i}vel em:
-  \url{https://www.noaa.gov/jetstream/atmosphere/air-pressure}. Acesso em: 02
+  \url{https://www.noaa.gov/jetstream/atmosphere/air-pressure}. Acesso em: 2
   set. 2026.}
 
 \bibitem[{NATURE COMMUNICATIONS} 2020]{naturecomm2020advanced}
 \abntrefinfo{{NATURE COMMUNICATIONS}}{{NATURE COMMUNICATIONS}}{2020}
 {{NATURE COMMUNICATIONS}. Advanced analysis of satellite data reveals ground
   deformation precursors to the brumadinho tailings dam collapse.
-2020.
+\emph{Communications Earth \& Environment}, 2020.
 Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-020-00079-2}.
   Acesso em: 11 jun. 2025.}
 
@@ -876,7 +897,7 @@ Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-020-00079-2}.
 \abntrefinfo{{NATURE COMMUNICATIONS}}{{NATURE COMMUNICATIONS}}{2022}
 {{NATURE COMMUNICATIONS}. Advanced monitoring of tailings dam performance using
   seismic noise and stress models.
-2022.
+\emph{Communications Earth \& Environment}, 2022.
 Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-022-00629-w}.
   Acesso em: 11 jun. 2025.}
 
@@ -932,7 +953,7 @@ Dispon{\'\i}vel em:
 \emph{Journal of Hazardous Materials}, v.~152, n.~2, p. 846--852, 2008.
 Dispon{\'\i}vel em:
   \url{https://repositorio.ufc.br/bitstream/riufc/64704/1/2008\_art\_mrico.pdf}.
-  Acesso em: 06 mar. 2026.}
+  Acesso em: 6 mar. 2026.}
 
 \bibitem[Robertson et al. 2019]{robertson2019feijaoson2019}
 \abntrefinfo{Robertson et al.}{ROBERTSON et al.}{2019}
@@ -941,6 +962,12 @@ Dispon{\'\i}vel em:
 Brumadinho, Minas Gerais, Brasil, 2019. Dispon{\'\i}vel em:
   \url{https://bdrb1investigationstacc.z15.web.core.windows.net/assets/Feijao-Dam-I-Expert-Panel-Report-ENG.pdf}.
   Acesso em: 10 mar. 2026.}
+
+\bibitem[Rocha et al. 2004]{rocha2004georisco}
+\abntrefinfo{Rocha et al.}{ROCHA et al.}{2004}
+{ROCHA, R. S.~d. et al. Geotechnical data management system of transpetro pipe
+  routes – georisco. In:  \emph{Proceedings of IPC 2004}. Calgary, Canada:
+  ASME, 2004. p. 1--12.}
 
 \bibitem[{RST INSTRUMENTS} 2022]{rstinstruments2022tailings}
 \abntrefinfo{{RST INSTRUMENTS}}{{RST INSTRUMENTS}}{2022}
@@ -1000,11 +1027,11 @@ Dispon{\'\i}vel em:
   Fundação Instituto de Geotécnica do Município do Rio de Janeiro, 2025.
 Dispon{\'\i}vel em:
   \url{https://www.sistema-alerta-rio.com.br/previsao-do-tempo/termosmet/}.
-  Acesso em: 02 jul. 2025.}
+  Acesso em: 2 jul. 2025.}
 
 \bibitem[{Sistema ESO} 2021]{sistemaeso2021avaliacao}
 \abntrefinfo{{Sistema ESO}}{{Sistema ESO}}{2021a}
-{{Sistema ESO}. \emph{Avaliação de riscos no PGR}. 2021.
+{{Sistema ESO}. \emph{Avaliação de riscos no PGR}. 2021. Sistema ESO Blog.
 Dispon{\'\i}vel em:
   \url{https://sistemaeso.com.br/blog/seguranca-no-trabalho/avaliacao-de-riscos-no-pgr}.
   Acesso em: 22 maio 2025.}
@@ -1012,6 +1039,7 @@ Dispon{\'\i}vel em:
 \bibitem[{Sistema ESO} 2021]{sistemaeso2021matriz}
 \abntrefinfo{{Sistema ESO}}{{Sistema ESO}}{2021b}
 {{Sistema ESO}. \emph{O que é matriz de risco e qual usar no PGR}. 2021.
+  Sistema ESO Blog.
 Dispon{\'\i}vel em:
   \url{https://sistemaeso.com.br/blog/seguranca-no-trabalho/o-que-e-matriz-de-risco-e-qual-usar-no-pgr}.
   Acesso em: 22 maio 2025.}
@@ -1029,11 +1057,12 @@ Dispon{\'\i}vel em:
 {SOMMERVILLE, I. \emph{Engenharia de Software}. 9. ed. São Paulo: Pearson
   Prentice Hall, 2011. Dispon{\'\i}vel em:
   \url{https://www.facom.ufu.br/~william/Disciplinas\%202018-2/BSI-GSI030-EngenhariaSoftware/Livro/engenhariaSoftwareSommerville.pdf}.
-  Acesso em: 02 jul. 2025.}
+  Acesso em: 2 jul. 2025.}
 
 \bibitem[STOCKS 2019]{stocks2019tailings}
 \abntrefinfo{STOCKS}{STOCKS}{2019}
 {STOCKS, C. \emph{Tailings dam failures – can we minimise the risks?} 2019.
+  Water Power Magazine.
 Dispon{\'\i}vel em:
   \url{https://www.waterpowermagazine.com/analysis/tailings-dam-failures-can-we-minimise-the-risks-7217097/?cf-view}.
   Acesso em: 12 jun. 2025.}
@@ -1111,8 +1140,8 @@ Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/sobre-barragens-e-rejeitos}.
 \bibitem[{Vale S.A.} 2026]{vale2026glossario}
 \abntrefinfo{{Vale S.A.}}{{Vale S.A.}}{2026}
 {{Vale S.A.} \emph{Glossário/{FAQ}}. 2026.
-  \url{https://vale.com/pt/esg/glossario-e-faq}.
-Acesso em: 30 ago. 2026.}
+Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/glossario-e-faq}. Acesso em:
+  30 ago. 2026.}
 
 \bibitem[Victorino et al. 2003]{victorino2003piezometro}
 \abntrefinfo{Victorino et al.}{VICTORINO et al.}{2003}

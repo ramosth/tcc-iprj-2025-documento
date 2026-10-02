@@ -179,7 +179,11 @@ propostos os seguintes aprimoramentos para trabalhos futuros:
   identificado por um código de ponto no \textit{payload} enviado ao
   \textit{backend}. O modelo de risco passaria a calcular um índice
   por ponto e um índice agregado para a estrutura como um todo,
-  reduzindo a limitação inerente ao ponto único de medição.
+  reduzindo a limitação inerente ao ponto único de medição. Esse
+  modelo de rede distribuída já é empregado, por exemplo, pelo sistema
+  GeoRisco da TRANSPETRO, que centraliza as leituras de centenas de
+  instrumentos geotécnicos distribuídos por dezenas de pontos ao longo
+  de suas faixas de dutos \cite{rocha2004georisco}.
 
   \item \textbf{Validação empírica dos pesos do modelo.}
   Submeter o modelo de sete variáveis a processo de calibração
@@ -196,7 +200,11 @@ propostos os seguintes aprimoramentos para trabalhos futuros:
   de alerta evoluir de AMARELO para VERMELHO, sem exigir que o
   painel \textit{web} esteja aberto. Em cenários operacionais
   reais, a presença contínua do responsável diante da interface não
-  pode ser garantida.
+  pode ser garantida. Precedente semelhante já opera na indústria de
+  dutos: o programa GeoAlerta, do sistema GeoRisco da TRANSPETRO,
+  dispara automaticamente alertas por e-mail sempre que uma leitura
+  importada ultrapassa limiares críticos cadastrados no banco de dados
+  \cite{rocha2004georisco}.
 
   \item \textbf{Substituição do sensor por instrumento certificado.}
   Avaliar a integração com sensores geotécnicos com certificação

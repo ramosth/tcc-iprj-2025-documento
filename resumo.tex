@@ -66,12 +66,11 @@ de risco por meio da soma ponderada de sete variáveis que expressam
 condições geotécnicas --- umidade do solo e taxa de variação da
 umidade --- e meteorológicas --- precipitações acumuladas em três
 janelas temporais, previsão pluviométrica e queda de pressão
-atmosférica. O limiar de 24 horas apoia-se em \citeonline{rico2008mine}
-e nos critérios do Sistema Alerta Rio \cite{sistemaalertario2025}, o de
-30 dias foi definido a partir do histórico da estação D6594, e os
-demais limiares e pesos foram arbitrados pela autora. O modelo inclui
+atmosférica. O modelo inclui
 ainda um mecanismo de amplificação, ativado quando a saturação elevada
-do solo coincide com previsão de chuva moderada ou superior. A plataforma de \textit{software}
+do solo coincide com previsão de chuva moderada ou superior. 
+% TODO: Inserir referência para o mecanismo de amplificação.
+A plataforma de \textit{software}
 adota arquitetura cliente-servidor em três camadas: \textit{firmware}
 embarcado, \textit{backend} desenvolvido em Node.js com TypeScript e
 banco de dados PostgreSQL com extensão TimescaleDB para séries temporais,
