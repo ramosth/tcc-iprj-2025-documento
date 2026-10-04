@@ -56,7 +56,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'field_info' (item size: 4) to 15488 items.
+Reallocating 'field_info' (item size: 4) to 17075 items.
 Database file #1: abntex2-options.bib
 Database file #2: tcc.bib
 Warning--I didn't find a database entry for "abnt-emphasize=italic"
@@ -66,50 +66,59 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
 Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Warning--campo year vazio ou faltando em ams1117_datasheet
+Warning--campo year vazio ou faltando em bto_ncr18650_pcm
+Warning--campo year vazio ou faltando em energizer522
+Warning--campo year vazio ou faltando em espressif_esp32
+Warning--campo year vazio ou faltando em usinainfo_led_azul
+Warning--campo year vazio ou faltando em wokwi_esp32wifi
+Warning--campo year vazio ou faltando em wokwi_buzzer
+Warning--campo year vazio ou faltando em wokwi_potentiometer
+Warning--campo year vazio ou faltando em wokwi_slideswitch
 +---------------------------------------------------------+
 | Estilo bibliográfico abntex2-alf.bst versão v-1.9.7           |
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 149 entries,
+You've used 172 entries,
             6711 wiz_defined-function locations,
-            2037 strings with 41624 characters,
-and the built_in function-call counts, 318475 in all, are:
-= -- 42759
-> -- 2671
-< -- 11781
-+ -- 12726
-- -- 859
-* -- 18186
-:= -- 37521
-add.period$ -- 778
-call.type$ -- 150
-change.case$ -- 1076
-chr.to.int$ -- 194
-cite$ -- 145
-duplicate$ -- 39436
-empty$ -- 8584
-format.name$ -- 4022
-if$ -- 58484
-int.to.chr$ -- 12
+            2151 strings with 46759 characters,
+and the built_in function-call counts, 364230 in all, are:
+= -- 48741
+> -- 3142
+< -- 13405
++ -- 14503
+- -- 1007
+* -- 20817
+:= -- 42942
+add.period$ -- 893
+call.type$ -- 173
+change.case$ -- 1259
+chr.to.int$ -- 227
+cite$ -- 177
+duplicate$ -- 44923
+empty$ -- 9882
+format.name$ -- 4727
+if$ -- 67035
+int.to.chr$ -- 14
 int.to.str$ -- 3
-missing$ -- 2442
-newline$ -- 758
-num.names$ -- 726
-pop$ -- 2808
+missing$ -- 2810
+newline$ -- 877
+num.names$ -- 841
+pop$ -- 3241
 preamble$ -- 1
-purify$ -- 480
+purify$ -- 558
 quote$ -- 0
-skip$ -- 39847
+skip$ -- 45464
 stack$ -- 1
-substring$ -- 14694
-swap$ -- 13711
-text.length$ -- 162
+substring$ -- 16740
+swap$ -- 15637
+text.length$ -- 196
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 56
-warning$ -- 0
-while$ -- 1034
+warning$ -- 9
+while$ -- 1199
 width$ -- 0
-write$ -- 2368
-(There were 3 warnings)
+write$ -- 2730
+(There were 12 warnings)

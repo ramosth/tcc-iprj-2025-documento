@@ -6,13 +6,12 @@
 \label{sec:objetivo-geral}
 % -------------------------------------------------------------
 
-Desenvolver um sistema automatizado de monitoramento e alerta para
-barragens de rejeitos de mineração, baseado em tecnologia IoT, capaz
-de mensurar continuamente a umidade do solo, integrar dados
-meteorológicos obtidos por meio de APIs externas, calcular um índice
-de risco geotécnico em tempo real e disponibilizar as informações em
-uma plataforma \textit{web} de monitoramento, contribuindo para a
-prevenção de acidentes em estruturas de contenção de rejeitos.
+Desenvolver um sistema de monitoramento e alerta para barragens de
+rejeitos de mineração, baseado em Internet das Coisas (IoT), que
+combine a saturação do solo, obtida no local, com a chuva observada e
+prevista, e emita alertas em três níveis, de forma local e remota, com
+alimentação redundante por bateria, como apoio ao aviso antecipado à
+população a jusante.
 
 % -------------------------------------------------------------
 \section{Objetivos Específicos}
@@ -23,38 +22,26 @@ Para alcançar o objetivo geral, foram estabelecidos os objetivos específicos:
 
 \begin{enumerate}[label=\alph*)]
 
-    \item Desenvolver um protótipo de \textit{hardware} embarcado
-    baseado no microcontrolador ESP8266 NodeMCU, integrado a sensor
-    higrômetro para medição contínua da umidade do solo, com
-    sinalização visual por LEDs e sonora por \textit{buzzer}
-    proporcional ao nível de risco identificado;
+    \item Definir um modelo de alerta com dois limiares, que combine a
+    saturação relativa do solo ($S$), obtida pelo higrômetro, e a chuva
+    de 72~h ($P_{72}$), formada por 48~h observadas (BNDMET) e 24~h
+    previstas (OpenWeatherMap) \cite{mirus2018developing};
 
-    \item Implementar a integração com as APIs meteorológicas
-    BNDMET/DECEA e OpenWeatherMap para obtenção de dados de
-    precipitação histórica acumulada nas janelas de 24 horas, 7 dias
-    e 30 dias, e de previsão pluviométrica para as próximas 24 horas;
+    \item Construir o protótipo físico com ESP8266 NodeMCU e a simulação
+    no Wokwi com ESP32, com alerta local por LEDs e \textit{buzzer};
 
-    \item Formular e implementar um modelo de avaliação de risco
-    integrado composto por sete variáveis ponderadas, que expressam
-    condições geotécnicas e meteorológicas, com mecanismo de
-    amplificação ativado quando o solo apresenta saturação elevada
-    concomitante a previsão de chuva moderada ou superior;
+    \item Dimensionar por cálculo a bateria de redundância de energia e
+    demonstrar o seu funcionamento na simulação;
 
-    \item Desenvolver o \textit{backend} do sistema com banco de dados
-    de séries temporais, expondo uma API RESTful responsável pelo
-    recebimento, validação e persistência das leituras enviadas
-    pelo dispositivo embarcado;
+    \item Desenvolver a plataforma \textit{web}, com página inicial
+    (\textit{landing page}), cadastro de moradores, painel do
+    administrador e envio de e-mail de alerta (verde, amarelo ou
+    vermelho) sobre a necessidade de deslocamento;
 
-    \item Implementar uma interface \textit{web} de monitoramento em
-    tempo real que permita visualizar o histórico de leituras, os
-    níveis de alerta ativos e os dados meteorológicos integrados,
-    além de gerenciar os usuários cadastrados para recebimento de
-    notificações;
+    \item Elaborar os fluxogramas e os diagramas de casos de uso e de
+    sequência do sistema;
 
-    \item Estabelecer um sistema de envio de alertas por e-mail,
-    acionado manualmente pelo administrador do sistema, aos usuários
-    cadastrados, com formulário de composição da mensagem, seleção
-    de destinatários por perfil e registro de auditoria de cada
-    disparo.
+    \item Validar o sistema por cenários de teste que combinem níveis
+    de saturação, de chuva e de energia.
 
 \end{enumerate}

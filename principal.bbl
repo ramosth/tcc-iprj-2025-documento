@@ -14,6 +14,35 @@ Rio de Janeiro, 2017. Dispon{\'\i}vel em:
   \url{https://blogdopedlowski.com/wp-content/uploads/2019/03/nbr13028-2018.pdf}.
   Acesso em: 19 maio 2025.}
 
+\bibitem[{Adafruit Industries} 2024]{adafruit_powerboost1000c}
+\abntrefinfo{{Adafruit Industries}}{{Adafruit Industries}}{2024}
+{{Adafruit Industries}. \emph{Adafruit {PowerBoost} {1000C}: guia do produto}.
+  2024.
+Dispon{\'\i}vel em:
+  \url{https://learn.adafruit.com/adafruit-powerboost-1000c-load-share-usb-charge-boost}.
+  Acesso em: 1 out. 2026.}
+
+\bibitem[{Advanced Monolithic Systems}]{ams1117_datasheet}
+\abntrefinfo{{Advanced Monolithic Systems}}{{Advanced Monolithic Systems}}{}
+{{Advanced Monolithic Systems}. \emph{{AMS1117-3.3}: 1A low dropout voltage
+  regulator -- datasheet}.
+Dispon{\'\i}vel em:
+  \url{https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/8122/AMS11173.3SOT223.pdf}.
+  Acesso em: 1 out. 2026.}
+
+\bibitem[{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA} 2024]{aneel2024nt90}
+\abntrefinfo{{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA}}{{AGÊNCIA NACIONAL DE
+  ENERGIA ELÉTRICA}}{2024}
+{{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA}. \emph{Nota Técnica n.
+  90/2024-{STD-SFT-SFF/ANEEL}: avaliação das contribuições recebidas
+  durante a Tomada de Subsídios 002/2024 e proposta de aprimoramentos
+  regulatórios associados ao aumento da resiliência do sistema de
+  distribuição e de transmissão a eventos climáticos extremos}. Brasília,
+  DF: [s.n.], 2024.
+Dispon{\'\i}vel em:
+  \url{https://static.poder360.com.br/2024/10/nota-tecnica-aneel-planos-cotingencia.pdf}.
+  Acesso em: 2 out. 2026. Processo 48500.006650/2023-59, 18 out. 2024.}
+
 \bibitem[{AGÊNCIA NACIONAL DE MINERAÇÃO} 2019]{anm2019relatorio}
 \abntrefinfo{{AGÊNCIA NACIONAL DE MINERAÇÃO}}{{AGÊNCIA NACIONAL DE
   MINERAÇÃO}}{2019}
@@ -31,6 +60,16 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/barragens/legislacao}. Acesso em:
   31 maio 2025.}
+
+\bibitem[{AGÊNCIA NACIONAL DE ÁGUAS} 2016]{ana2016manualpae}
+\abntrefinfo{{AGÊNCIA NACIONAL DE ÁGUAS}}{{AGÊNCIA NACIONAL DE
+  ÁGUAS}}{2016}
+{{AGÊNCIA NACIONAL DE ÁGUAS}. \emph{Manual do empreendedor sobre segurança
+  de barragens}: volume {IV}: guia de orientação e formulários do plano de
+  ação de emergência -- {PAE}.
+Brasília, DF, 2016. Dispon{\'\i}vel em:
+  \url{https://www.defesacivil.pr.gov.br/sites/defesa-civil/arquivos\_restritos/files/documento/2020-01/volume\_iv.pdf}.
+  Acesso em: 2 out. 2026.}
 
 \bibitem[{Agência Nacional de Mineração} 2025]{anm2025boletim}
 \abntrefinfo{{Agência Nacional de Mineração}}{{Agência Nacional de
@@ -150,6 +189,15 @@ Dispon{\'\i}vel em: \url{https://www.bbc.com/portuguese/articles/c873lwnyl75o}.
 Dispon{\'\i}vel em: \url{https://br.bentley.com/solutions/dam-monitoring/}.
   Acesso em: 31 maio 2025.}
 
+\bibitem[Bogaard e Greco 2018]{bogaard2018hydrological}
+\abntrefinfo{Bogaard e Greco}{BOGAARD; GRECO}{2018}
+{BOGAARD, T.; GRECO, R. Invited perspectives: hydrological perspectives on
+  precipitation intensity-duration thresholds for landslide initiation:
+  proposing hydro-meteorological thresholds.
+\emph{Natural Hazards and Earth System Sciences}, v.~18, n.~1, p. 31--39, 2018.
+Dispon{\'\i}vel em: \url{https://nhess.copernicus.org/articles/18/31/2018/}.
+  Acesso em: 2 out. 2026.}
+
 \bibitem[{BRASIL} 1934]{brasil1934b}
 \abntrefinfo{{BRASIL}}{{BRASIL}}{1934}
 {{BRASIL}. \emph{Decreto Federal nº 24.642, de 10 de julho de 1934}: Decreta o
@@ -253,6 +301,13 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://www.gov.br/planalto/pt-br/novo-acordo-do-rio-doce/conheca-a-linha-do-tempo-da-tragedia-de-mariana-mg}.
   Acesso em: 22 maio 2025.}
+
+\bibitem[{BTO}]{bto_ncr18650_pcm}
+\abntrefinfo{{BTO}}{{BTO}}{}
+{{BTO}. \emph{Product data sheet: {NCR18650-340PCM} (célula {NCR18650B} com
+  circuito de proteção)}.
+Dispon{\'\i}vel em: \url{https://static.rapidonline.com/pdf/12-5776\_v1.pdf}.
+  Acesso em: 1 out. 2026.}
 
 \bibitem[Carneiro 2018]{carneiro2018}
 \abntrefinfo{Carneiro}{CARNEIRO}{2018}
@@ -369,6 +424,13 @@ Dispon{\'\i}vel em:
   \url{https://scicrop.com/2024/07/03/transformacao-digital-na-mineracao-a-nova-era-da-eficiencia-e-sustentabilidade/}.
   Acesso em: 24 maio 2025.}
 
+\bibitem[{DFRobot} 2017]{dfrobot_sen0114}
+\abntrefinfo{{DFRobot}}{{DFRobot}}{2017}
+{{DFRobot}. \emph{Moisture Sensor (SKU:SEN0114)}. 2017.
+Dispon{\'\i}vel em:
+  \url{https://www.datasheethub.com/wp-content/uploads/2022/08/SEN0114\_Web.pdf}.
+  Acesso em: 1 out. 2026.}
+
 \bibitem[Domingues 2022]{domingues2022}
 \abntrefinfo{Domingues}{DOMINGUES}{2022}
 {DOMINGUES, G.~F. História da mineração no território brasileiro: uma
@@ -412,6 +474,20 @@ Dispon{\'\i}vel em: \url{https://earthworks.org/resources/safety-first/}.
 Dispon{\'\i}vel em:
   \url{https://www.eletrogate.com/modulo-sensor-de-umidade-de-solo}. Acesso em:
   20 mar. 2026.}
+
+\bibitem[{Energizer}]{energizer522}
+\abntrefinfo{{Energizer}}{{Energizer}}{}
+{{Energizer}. \emph{Energizer 522: product datasheet (9 volt alkaline, Form No.
+  522GL1019)}.
+Dispon{\'\i}vel em: \url{https://www.farnell.com/datasheets/2934224.pdf}.
+  Acesso em: 2 out. 2026.}
+
+\bibitem[{Espressif Systems}]{espressif_esp32}
+\abntrefinfo{{Espressif Systems}}{{Espressif Systems}}{}
+{{Espressif Systems}. \emph{{ESP32} Series Datasheet, versão 5.3}.
+Dispon{\'\i}vel em:
+  \url{https://www.espressif.com/sites/default/files/documentation/esp32\_datasheet\_en.pdf}.
+  Acesso em: 2 out. 2026.}
 
 \bibitem[{Espressif Systems} 2013]{espressif_esp8266_spec2013}
 \abntrefinfo{{Espressif Systems}}{{Espressif Systems}}{2013}
@@ -507,6 +583,15 @@ Dispon{\'\i}vel em:
   \url{https://www.pimentacultural.com/wp-content/uploads/2024/05/eBook\_Rejeitos-minerio-Brasil.pdf}.
   Acesso em: 7 maio 2025.}
 
+\bibitem[Freitas et al. 2021]{freitas2021analise}
+\abntrefinfo{Freitas et al.}{FREITAS et al.}{2021}
+{FREITAS, E. d.~S. et al. Análise da correlação da precipitação entre
+  pluviógrafos em diferentes escalas temporais. In:  ABRHIDRO. \emph{Anais do
+  XXIV Simpósio Brasileiro de Recursos Hídricos}. 2021. p. 1--10.
+  Dispon{\'\i}vel em:
+  \url{https://files.abrhidro.org.br/Eventos/Trabalhos/142/XXIV-SBRH0237-2-0-20210807-083409.pdf}.
+  Acesso em: 2 out. 2026.}
+
 \bibitem[Freitas 2019]{freitas2019dissertacao}
 \abntrefinfo{Freitas}{FREITAS}{2019}
 {FREITAS, R. \emph{Dissertação de 2010 na {Ufop} apontava possibilidade de
@@ -537,6 +622,16 @@ Dispon{\'\i}vel em:
   \url{https://www.geoscan.com.br/sistema-de-monitoramento-de-barragem/}.
   Acesso em: 31 maio 2025.}
 
+\bibitem[{GOIÁS. Corpo de Bombeiros Militar} 2022]{cbmgo2022nt19}
+\abntrefinfo{{GOIÁS. Corpo de Bombeiros Militar}}{{GOIÁS. Corpo de Bombeiros
+  Militar}}{2022}
+{{GOIÁS. Corpo de Bombeiros Militar}. \emph{Norma Técnica 19/2022: sistemas
+  de detecção e alarme de incêndio}.
+Goiânia, 2022. Aprovada pela Portaria n. 426, de 24 ago. 2022. Dispon{\'\i}vel
+  em:
+  \url{https://www.bombeiros.go.gov.br/wp-content/uploads/2021/03/NT-19\_2022\_-\_Sistema\_de\_deteccao\_e\_alarme\_de\_incendio.pdf}.
+  Acesso em: 2 out. 2026.}
+
 \bibitem[{GREENPEACE BRASIL} 2016]{greenpeace2016valor}
 \abntrefinfo{{GREENPEACE BRASIL}}{{GREENPEACE BRASIL}}{2016}
 {{GREENPEACE BRASIL}. \emph{Qual é o valor de um desastre ambiental no
@@ -565,6 +660,14 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://brasilescola.uol.com.br/biologia/rompimento-barragem-brumadinho.htm}.
   Acesso em: 23 set. 2026.}
+
+\bibitem[Hammerberg 2021]{hammerberg2021calculation}
+\abntrefinfo{Hammerberg}{HAMMERBERG}{2021}
+{HAMMERBERG, T.~P. \emph{Calculation crunching: fire alarm math you should
+  know}. 2021. Electrical Contractor Magazine.
+Dispon{\'\i}vel em:
+  \url{https://www.ecmag.com/magazine/articles/article-detail/integrated-systems-calculation-crunching-fire-alarm-math-you-should-know}.
+  Acesso em: 2 out. 2026.}
 
 \bibitem[Hartman e Mutmansky 2019]{jr2019}
 \abntrefinfo{Hartman e Mutmansky}{HARTMAN; MUTMANSKY}{2019}
@@ -730,14 +833,6 @@ Dispon{\'\i}vel em:
   \url{https://www.researchgate.net/publication/304011831\_Metodologia\_probabilistica\_de\_previsao\_de\_brecha\_de\_ruptura\_de\_barragensProbabilistic\_approach\_to\_dam\_breach\_modeling}.
   Acesso em: 23 set. 2026.}
 
-\bibitem[Larman 2007]{larman2007utilizando}
-\abntrefinfo{Larman}{LARMAN}{2007}
-{LARMAN, C. \emph{Utilizando UML e padrões: uma introdução à análise e ao
-  projeto orientados a objetos}. 3. ed. Porto Alegre: Bookman, 2007.
-  Dispon{\'\i}vel em:
-  \url{https://www.kufunda.net/publicdocs/Utilizando\%20UML\%20e\%20padr\%C3\%B5es\%20(Craig\%20Larman).pdf}.
-  Acesso em: 2 jul. 2025.}
-
 \bibitem[Leão e Rabelo 2023]{leao2023}
 \abntrefinfo{Leão e Rabelo}{LEãO; RABELO}{2023}
 {LEãO, R.; RABELO, R. \emph{A Extensão da Cadeia Produtiva da Economia
@@ -789,6 +884,14 @@ Dispon{\'\i}vel em:
   \url{https://www.teses.usp.br/teses/disponiveis/3/3134/tde-31032008-154124/publico/DissertacaoWillianGladstoneMachado.pdf}.
   Acesso em: 21 jun. 2025.}
 
+\bibitem[Mendes et al. 2020]{mendes2020proposicao}
+\abntrefinfo{Mendes et al.}{MENDES et al.}{2020}
+{MENDES, R.~M. et al. Proposição de limiares críticos ambientais para uso em
+  sistema de alertas de deslizamentos.
+\emph{Revista do Departamento de Geografia}, v.~40, p. 61--77, 2020.
+Dispon{\'\i}vel em: \url{https://www.revistas.usp.br/rdg/article/view/165390}.
+  Acesso em: 2 out. 2026.}
+
 \bibitem[{Mercado Livre} 2025]{mercadolivre_esp8266}
 \abntrefinfo{{Mercado Livre}}{{Mercado Livre}}{2025}
 {{Mercado Livre}. \emph{NodeMCU {V3} {ESP8266} {ESP-12E} {USB} Tipo {C} com
@@ -812,6 +915,25 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://metsul.com/governo-local-rejeitou-sistema-de-alerta-que-evitaria-tragedia-no-texas/}.
   Acesso em: 26 mar. 2026.}
+
+\bibitem[{Microchip Technology} 2009]{microchip_mcp73871}
+\abntrefinfo{{Microchip Technology}}{{Microchip Technology}}{2009}
+{{Microchip Technology}. \emph{{MCP73871}: stand-alone system load sharing and
+  {Li-Ion}/{Li-Polymer} battery charge management controller, {DS22090B}}.
+  2009.
+Dispon{\'\i}vel em:
+  \url{https://cdn-shop.adafruit.com/datasheets/MCP73871.pdf}. Acesso em: 1
+  out. 2026.}
+
+\bibitem[{MINAS GERAIS. Corpo de Bombeiros Militar} 2017]{cbmmg2017it14}
+\abntrefinfo{{MINAS GERAIS. Corpo de Bombeiros Militar}}{{MINAS GERAIS. Corpo
+  de Bombeiros Militar}}{2017}
+{{MINAS GERAIS. Corpo de Bombeiros Militar}. \emph{Instrução Técnica n. 14:
+  sistemas de detecção e alarme de incêndio}.
+2. ed. Belo Horizonte, 2017. Aprovada pela Portaria n. 28, de 29 abr. 2017;
+  alterada pela Portaria n. 61, de 28 dez. 2020. Dispon{\'\i}vel em:
+  \url{https://www.bombeiros.mg.gov.br/storage/files/shares/intrucoestecnicas/IT\_14\_2a\_Ed\_portaria\_61\_errata\_22.pdf}.
+  Acesso em: 2 out. 2026.}
 
 \bibitem[{MINAS GERAIS. Governo do Estado} 2024]{minasgerais2024historico}
 \abntrefinfo{{MINAS GERAIS. Governo do Estado}}{{MINAS GERAIS. Governo do
@@ -855,6 +977,14 @@ Dispon{\'\i}vel em:
 Brasília, DF, 2018. Dispon{\'\i}vel em:
   \url{https://www.gov.br/transportes/pt-br/centrais-de-conteudo/iso-31000-de-2018-gestao-de-riscos-pdf}.
   Acesso em: 24 maio 2025.}
+
+\bibitem[Mirus et al. 2018]{mirus2018developing}
+\abntrefinfo{Mirus et al.}{MIRUS et al.}{2018}
+{MIRUS, B.~B.; MORPHEW, M.~D.; SMITH, J.~B. Developing hydro-meteorological
+  thresholds for shallow landslide initiation and early warning.
+\emph{Water}, v.~10, n.~9, p.~1274, 2018.
+Dispon{\'\i}vel em: \url{https://www.mdpi.com/2073-4441/10/9/1274}. Acesso em:
+  2 out. 2026.}
 
 \bibitem[Modelli 2024]{modelli2024brumadinho}
 \abntrefinfo{Modelli}{MODELLI}{2024}
@@ -909,12 +1039,13 @@ Dispon{\'\i}vel em:
   \url{https://oglobo.globo.com/mundo/noticia/2025/07/07/enchentes-no-texas-falta-de-alerta-antes-de-tragedia-movem-criticas-em-meio-a-buscas-por-sobreviventes.ghtml}.
   Acesso em: 26 mar. 2026.}
 
-\bibitem[{OWASP Foundation} 2021]{owasp2021}
-\abntrefinfo{{OWASP Foundation}}{{OWASP Foundation}}{2021}
-{{OWASP Foundation}. \emph{Authentication Cheat Sheet}. 2021.
+\bibitem[{Panasonic} 2012]{panasonic_ncr18650b}
+\abntrefinfo{{Panasonic}}{{Panasonic}}{2012}
+{{Panasonic}. \emph{{NCR18650B} -- Lithium Ion (\textit{datasheet}, versão
+  13.11 R1)}. 2012.
 Dispon{\'\i}vel em:
-  \url{https://cheatsheetseries.owasp.org/cheatsheets/Authentication\_Cheat\_Sheet.html}.
-  Acesso em: 25 mar. 2025.}
+  \url{https://e2e.ti.com/cfs-file/\_\_key/communityserver-discussions-components-files/196/Panasonic-NCR18650B-datasheet.pdf}.
+  Acesso em: 1 out. 2026.}
 
 \bibitem[{PROJETO MANUELZÃO} 2015]{projetomanuelzao2015}
 \abntrefinfo{{PROJETO MANUELZÃO}}{{PROJETO MANUELZÃO}}{2015}
@@ -923,6 +1054,13 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://manuelzao.ufmg.br/barragem-que-se-rompeu-em-mariana-tinha-20-vezes-o-volume-registrado-pela-feam/}.
   Acesso em: 26 maio 2025.}
+
+\bibitem[{Quick-Teck} 2015]{quickteck_tmb12a03}
+\abntrefinfo{{Quick-Teck}}{{Quick-Teck}}{2015}
+{{Quick-Teck}. \emph{{TMB12A} Buzzer Datasheet (modelo {TMB-12A03})}. 2015.
+Dispon{\'\i}vel em:
+  \url{https://www.alldatasheet.net/datasheet-pdf/view/2249837/ETC/TMB-12A03.html}.
+  Acesso em: 1 out. 2026.}
 
 \bibitem[Quispe et al. 2018]{quispe2018instrumentacao}
 \abntrefinfo{Quispe et al.}{QUISPE et al.}{2018}
@@ -945,6 +1083,12 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://ramjacktech.com/our-expertise/monitor/tailings-dam-monitoring/}.
   Acesso em: 11 jun. 2025.}
+
+\bibitem[Reiswig 2023]{reiswig2023nfpa72}
+\abntrefinfo{Reiswig}{REISWIG}{2023}
+{REISWIG, R. \emph{5 things you need to know about the 2022 edition of {NFPA}
+  72}. 2023. Electronic Security Association (ESA).
+Dispon{\'\i}vel em: \url{https://esaweb.org/?p=27469}. Acesso em: 2 out. 2026.}
 
 \bibitem[Rico et al. 2008]{rico2008mine}
 \abntrefinfo{Rico et al.}{RICO et al.}{2008}
@@ -1082,6 +1226,13 @@ Dispon{\'\i}vel em:
   \url{https://www.tetratech.com/insights/mitigating-risks-for-tailings-dams-with-microseismic-technology/}.
   Acesso em: 11 jun. 2025.}
 
+\bibitem[{Texas Instruments} 2025]{ti_lm393}
+\abntrefinfo{{Texas Instruments}}{{Texas Instruments}}{2025}
+{{Texas Instruments}. \emph{{LMx93}, {LM2903x} dual comparators, {SLCS005AH}}.
+  2025.
+Dispon{\'\i}vel em: \url{https://www.ti.com/lit/ds/symlink/lm393.pdf}. Acesso
+  em: 2 out. 2026. Revisado em abr. 2025.}
+
 \bibitem[Thomé e Passini 2018]{thome2018}
 \abntrefinfo{Thomé e Passini}{THOMé; PASSINI}{2018}
 {THOMé, R.; PASSINI, M.~L. Barragens de rejeitos de mineração:
@@ -1092,13 +1243,6 @@ Dispon{\'\i}vel em:
   \url{https://saber.unioeste.br/index.php/csaemrevista/article/view/19480}.
   Acesso em: 14 jun. 2024.}
 
-\bibitem[{Timescale Inc.} 2024]{timescaledb2024}
-\abntrefinfo{{Timescale Inc.}}{{Timescale Inc.}}{2024}
-{{Timescale Inc.} \emph{TimescaleDB Documentation: Hypertables}. 2024.
-Dispon{\'\i}vel em:
-  \url{https://docs.timescale.com/use-timescale/latest/hypertables/}. Acesso
-  em: 24 mar. 2025.}
-
 \bibitem[{UNIVERSIDADE FEDERAL DO PARANÁ} 2021]{ufpr2021simepar}
 \abntrefinfo{{UNIVERSIDADE FEDERAL DO PARANÁ}}{{UNIVERSIDADE FEDERAL DO
   PARANÁ}}{2021}
@@ -1108,28 +1252,29 @@ Dispon{\'\i}vel em:
   \url{https://ufpr.br/simepar-faz-monitoramento-inteligente-das-aguas-com-tecnologia-iot/}.
   Acesso em: 31 maio 2025.}
 
-\bibitem[{Usinainfo} 2025]{usinainfo_buzzer}
-\abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025a}
-{{Usinainfo}. \emph{Buzzer passivo {5V} {PCB} 12mm -- modelo {BPA5}}. 2025.
+\bibitem[{Usinainfo}]{usinainfo_led_azul}
+\abntrefinfo{{Usinainfo}}{{Usinainfo}}{}
+{{Usinainfo}. \emph{{LED} azul 5mm difuso -- modelo {LAD5M} -- kit com 5
+  unidades}.
 Dispon{\'\i}vel em:
-  \url{https://www.usinainfo.com.br/buzzer/buzzer-passivo-5v-pci-12mm-4640.html}.
-  Acesso em: 20 mar. 2026.}
+  \url{https://www.usinainfo.com.br/leds-difuso/led-azul-5mm-difuso-kit-com-5-unidades-4404.html}.
+  Acesso em: 3 out. 2026.}
 
 \bibitem[{Usinainfo} 2025]{usinainfo_led_amarelo}
-\abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025b}
+\abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025a}
 {{Usinainfo}. \emph{{LED} amarelo 5mm difuso -- modelo {LA5MM} -- kit com 5
   unidades}. 2025.
 Dispon{\'\i}vel em:
-  \url{https://www.usinainfo.com.br/led-difuso/led-amarelo-5mm-difuso-kit-com-5-unidades-2978.html}.
-  Acesso em: 20 mar. 2026.}
+  \url{https://www.usinainfo.com.br/leds-difuso/led-amarelo-5mm-difuso-kit-com-5-unidades-2978.html}.
+  Acesso em: 3 out. 2026.}
 
 \bibitem[{Usinainfo} 2025]{usinainfo_led_vermelho}
-\abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025c}
+\abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025b}
 {{Usinainfo}. \emph{{LED} vermelho 5mm difuso -- modelo {LVMD5M} -- kit com 5
   unidades}. 2025.
 Dispon{\'\i}vel em:
-  \url{https://www.usinainfo.com.br/led-difuso/led-vermelho-5mm-difuso-kit-com-5-unidades-2984.html}.
-  Acesso em: 20 mar. 2026.}
+  \url{https://www.usinainfo.com.br/leds-difuso/led-vermelho-5mm-difuso-kit-com-5-unidades-2984.html}.
+  Acesso em: 3 out. 2026.}
 
 \bibitem[{Vale} 2024]{vale2024}
 \abntrefinfo{{Vale}}{{Vale}}{2024}
@@ -1179,6 +1324,46 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://periodicorease.pro.br/rease/article/view/11650}. Acesso em: 19
   maio 2025.}
+
+\bibitem[{WCH} 2013]{wch_ch340}
+\abntrefinfo{{WCH}}{{WCH}}{2013}
+{{WCH}. \emph{{CH340} Datasheet -- {USB} to serial chip}. 2013.
+Dispon{\'\i}vel em:
+  \url{https://cdn.sparkfun.com/datasheets/Dev/Arduino/Other/CH340DS1.PDF}.
+  Acesso em: 1 out. 2026.}
+
+\bibitem[Wicki et al. 2020]{wicki2020assessing}
+\abntrefinfo{Wicki et al.}{WICKI et al.}{2020}
+{WICKI, A. et al. Assessing the potential of soil moisture measurements for
+  regional landslide early warning.
+\emph{Landslides}, v.~17, p. 1881--1896, 2020.
+Dispon{\'\i}vel em:
+  \url{https://link.springer.com/article/10.1007/s10346-020-01400-y}. Acesso
+  em: 2 out. 2026.}
+
+\bibitem[{Wokwi}]{wokwi_esp32wifi}
+\abntrefinfo{{Wokwi}}{{Wokwi}}{a}
+{{Wokwi}. \emph{{ESP32} {WiFi} networking}.
+Dispon{\'\i}vel em: \url{https://docs.wokwi.com/guides/esp32-wifi}. Acesso em:
+  3 out. 2026.}
+
+\bibitem[{Wokwi}]{wokwi_buzzer}
+\abntrefinfo{{Wokwi}}{{Wokwi}}{b}
+{{Wokwi}. \emph{wokwi-buzzer reference}.
+Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-buzzer}. Acesso em:
+  3 out. 2026.}
+
+\bibitem[{Wokwi}]{wokwi_potentiometer}
+\abntrefinfo{{Wokwi}}{{Wokwi}}{c}
+{{Wokwi}. \emph{wokwi-potentiometer reference}.
+Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-potentiometer}.
+  Acesso em: 3 out. 2026.}
+
+\bibitem[{Wokwi}]{wokwi_slideswitch}
+\abntrefinfo{{Wokwi}}{{Wokwi}}{d}
+{{Wokwi}. \emph{wokwi-slide-switch reference}.
+Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-slide-switch}.
+  Acesso em: 1 out. 2026.}
 
 \bibitem[{World Meteorological Organization} 2014]{wmo2014guide}
 \abntrefinfo{{World Meteorological Organization}}{{World Meteorological

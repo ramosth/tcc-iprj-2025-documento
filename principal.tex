@@ -26,7 +26,8 @@
 
 % Pacotes
 %% Sumário
-%\usepackage{tocloft}
+\usepackage{tocloft}
+\usepackage{newfloat}
 \setlength{\cftbeforechapterskip}{0pt}
 
 
@@ -45,6 +46,13 @@
     abnt-upper-cite=no      % DESATIVA caixa alta nas citações
 ]{abntex2cite}
 \usepackage{hyperref}
+
+\DeclareFloatingEnvironment[
+    fileext=loq,
+    listname={Lista de Quadros},
+    name={Quadro},
+    placement=htb
+]{quadro}
 
 %\usepackage[hyphenbreaks]{breakurl}
 %\usepackage[num,overcite,'-emphasize=em]{abntex2cite}
@@ -91,6 +99,7 @@
 
 \usepackage{url}
 \usepackage{breakurl}
+
 \renewcommand{\UrlLeft}{}  % Remove o símbolo de abertura (por padrão é `<`)
 \renewcommand{\UrlRight}{} % Remove o símbolo de fechamento (por padrão é `>`)
 
@@ -163,6 +172,10 @@
 	
 	 % Elementos textuais
 	\textual
+	% Define o comando \listofquadros* compatível com abnTeX2
+	\renewcommand{\listofquadros*}{\listof{quadro}{Lista de Quadros}}
+	\listofquadros*
+	\cleardoublepage
 	\include{introducao}
 	\include{cap1}
 	\include{cap2}
