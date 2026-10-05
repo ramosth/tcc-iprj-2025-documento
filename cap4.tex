@@ -919,9 +919,26 @@ redundante e não foram montados no protótipo físico. A quantidade de
 células resulta do cálculo da \autoref{subsec:energia}.
 
 A bateria é formada por três células de íon-lítio Panasonic NCR18650B
-ligadas em paralelo, cada uma em um suporte individual. Cada célula tem
+(\autoref{fig:celula_ncr18650b}) ligadas em paralelo, cada uma em um
+suporte individual (\autoref{fig:suporte_18650}). Cada célula tem
 capacidade nominal mínima de 3200\,mAh e tensão nominal de 3,6\,V
 \cite{panasonic_ncr18650b}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/image66_celula_ncr18650b.png}
+    \caption{Célula de íon-lítio Panasonic NCR18650B com circuito de proteção e terminal positivo em botão}
+    \label{fig:celula_ncr18650b}
+    \fonte{\citeonline{taklite_ncr18650b_pcb}.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/image67_suporte_18650.png}
+    \caption{Suporte para uma célula 18650, com fios de ligação}
+    \label{fig:suporte_18650}
+    \fonte{\citeonline{usinainfo_suporte_18650}.}
+\end{figure}
 
 Foi especificada a versão da célula com circuito de proteção, que a
 desliga em 2,50\,V \cite{bto_ncr18650_pcm}. Essa proteção é necessária
@@ -929,9 +946,18 @@ porque o módulo de alimentação não protege a célula contra descarga
 profunda.
 
 O módulo de referência para carregar a bateria e alimentar a placa é o
-PowerBoost 1000C. Ele combina um carregador com compartilhamento de carga,
-que alimenta o circuito e carrega a bateria ao mesmo tempo, e um conversor
-elevador com saída de 5,2\,V \cite{adafruit_powerboost1000c,microchip_mcp73871}.
+PowerBoost 1000C (\autoref{fig:powerboost}). Ele combina um carregador com
+compartilhamento de carga, que alimenta o circuito e carrega a bateria ao
+mesmo tempo, e um conversor elevador com saída de 5,2\,V
+\cite{adafruit_powerboost1000c,microchip_mcp73871}.
+ 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{figures/image68_powerboost_1000c.png}
+    \caption{Módulo carregador e elevador PowerBoost 1000C}
+    \label{fig:powerboost}
+    \fonte{\citeonline{adafruit_2465_produto}.}
+\end{figure}
 
 A presença da rede elétrica pode ser obtida do próprio carregador. A
 saída PG (\textit{power-good}) do MCP73871 fica em nível baixo sempre que

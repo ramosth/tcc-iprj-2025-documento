@@ -5,6 +5,13 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{v-1.9.7 }
 
+\bibitem[{Adafruit Industries}]{adafruit_2465_produto}
+\abntrefinfo{{Adafruit Industries}}{{Adafruit Industries}}{}
+{{Adafruit Industries}. \emph{{PowerBoost} 1000 charger -- rechargeable 5{V}
+  {LiPo} {USB} boost @ 1{A} -- 1000{C}}.
+Dispon{\'\i}vel em: \url{https://www.adafruit.com/product/2465}. Acesso em: 5
+  out. 2026. Produto 2465.}
+
 \bibitem[{Adafruit Industries} 2024]{adafruit_powerboost1000c}
 \abntrefinfo{{Adafruit Industries}}{{Adafruit Industries}}{2024}
 {{Adafruit Industries}. \emph{Adafruit {PowerBoost} {1000C}: guia do produto}.

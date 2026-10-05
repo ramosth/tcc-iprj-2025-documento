@@ -54,7 +54,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'field_info' (item size: 4) to 14591 items.
+Reallocating 'field_info' (item size: 4) to 14660 items.
 Database file #1: abntex2-options.bib
 Database file #2: tcc.bib
 Warning--I didn't find a database entry for "abnt-emphasize=italic"
@@ -64,6 +64,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
 Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Warning--campo year vazio ou faltando em adafruit_2465_produto
 Warning--campo year vazio ou faltando em ams1117_datasheet
 Warning--campo year vazio ou faltando em amazon_powerboost1000c
 Warning--campo year vazio ou faltando em bto_ncr18650_pcm
@@ -82,45 +83,45 @@ Warning--campo year vazio ou faltando em wokwi_slideswitch
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 136 entries,
+You've used 137 entries,
             6711 wiz_defined-function locations,
-            1959 strings with 39684 characters,
-and the built_in function-call counts, 279245 in all, are:
-= -- 37160
-> -- 2506
-< -- 10118
-+ -- 11000
-- -- 800
-* -- 15981
-:= -- 32990
-add.period$ -- 704
-call.type$ -- 137
-change.case$ -- 1015
-chr.to.int$ -- 183
-cite$ -- 145
-duplicate$ -- 34079
-empty$ -- 7801
-format.name$ -- 3764
-if$ -- 51687
+            1963 strings with 39837 characters,
+and the built_in function-call counts, 280536 in all, are:
+= -- 37317
+> -- 2521
+< -- 10156
++ -- 11043
+- -- 805
+* -- 16052
+:= -- 33150
+add.period$ -- 709
+call.type$ -- 138
+change.case$ -- 1022
+chr.to.int$ -- 184
+cite$ -- 147
+duplicate$ -- 34219
+empty$ -- 7854
+format.name$ -- 3787
+if$ -- 51943
 int.to.chr$ -- 13
 int.to.str$ -- 3
-missing$ -- 2231
-newline$ -- 691
-num.names$ -- 660
-pop$ -- 2590
+missing$ -- 2247
+newline$ -- 696
+num.names$ -- 665
+pop$ -- 2611
 preamble$ -- 1
-purify$ -- 445
+purify$ -- 448
 quote$ -- 0
-skip$ -- 34554
+skip$ -- 34700
 stack$ -- 1
-substring$ -- 12785
-swap$ -- 11901
-text.length$ -- 156
+substring$ -- 12831
+swap$ -- 11950
+text.length$ -- 157
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 43
-warning$ -- 13
-while$ -- 940
+warning$ -- 14
+while$ -- 946
 width$ -- 0
-write$ -- 2148
-(There were 16 warnings)
+write$ -- 2163
+(There were 17 warnings)
