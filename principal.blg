@@ -54,7 +54,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'field_info' (item size: 4) to 14660 items.
+Reallocating 'field_info' (item size: 4) to 14729 items.
 Database file #1: abntex2-options.bib
 Database file #2: tcc.bib
 Warning--I didn't find a database entry for "abnt-emphasize=italic"
@@ -64,64 +64,50 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
 Reallocating 'global_strs' (item size: 1) to 4000000 items.
-Warning--campo year vazio ou faltando em adafruit_2465_produto
-Warning--campo year vazio ou faltando em ams1117_datasheet
-Warning--campo year vazio ou faltando em amazon_powerboost1000c
-Warning--campo year vazio ou faltando em bto_ncr18650_pcm
-Warning--campo year vazio ou faltando em energizer522
-Warning--campo year vazio ou faltando em espressif_esp32
-Warning--campo year vazio ou faltando em icmm2025gistm
-Warning--campo year vazio ou faltando em taklite_ncr18650b_pcb
-Warning--campo year vazio ou faltando em usinainfo_led_azul
-Warning--campo year vazio ou faltando em usinainfo_suporte_18650
-Warning--campo year vazio ou faltando em wokwi_esp32wifi
-Warning--campo year vazio ou faltando em wokwi_buzzer
-Warning--campo year vazio ou faltando em wokwi_potentiometer
-Warning--campo year vazio ou faltando em wokwi_slideswitch
 +---------------------------------------------------------+
 | Estilo bibliográfico abntex2-alf.bst versão v-1.9.7           |
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 137 entries,
+You've used 138 entries,
             6711 wiz_defined-function locations,
-            1963 strings with 39837 characters,
-and the built_in function-call counts, 280536 in all, are:
-= -- 37317
-> -- 2521
-< -- 10156
-+ -- 11043
-- -- 805
-* -- 16052
-:= -- 33150
-add.period$ -- 709
-call.type$ -- 138
+            1962 strings with 39883 characters,
+and the built_in function-call counts, 281507 in all, are:
+= -- 37374
+> -- 2510
+< -- 10102
++ -- 10986
+- -- 803
+* -- 16185
+:= -- 33284
+add.period$ -- 728
+call.type$ -- 139
 change.case$ -- 1022
-chr.to.int$ -- 184
-cite$ -- 147
-duplicate$ -- 34219
-empty$ -- 7854
-format.name$ -- 3787
-if$ -- 51943
-int.to.chr$ -- 13
+chr.to.int$ -- 182
+cite$ -- 134
+duplicate$ -- 34117
+empty$ -- 8106
+format.name$ -- 3772
+if$ -- 52234
+int.to.chr$ -- 16
 int.to.str$ -- 3
-missing$ -- 2247
-newline$ -- 696
-num.names$ -- 665
-pop$ -- 2611
+missing$ -- 2280
+newline$ -- 701
+num.names$ -- 670
+pop$ -- 2647
 preamble$ -- 1
-purify$ -- 448
+purify$ -- 449
 quote$ -- 0
-skip$ -- 34700
+skip$ -- 34513
 stack$ -- 1
-substring$ -- 12831
-swap$ -- 11950
-text.length$ -- 157
+substring$ -- 13251
+swap$ -- 11941
+text.length$ -- 156
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 43
-warning$ -- 14
-while$ -- 946
+warning$ -- 0
+while$ -- 965
 width$ -- 0
-write$ -- 2163
-(There were 17 warnings)
+write$ -- 2192
+(There were 3 warnings)

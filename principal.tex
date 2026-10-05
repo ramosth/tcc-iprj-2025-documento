@@ -49,6 +49,7 @@
 
 \DeclareFloatingEnvironment[
     fileext=loq,
+    within=none,
     listname={Lista de Quadros},
     name={Quadro},
     placement=htb
@@ -109,11 +110,11 @@
 % Quando o autor é brasileiro, trate o grau de parentesco como parte do sobrenome.
 % Exemplo: Autor: Luís Fernando Carvalho Neto - Entrada: CARVALHO NETO, L. F.
 \autor{Thamires Ramos dos Santos}
-\newcommand{\entradaAutor}{DOS SANTOS, Thamires Ramos} % Sem ponto no final
+\newcommand{\entradaAutor}{SANTOS, Thamires Ramos dos} % Sem ponto no final
 
 % Titulo do trabalho
 \titulo{A engenharia da computação na prevenção de acidentes em barragens de rejeitos} %Título do trabalho
-\newcommand{\englishTitle}{The computer engineering in preventing tailings dam accidents} %Título do trabalho em inglês
+\newcommand{\englishTitle}{Computer engineering in the prevention of accidents at tailings dams} %Título do trabalho em inglês
 \data{\today}			%Ano de publicação
 \local{Nova Friburgo}	%Local
 
@@ -155,6 +156,11 @@
 	\listoffigures*
 	\cleardoublepage
 
+	%Lista de Quadros
+	\pdfbookmark[0]{Lista de Quadros}{loq}
+	\listof{quadro}{Lista de Quadros}
+	\cleardoublepage
+
  	%Lista de Tabelas
 	\renewcommand*\listtablename{Lista de Tabelas}
 	\listoftables*
@@ -172,10 +178,6 @@
 	
 	 % Elementos textuais
 	\textual
-	% Define o comando \listofquadros* compatível com abnTeX2
-	\renewcommand{\listofquadros*}{\listof{quadro}{Lista de Quadros}}
-	\listofquadros*
-	\cleardoublepage
 	\include{introducao}
 	\include{cap1}
 	% \include{cap2}

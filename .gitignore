@@ -9,3 +9,8 @@
 *.out
 *.synctex.gz
 *.pdf
+# Fora do controle de versão (modelo antigo / cópias sem uso) — continuam no disco
+figures/_antigas/
+cap2.tex
+cap1_antigo.tex
+figures/cap5/cap4_wokwi_circuito_v3.png

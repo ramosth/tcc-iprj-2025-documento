@@ -56,21 +56,19 @@ Output is `principal.pdf`. Build artifacts (`*.aux`, `*.log`, `*.toc`, etc.) are
 - Refs/labels/cites: nenhum quebrado; 132 entradas, todas citadas.
 - Firmwares: projeto_tcc_wokwi/sketch_v3/sketch_v3.ino (ESP32) e Downloads/tcc_versao_21/tcc_versao_21.ino (ESP8266), constantes iguais ao texto.
 
-## Pendências abertas (ver IDs no P15)
+## Pendências abertas (05/10/2026, depois de aplicar o P15 — IDs do Downloads/P15_varredura.txt)
 
-- A1 Freitas (2021): trocar p.~2 por p.~3 (cap4.tex, 4 lugares).
-- A2 cap4.tex l. 46 "raramente decorre de uma causa isolada" (Rico diz 39%).
-- A3 token ANA 60 min sem citação (fonte conferida: manual HidroWebService, p. 4).
-- A4 parágrafo duplicado das coordenadas OWM (cap4.tex l. 456–466).
-- A5/A6 anexos.tex: link BNDMET com texto do modelo antigo (V_ch.30d, 300 mm); buzzer passivo BPA5 no anexo; faltam datasheets da bateria/carregador/ESP32.
-- A7 GitHub: firmware só com tcc_versao_19 (antigo); sistema abre em master (antigo; v3 em v3-simples).
-- A8 \listofquadros* (principal.tex l. 175–178): erro no TeX Live, "**" no PDF, lista depois do sumário, numeração "3.1".
-- A9 buzzer 35 mA direto no GPIO (limite 12 mA).
-- A10 "e-mail chegou aos cinco moradores" (resumo, abstract, conclusão) -> "foi enviado".
-- B1 \entradaAutor deve ser "SANTOS, Thamires Ramos dos"; B3/B4 caixa dos autores institucionais e 13 entradas sem ano; B19 parágrafos > 5 linhas; B20 overfull.
-- Orientador: diagrama de classes (incluir simples ou justificar), palavras-chave (faltam "sistema de segurança" e "acidente ambiental"), numeração (modelo IPRJ x orientador), SMS/Defesa Civil.
-- BNDMET como iniciativa INMET + DECEA: não confirmado em fonte oficial.
-- Battery University: fonte de empresa; reforçar com livro-texto.
+Aplicados em 05/10: A1–A4, A6, A8, A10–A12, B1–B5, B7, B8, B10, B11, B13, B14, B16–B18, B21, B23, B25, B27, C1, C2 ("Autora, 2026."), C6–C9.
+Compilação completa (4 passes) sem erro e sem referência indefinida; o documento passou a 158 folhas.
+
+- A5: trocar no Google Drive o arquivo das requisições BNDMET (tem o texto "V_ch.30d / 300 mm" do modelo antigo).
+- A7: firmware — branch v3-simples com o tcc_versao_21 está commitada em D:/Users/thami/Documents/github/tcc-iprj-2025-firmware, falta `git push origin v3-simples` e tornar v3-simples a branch padrão no GitHub.
+- A9: buzzer 35 mA direto no GPIO (limite 12 mA) — não aplicado.
+- B6 (domínio do BNDMET no .bib), B9 (fontes fracas), B12 (fonte da figura do buzzer), B15 (horários X05 x F07), B19 (parágrafos > 5 linhas), B20 (overfull), B22 (ficha catalográfica: gerar de novo com 158 f. e "Poiate Júnior, Edgard"), B24, B26 (página da Taklite), C3–C5.
+- Energizer 522: conferir se a menor corrente do gráfico é 25 mA (o PDF parece começar em 10 mA).
+- Orientador: diagrama de classes, palavras-chave, numeração dos capítulos, SMS/Defesa Civil.
+- BNDMET como iniciativa INMET + DECEA: não confirmado.
+- C8: arquivos antigos tirados do índice do git (git rm --cached) e postos no .gitignore; falta o commit.
 - Downloads ainda tem temporários antigos: _teste_cap1.tgz, _teste_figs.txt, _prev_componentes/.
 
 **Front matter files**: `capa.tex`, `folhaderosto.tex`, `folhaaprovacao.tex`, `catalogacao.tex`, `dedicatoria.tex`, `agradecimentos.tex`, `epigrafe.tex`, `resumo.tex`, `abstract.tex`, `siglas.tex`, `simbolos.tex`

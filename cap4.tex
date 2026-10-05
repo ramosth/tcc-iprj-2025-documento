@@ -43,10 +43,10 @@ responsabilidade e autoria da autora.
 \label{sec:modelo-risco}
 % =============================================================
 
-Em barragens de rejeitos, a ruptura raramente decorre de uma causa
-isolada. No levantamento de 147 casos feito por
-\citeonline[p.~848]{rico2008mine}, 39\% das rupturas resultaram da
-combinação de diferentes fatores. As causas meteorológicas, como
+Em barragens de rejeitos, a ruptura pode resultar da combinação de
+fatores. No levantamento de 147 casos feito por
+\citeonline[p.~848]{rico2008mine}, isso ocorreu em 39\% das rupturas.
+As causas meteorológicas, como
 eventos ou períodos de chuva incomum, responderam por 25\% dos casos
 no mundo e por 35\% na Europa.
 
@@ -252,7 +252,7 @@ $P_1$ & Chuva em 72 horas -- atenção     & 60\,mm   & \citeonline[p.~74, Tabel
 $P_2$ & Chuva em 72 horas -- alerta      & 100\,mm  & \citeonline[p.~74, Tabela~3]{mendes2020proposicao} \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{mirus2018developing}
+\fonte{Autora, 2026, com base em \citeonline{mirus2018developing}
 e \citeonline{mendes2020proposicao}.}
 \end{table}
 
@@ -278,7 +278,7 @@ $0{,}64 \leq S < 0{,}86$ & VERDE & AMARELO & AMARELO  \\
 $S \geq 0{,}86$          & VERDE & AMARELO & VERMELHO \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora a partir da \autoref{eq:nivel} e da
+\fonte{Autora, 2026, a partir da \autoref{eq:nivel} e da
 \autoref{tab:limiares}.}
 \end{table}
 
@@ -381,7 +381,7 @@ Dados de chuva indisponíveis & $S \geq 0{,}86$       & AMARELO  & Sem dados de 
 Higrômetro e chuva indisponíveis & Inclui mínimo garantido $< P_1$ & AMARELO & Sem dados & \citeonline{bogaard2018hydrological}; regra de projeto \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{mendes2020proposicao}
+\fonte{Autora, 2026, com base em \citeonline{mendes2020proposicao}
 e \citeonline{bogaard2018hydrological}.}
 \end{table}
 
@@ -405,10 +405,10 @@ O acesso à API exigiu solicitação formal junto ao DECEA, com
 apresentação de credenciais acadêmicas e justificativa técnica para
 uso dos dados em pesquisa científica.
 
-A estação selecionada para o estudo foi a D6594 (Alberto Flores),
-integrante da rede ANA e localizada na região de Brumadinho (MG),
-referência do maior acidente de barragem de rejeitos do Brasil em
-termos de vítimas \cite{robertson2019feijaoson2019}. O acesso se dá pelo
+A estação selecionada para o estudo foi a D6594 (Alberto Flores), na
+região de Brumadinho (MG), onde ocorreu o rompimento de barragem de
+rejeitos com maior número de vítimas no país, com 272 mortes
+\cite{minasgerais2024historico}. O acesso se dá pelo
 \textit{endpoint} \path{/v1/estacoes/D6594/fenomenos/{codigo}},
 com autenticação por chave estática (\textit{API key}) transmitida
 no cabeçalho \texttt{x-api-key}.
@@ -435,14 +435,15 @@ Na série de janeiro de 2026 da estação D6594, 3 dos 30 dias
 retornaram \texttt{null} (\autoref{anexo:bndmet}).
 
 A escolha do BNDMET em detrimento da API HidroWebService da Agência
-Nacional de Águas (ANA) foi motivada por uma restrição operacional
-desta última: o campo \texttt{tokenautenticacao}, obrigatório em todas
-as requisições da ANA, possui validade de apenas 60 minutos, exigindo
-renovação periódica. Tal comportamento é incompatível com a operação
-autônoma e contínua do ESP8266, que necessita de um mecanismo de
-autenticação estável e de baixa complexidade. Como a estação D6594
-já estava disponível via BNDMET com autenticação por chave estática,
-a integração foi consolidada exclusivamente por essa interface.
+Nacional de Águas (ANA) foi motivada por uma restrição operacional: o
+campo \texttt{tokenautenticacao}, obrigatório nas requisições da ANA,
+tem validade de 60 minutos e precisa ser renovado
+\cite[p.~4]{ana_hidrowebservice}.
+
+Isso é incompatível com a operação autônoma e contínua do ESP8266, que
+precisa de uma autenticação estável e simples. Como a estação D6594
+já estava disponível no BNDMET com chave estática, a integração foi
+feita apenas por essa interface.
 
 \subsection{API OpenWeatherMap — Previsão de Chuva}
 \label{subsec:owm}
@@ -454,16 +455,14 @@ previsão em blocos de 3 horas; a consulta solicita oito blocos
 próximas 24 horas.
 
 O \textit{endpoint} é acessado por HTTPS, com autenticação por chave de
-API transmitida como parâmetro da consulta. As coordenadas foram obtidas
-pelo serviço de geocodificação da própria OpenWeatherMap, a partir da
-localidade de Brumadinho.
+API transmitida como parâmetro da consulta
+\cite{openweathermap_forecast5}.
 
-As coordenadas geográficas utilizadas nas consultas foram obtidas por 
-meio do serviço de geocodificação da própria OpenWeatherMap, a partir da identificação da localidade de Brumadinho. 
-Para a região de estudo, correspondente a Córrego do Feijão, foram utilizadas as coordenadas retornadas pela API, 
-com latitude $-20,1433$ e longitude $-44,1997$, expressas em graus decimais. A documentação da OpenWeatherMap 
-caracteriza os campos \texttt{lat} e \texttt{lon} como coordenadas geográficas, não especificando, entretanto, 
-o \textit{datum} geodésico de referência.
+As coordenadas da região de Córrego do Feijão, em Brumadinho, foram
+obtidas pelo serviço de geocodificação da própria OpenWeatherMap:
+latitude $-20{,}1433$ e longitude $-44{,}1997$, em graus decimais. A
+documentação não informa o \textit{datum} geodésico dessas
+coordenadas.
 
 % =============================================================
 \section{Plataforma de \textit{Software}}
@@ -506,7 +505,7 @@ As tecnologias utilizadas em cada camada estão listadas na
 Diagramas & draw.io (diagrams.net) & Elaboração dos fluxogramas e diagramas UML \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{table}
 
 % -------------------------------------------------------------
@@ -528,7 +527,7 @@ define o nível pela \autoref{eq:nivel} e pelas regras da
 Em seguida, o dispositivo aciona os LEDs e o \textit{buzzer} e envia o
 resultado ao \textit{backend}. O intervalo entre ciclos é de 60 minutos
 sem chuva e de 10 minutos com chuva ou com alerta
-\cite[p.~2]{freitas2021analise}, conforme a \autoref{subsec:energia}.
+\cite[p.~3]{freitas2021analise}, conforme a \autoref{subsec:energia}.
 
 Foram desenvolvidos dois \textit{firmwares} com a mesma lógica de
 alerta: um para o ESP8266 do protótipo físico (\autoref{sec:hardware})
@@ -559,7 +558,7 @@ administradores. O banco de dados possui quatro tabelas
 \texttt{administradores} & Contas de acesso ao painel \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora.}
+\fonte{Autora, 2026.}
 \end{table}
 
 A interface \textit{web} possui três telas. A página inicial, pública,
@@ -595,14 +594,14 @@ e envia a leitura ao \textit{backend}.
 Ao final de cada ciclo, o dispositivo define o próximo intervalo: 10
 minutos se houver chuva observada ou prevista, ou se o nível for
 diferente de VERDE, e 60 minutos nos demais casos
-\cite[p.~2]{freitas2021analise}.
+\cite[p.~3]{freitas2021analise}.
 
 \begin{figure}[H]
 \centering
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image56_f1_fluxograma_geral.png}}
 \caption{Fluxograma geral do dispositivo}
 \label{fig:f1-geral}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma do cálculo do nível}
@@ -628,7 +627,7 @@ depende só de $S$; sem os dois, o nível é AMARELO, por precaução.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image57_f2_calculo_nivel.png}}
 \caption{Fluxograma do cálculo do nível de alerta}
 \label{fig:f2-nivel}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma da supervisão de energia}
@@ -649,7 +648,7 @@ O cálculo do nível de alerta continua durante a operação na bateria.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image58_f3_energia.png}}
 \caption{Fluxograma da supervisão de energia}
 \label{fig:f3-energia}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma do envio de e-mail de alerta}
@@ -670,7 +669,7 @@ enviadas e quantas falharam.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image59_f4_envio_email.png}}
 \caption{Fluxograma do envio do e-mail de alerta}
 \label{fig:f4-email}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Diagrama de casos de uso}
@@ -694,7 +693,7 @@ como o morador no envio do alerta.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image60_casos_de_uso.png}}
 \caption{Diagrama de casos de uso}
 \label{fig:casos-uso}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Diagrama de sequência}
@@ -717,7 +716,7 @@ resposta ao dispositivo.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image61_sequencia_1.png}}
 \caption{Diagrama de sequência --- parte 1: ciclo de leitura do dispositivo}
 \label{fig:sequencia-1}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 A segunda parte (\autoref{fig:sequencia-2}) mostra o uso do painel:
@@ -733,7 +732,7 @@ registra o envio, com o número de mensagens enviadas e de falhas.
 \fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image62_sequencia_2.png}}
 \caption{Diagrama de sequência --- parte 2: painel e envio do alerta}
 \label{fig:sequencia-2}
-\fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
+\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 O conteúdo das mensagens segue o Plano de Ação de Emergência previsto na Política
@@ -763,7 +762,7 @@ sinalizada e seguir as orientações da Defesa Civil. &
 \citeonline{ana2016manualpae}; \citeonline{anm2022resolucao95}, art. 42 \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{brasil2010pnsb},
+\fonte{Autora, 2026, com base em \citeonline{brasil2010pnsb},
 \citeonline{ana2016manualpae} e \citeonline{anm2022resolucao95}.}
 \end{quadro}
 
@@ -789,19 +788,18 @@ bateria, carregador e detecção da rede elétrica
 % -------------------------------------------------------------
 
 O ESP8266 NodeMCU V3 é uma placa de desenvolvimento baseada no módulo
-ESP-12E, equipada com processador de arquitetura 32 \textit{bits},
-\textit{clock} de 80\,MHz, 4\,MB de memória \textit{flash} e 80\,KB
-de RAM. Opera com tensão de 3,3\,V a nível lógico, admitindo
-alimentação entre 5\,V e 9\,V via USB Tipo C. Possui 17 pinos GPIO,
-conversor ADC de 10 \textit{bits} (pino A0), suporte a Wi-Fi 802.11
-b/g/n em 2,4\,GHz com criptografia WPA/WPA2 e chip conversor USB-serial
-CH340.
+ESP-12E, que tem 4\,MB de memória \textit{flash} \cite{aithinker_esp12e}.
+O microcontrolador ESP8266EX tem processador de 32 \textit{bits}, com
+\textit{clock} de até 160\,MHz, 17 pinos GPIO, conversor ADC de 10
+\textit{bits} e Wi-Fi 802.11 b/g/n em 2,4\,GHz \cite{espressif_esp8266ex}.
 
-No protótipo, o ESP8266 lê o sensor de umidade, consulta as APIs
-meteorológicas por HTTPS, calcula o nível de alerta, aciona os LEDs e o
-\textit{buzzer} e envia os dados ao \textit{backend}
-\cite{mercadolivre_esp8266, espressif_esp8266_spec2013}. A
-\autoref{fig:esp8266} mostra a placa e a identificação dos seus pinos.
+A placa opera em 3,3\,V nos pinos, é alimentada por 5\,V pela porta
+USB-C e usa o conversor USB-serial CH340
+\cite{mercadolivre_esp8266, wch_ch340}. No protótipo, o ESP8266 lê o
+sensor de umidade, consulta as APIs meteorológicas por HTTPS, calcula o
+nível de alerta, aciona os LEDs e o \textit{buzzer} e envia os dados ao
+\textit{backend}. A \autoref{fig:esp8266} mostra a placa e a
+identificação dos seus pinos.
 
 \begin{figure}[H]
     \centering
@@ -846,7 +844,7 @@ microcontrolador. Assim, a calibração é mantida após uma reinicialização.
 
 A leitura do sensor e o envio dos dados ao \textit{backend} seguem os
 intervalos de registro dos pluviômetros do Cemaden: 60 minutos sem chuva e
-10 minutos com chuva \cite[p.~2]{freitas2021analise}. A regra adotada e
+10 minutos com chuva \cite[p.~3]{freitas2021analise}. A regra adotada e
 seu efeito no consumo são descritos na \autoref{subsec:energia}.
 
 % -------------------------------------------------------------
@@ -995,7 +993,7 @@ pinos e as ligações entre os componentes.
         {figures/image52_esquematico_versao_3.png}}
     \caption{Esquemático elétrico do protótipo embarcado}
     \label{fig:esquematico}
-    \fonte{Elaborado pela autora, com utilização da biblioteca Matplotlib (Python), 2026.}
+    \fonte{Autora, 2026, com utilização da biblioteca Matplotlib (Python).}
 \end{figure}
 
 Na montagem, o LED azul indica o nível VERDE (\autoref{subsec:leds}), e a
@@ -1017,7 +1015,7 @@ e o envia ao \textit{backend} pela rota \texttt{POST /leituras}
 \label{subsec:specs-custos}
 % -------------------------------------------------------------
 
-A Tabela~\ref{tab:specs} consolida as principais especificações
+A \autoref{tab:specs} consolida as principais especificações
 técnicas dos componentes utilizados.
 
 \begin{table}[H]
@@ -1029,7 +1027,7 @@ técnicas dos componentes utilizados.
 \hline
 \textbf{Componente} & \textbf{Tensão (V)} & \textbf{Corrente} & \textbf{Interface} \\
 \hline
-ESP8266 NodeMCU V3 & 3,3 (lógico) & 80\,mA (média); até 215\,mA (TX contínuo) & Wi-Fi / GPIO / ADC \\
+ESP8266 NodeMCU V3 & 3,3 (lógico) & 80\,mA (média); 170\,mA (transmissão 802.11b) & Wi-Fi / GPIO / ADC \\
 Módulo higrômetro (comparador LM393) & 3,3 ou 5 & 35\,mA (módulo); LM393: até 1,0\,mA & Analógica (A0) \\
 LED azul 5\,mm (nível VERDE) & 3,0--3,3 & 20\,mA & GPIO digital \\
 LED amarelo 5\,mm & 2,0--2,2 & 20\,mA & GPIO digital \\
@@ -1042,13 +1040,14 @@ Célula Li-ion NCR18650B (3 em paralelo) & 3,6 (nominal); 4,20 (carga); 2,50 (co
 Módulo carregador e elevador (referência PowerBoost 1000C) & 5,2 (saída) & carga: até 1000\,mA & USB \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{espressif_esp8266ex,espressif_esp8266_spec2013,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,panasonic_ncr18650b,adafruit_powerboost1000c}.}
+\fonte{Autora, 2026, com base em \citeonline{espressif_esp8266ex,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,panasonic_ncr18650b,adafruit_powerboost1000c}.}
 \end{table}
 
-O custo dos componentes do protótipo físico foi de R\$\,70,30. A
-\autoref{tab:custos} apresenta também os itens da alimentação redundante,
-especificados na \autoref{subsec:energia}, que não foram montados. Com
-eles, o custo total passa a R\$\,602,70.
+Com os preços consultados em outubro de 2026, o custo dos componentes
+do protótipo físico é de R\$\,50,09. A \autoref{tab:custos} apresenta
+também os itens da alimentação redundante, especificados na
+\autoref{subsec:energia}, que não foram montados. Com eles, o custo
+total passa a R\$\,582,49.
 
 \begin{table}[H]
 \centering
@@ -1058,12 +1057,12 @@ eles, o custo total passa a R\$\,602,70.
 \hline
 \textbf{Componente} & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
 \hline
-ESP8266 NodeMCU V3 & 1 & 59,90 \\
-Higrômetro resistivo LM393 & 1 & 7,50 \\
-\textit{Buzzer} ativo 12\,mm & 1 & 2,30 \\
-LEDs indicadores (conjunto) & 1 & 0,60 \\
+ESP8266 NodeMCU V3 com USB-C e CH340$^{\mathrm{c}}$ & 1 & 35,60 \\
+Módulo higrômetro resistivo (sonda e placa comparadora)$^{\mathrm{c}}$ & 1 & 8,35 \\
+\textit{Buzzer} ativo TMB-12A03$^{\mathrm{b}}$ & 1 & 1,02 \\
+LEDs difusos de 5\,mm (kits com 5: azul, amarelo e vermelho) & 3 & 5,12 \\
 \hline
-\textbf{Subtotal do protótipo físico} & & \textbf{70,30} \\
+\textbf{Subtotal do protótipo físico} & & \textbf{50,09} \\
 \hline
 Célula Li-ion Panasonic NCR18650B com proteção$^{\mathrm{a}}$ & 3 & 312,64 \\
 Suporte para uma célula 18650 (ligados em paralelo) & 3 & 14,19 \\
@@ -1071,14 +1070,17 @@ Módulo carregador e elevador PowerBoost 1000C (MCP73871 + TPS61090) & 1 & 205,5
 \hline
 \textbf{Subtotal da alimentação redundante} & & \textbf{532,40} \\
 \hline
-\textbf{Total} & & \textbf{602,70} \\
+\textbf{Total} & & \textbf{582,49} \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com preços consultados em 4 out. 2026, sem frete
-\cite{taklite_ncr18650b_pcb,usinainfo_suporte_18650,amazon_powerboost1000c}.}
-\nota{$^{\mathrm{a}}$Preço unitário de US\$\,19,95, convertido pela taxa
-PTAX de venda de 2 out. 2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem
-impostos de importação.}
+\fonte{Autora, 2026, com preços consultados em 4 e 5 out. 2026, sem frete
+\cite{usinainfo_nodemcu,usinainfo_higrometro,lcsc_tmb12a03,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,taklite_ncr18650b_pcb,usinainfo_suporte_18650,amazon_powerboost1000c}.}
+\nota{$^{\mathrm{a}}$Preço unitário de US\$\,19,95 e $^{\mathrm{b}}$preço
+unitário de US\$\,0,1945, convertidos pela taxa PTAX de venda de 2 out.
+2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem impostos de importação.
+$^{\mathrm{c}}$Preço exibido na página da loja, com o produto indisponível
+na data da consulta; o higrômetro cotado é um módulo resistivo equivalente
+(HL-69).}
 \end{table}
 
 O protótipo físico é alimentado por fonte externa de 5\,V, pela porta
@@ -1161,7 +1163,7 @@ Conversor USB-serial CH340 & 30 & 30 & Máximo em operação \cite[Seção~6.2]{
 \textbf{Total} & \textbf{167} & \textbf{202} & \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base nos \textit{datasheets} citados.}
+\fonte{Autora, 2026, com base nos \textit{datasheets} citados.}
 \end{table}
 
 O valor de 80\,mA é a média de operação declarada pelo fabricante. Picos
@@ -1412,13 +1414,13 @@ Bateria crítica & Tensão $< 3{,}0$\,V & LED ATENÇÃO piscando & Bateria crít
 Falha de bateria & Rede presente e tensão $< 4{,}20$\,V após $T_{\mathrm{carga}}$ & LED ATENÇÃO aceso & Substituir a bateria \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{panasonic_ncr18650b}.}
+\fonte{Autora, 2026, com base em \citeonline{panasonic_ncr18650b}.}
 \end{table}
 
 \paragraph*{Frequência de leitura e envio}
 
 Os pluviômetros do Cemaden registram a chuva a cada 10 minutos quando há
-chuva e a cada 60 minutos quando não há \cite[p.~2]{freitas2021analise}.
+chuva e a cada 60 minutos quando não há \cite[p.~3]{freitas2021analise}.
 \citeonline{mendes2020proposicao} também leram os sensores de umidade do
 solo em intervalos de 10 minutos.
 
@@ -1429,7 +1431,9 @@ observada, ou quando o nível é AMARELO ou VERMELHO, o intervalo passa a
 
 Na simulação, um modo de demonstração reduz esses intervalos e o tempo
 $T_{\mathrm{carga}}$ para que os testes possam ser executados em minutos.
-Esse modo é usado apenas em teste, e não na operação.
+Esse modo é usado apenas em teste, e não na operação. O
+\textit{firmware} do protótipo físico tem o mesmo modo, usado apenas nos
+testes.
 
 O intervalo de 60 minutos reduz os envios de 144 para 24 por dia. O
 dimensionamento, porém, não considera essa redução: a corrente de 80\,mA
@@ -1489,7 +1493,7 @@ ESP32 DevKit C V4 & 1 & -- & ESP8266 NodeMCU do protótipo físico \\
 Potenciômetro (solo) & 1 & GPIO34 & Higrômetro; a leitura do conversor entra na \autoref{eq:saturacao} \\
 LED verde, amarelo e vermelho & 3 & GPIO18, 14, 27 & LEDs de nível de alerta (no protótipo físico, o nível VERDE usa LED azul) \\
 \textit{Buzzer} & 1 & GPIO26 & \textit{Buzzer} ativo TMB-12A03, acionado no VERMELHO \\
-Chave deslizante & 1 & GPIO32 & Presença da rede elétrica (saída PG do carregador): nível alto, rede presente; nível baixo, falta de rede \\
+Chave deslizante & 1 & GPIO32 & Presença da rede elétrica: nível alto, rede presente; nível baixo, falta de rede. No circuito real, a saída PG do carregador é ativa em nível baixo e seria lida de forma invertida \\
 Potenciômetro (bateria) & 1 & GPIO35 & Tensão da bateria, de 2,50 a 4,20\,V \\
 LED REDE (azul) & 1 & GPIO25 & Alimentação pela rede elétrica \\
 LED BACKUP (branco) & 1 & GPIO22 & Alimentação pela bateria \\
@@ -1497,7 +1501,7 @@ LED ATENÇÃO (roxo) & 1 & GPIO23 & Bateria baixa, crítica ou com falha (\autor
 Resistor de 220\,$\Omega$ & 6 & -- & Limitação de corrente dos LEDs virtuais \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base no arquivo \texttt{diagram.json} do projeto e em \citeonline{espressif_esp32,wokwi_potentiometer,wokwi_slideswitch,wokwi_buzzer}.}
+\fonte{Autora, 2026, com base no arquivo \texttt{diagram.json} do projeto e em \citeonline{espressif_esp32,wokwi_potentiometer,wokwi_slideswitch,wokwi_buzzer}.}
 \end{table}
 
 O potenciômetro do solo fornece ao conversor de 12 \textit{bits} do ESP32
@@ -1559,7 +1563,8 @@ no painel do administrador. Os resultados são apresentados no
 \autoref{cap:resultados}.
 
 Os casos foram organizados em três grupos: os nove casos do modelo de
-alerta (\autoref{tab:casos-modelo}), os casos de contingência
+alerta (\autoref{tab:casos-modelo}), precedidos do caso C00, que
+verifica o intervalo entre ciclos, os casos de contingência
 (\autoref{tab:casos-contingencia}) e os casos de energia
 (\autoref{tab:casos-energia}). Um quarto grupo de casos foi executado no
 protótipo físico (\autoref{tab:casos-fisico}).
@@ -1596,7 +1601,7 @@ C08 & 0,95 ($S \geq S_2$) & 80 & AMARELO; LED amarelo; \textit{buzzer} desligado
 C09 & 0,95 ($S \geq S_2$) & 120 & VERMELHO; LED vermelho; \textit{buzzer} acionado \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base na \autoref{tab:matriz}.}
+\fonte{Autora, 2026, com base na \autoref{tab:matriz}.}
 \end{table}
 
 Os casos C03 e C07 verificam que a chuva sem solo úmido, e o solo úmido
@@ -1641,7 +1646,7 @@ X08 & $S = 0{,}75$; dados de chuva incompletos, mínimo garantido de 80\,mm & AM
 X09 & $S = 0{,}95$; dados de chuva incompletos, mínimo garantido de 30\,mm & AMARELO (caso especial), pois o mínimo é menor que $P_1$; aviso ``dados de chuva incompletos'' \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base na \autoref{tab:contingencia}.}
+\fonte{Autora, 2026, com base na \autoref{tab:contingencia}.}
 \end{table}
 
 \paragraph*{Casos de energia}
@@ -1670,7 +1675,7 @@ E03 & Rede ausente; bateria em 3,15\,V e depois em 2,80\,V & LED ATENÇÃO pisca
 E04 & Rede presente; bateria em 3,80\,V até o fim de $T_{\mathrm{carga}}$ & Durante a recarga, estado normal, com indicação de recarga; após $T_{\mathrm{carga}}$, LED ATENÇÃO aceso e falha de bateria, sem a indicação de recarga \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base na \autoref{tab:estados-energia}.}
+\fonte{Autora, 2026, com base na \autoref{tab:estados-energia}.}
 \end{table}
 
 Os valores de $S$ e de tensão desses casos vêm dos potenciômetros da
@@ -1714,7 +1719,7 @@ F07 & APIs reais (BNDMET e OpenWeatherMap) & $P_{48}$, $P_{24}$ e $P_{72}$ do di
 F08 & Sonda em solo saturado ($S \geq S_2$); dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; LED vermelho; \textit{buzzer} acionado \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora com base nas \autoref{tab:matriz} e \autoref{tab:contingencia}.}
+\fonte{Autora, 2026, com base nas \autoref{tab:matriz} e \autoref{tab:contingencia}.}
 \end{table}
 
 No protótipo físico, $S$ vem do higrômetro, mas os casos continuam sendo
