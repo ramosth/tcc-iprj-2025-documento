@@ -26,8 +26,6 @@ A level-1 auxiliary file: introducao.aux
 Reallocating 'name_of_file' (item size: 1) to 9 items.
 A level-1 auxiliary file: cap1.aux
 Reallocating 'name_of_file' (item size: 1) to 9 items.
-A level-1 auxiliary file: cap2.aux
-Reallocating 'name_of_file' (item size: 1) to 9 items.
 A level-1 auxiliary file: cap3.aux
 Reallocating 'name_of_file' (item size: 1) to 9 items.
 A level-1 auxiliary file: cap4.aux
@@ -56,7 +54,7 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
-Reallocating 'field_info' (item size: 4) to 17075 items.
+Reallocating 'field_info' (item size: 4) to 14591 items.
 Database file #1: abntex2-options.bib
 Database file #2: tcc.bib
 Warning--I didn't find a database entry for "abnt-emphasize=italic"
@@ -67,10 +65,14 @@ Reallocating 'glb_str_end' (item size: 4) to 20 items.
 Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
 Reallocating 'global_strs' (item size: 1) to 4000000 items.
 Warning--campo year vazio ou faltando em ams1117_datasheet
+Warning--campo year vazio ou faltando em amazon_powerboost1000c
 Warning--campo year vazio ou faltando em bto_ncr18650_pcm
 Warning--campo year vazio ou faltando em energizer522
 Warning--campo year vazio ou faltando em espressif_esp32
+Warning--campo year vazio ou faltando em icmm2025gistm
+Warning--campo year vazio ou faltando em taklite_ncr18650b_pcb
 Warning--campo year vazio ou faltando em usinainfo_led_azul
+Warning--campo year vazio ou faltando em usinainfo_suporte_18650
 Warning--campo year vazio ou faltando em wokwi_esp32wifi
 Warning--campo year vazio ou faltando em wokwi_buzzer
 Warning--campo year vazio ou faltando em wokwi_potentiometer
@@ -80,45 +82,45 @@ Warning--campo year vazio ou faltando em wokwi_slideswitch
 | Em caso de dúvidas ou problemas com este estilo procure |
 | http://www.abntex.net.br/                               |
 +---------------------------------------------------------+
-You've used 172 entries,
+You've used 136 entries,
             6711 wiz_defined-function locations,
-            2151 strings with 46759 characters,
-and the built_in function-call counts, 364230 in all, are:
-= -- 48741
-> -- 3142
-< -- 13405
-+ -- 14503
-- -- 1007
-* -- 20817
-:= -- 42942
-add.period$ -- 893
-call.type$ -- 173
-change.case$ -- 1259
-chr.to.int$ -- 227
-cite$ -- 177
-duplicate$ -- 44923
-empty$ -- 9882
-format.name$ -- 4727
-if$ -- 67035
-int.to.chr$ -- 14
+            1959 strings with 39684 characters,
+and the built_in function-call counts, 279245 in all, are:
+= -- 37160
+> -- 2506
+< -- 10118
++ -- 11000
+- -- 800
+* -- 15981
+:= -- 32990
+add.period$ -- 704
+call.type$ -- 137
+change.case$ -- 1015
+chr.to.int$ -- 183
+cite$ -- 145
+duplicate$ -- 34079
+empty$ -- 7801
+format.name$ -- 3764
+if$ -- 51687
+int.to.chr$ -- 13
 int.to.str$ -- 3
-missing$ -- 2810
-newline$ -- 877
-num.names$ -- 841
-pop$ -- 3241
+missing$ -- 2231
+newline$ -- 691
+num.names$ -- 660
+pop$ -- 2590
 preamble$ -- 1
-purify$ -- 558
+purify$ -- 445
 quote$ -- 0
-skip$ -- 45464
+skip$ -- 34554
 stack$ -- 1
-substring$ -- 16740
-swap$ -- 15637
-text.length$ -- 196
+substring$ -- 12785
+swap$ -- 11901
+text.length$ -- 156
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 56
-warning$ -- 9
-while$ -- 1199
+type$ -- 43
+warning$ -- 13
+while$ -- 940
 width$ -- 0
-write$ -- 2730
-(There were 12 warnings)
+write$ -- 2148
+(There were 16 warnings)

@@ -1,2659 +1,1252 @@
 \chapter{RESULTADOS}
 \label{cap:resultados}
 
-Este capítulo apresenta o sistema de monitoramento e alerta implementado
-em funcionamento, descrevendo o comportamento observado em cada
-componente, os fluxos de sucesso e os cenários alternativos identificados
-durante os testes. A cobertura segue a arquitetura do sistema de ponta a
-ponta: do dispositivo embarcado às telas da interface \textit{web}, com
-referência aos objetivos específicos definidos no
-\autoref{cap:objetivos}.
+Este capítulo apresenta os resultados dos casos de teste definidos na
+\autoref{sec:testes-validacao}. Para cada caso, são indicadas a entrada,
+a saída esperada e a saída observada, com o registro do monitor serial
+e, quando disponível, do painel do administrador.
+
+Os resultados estão organizados em cinco seções: a simulação no Wokwi
+(\autoref{sec:res-simulacao}), a supervisão de energia
+(\autoref{sec:res-energia}), o protótipo físico
+(\autoref{sec:res-fisico}), a plataforma \textit{web}
+(\autoref{sec:res-web}) e a síntese dos resultados
+(\autoref{sec:res-sintese}).
+
+Os valores de $S$ e de tensão da bateria na simulação vêm de
+potenciômetros e não são medições. Os testes foram executados no modo
+de demonstração (\autoref{subsec:wokwi}), em que os intervalos de 60 e
+10~minutos passam a 30 e 5~segundos e $T_{\mathrm{carga}}$ passa a
+585~segundos.
+
+Os testes foram realizados entre 3 e 4 de outubro de 2026. Nos casos
+com as APIs reais, os valores de chuva são os do dia da consulta.
+
+Nas figuras, as setas vermelhas indicam os LEDs citados no texto, e os
+traços vermelhos destacam as linhas do monitor serial que registram a
+saída observada.
 
 % =============================================================
-\section{Visão Geral do Sistema Implementado}
-\label{sec:visao-geral}
+\section{Simulação no Wokwi}
+\label{sec:res-simulacao}
 % =============================================================
 
-O sistema entregue integra três camadas funcionais que operam de forma
-coordenada. O dispositivo embarcado --- composto pelo microcontrolador
-ESP8266 NodeMCU e pelo sensor higrômetro resistivo FC-28 --- mede
-continuamente a umidade do solo, consulta as APIs meteorológicas externas
-e calcula integralmente o índice de risco geotécnico. Esses dados
-processados são transmitidos ao \textit{backend}, desenvolvido em Node.js
-com TypeScript, que os recebe, valida e persiste no banco PostgreSQL com
-extensão TimescaleDB, sem nenhum recálculo dos valores de risco. A
-interface \textit{web}, construída com React e Next.js~14, consome essa
-base de dados em tempo real e disponibiliza ao administrador todas as
-funcionalidades de monitoramento, relatórios, gestão de usuários e envio
-de alertas.
+Cada registro mostra o circuito virtual (\autoref{fig:wokwi_diagrama})
+e o monitor serial. Em cada ciclo, o monitor serial apresenta a leitura
+do solo (\texttt{[SOLO]}), a chuva (\texttt{[CHUVA]}), o nível
+(\texttt{[NIVEL]}), a energia (\texttt{[ENERGIA]}), o intervalo até o
+próximo ciclo (\texttt{[CICLO]}), o JSON enviado (\texttt{[JSON]}) e a
+resposta do \textit{backend} (\texttt{[BACKEND]}).
 
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_arquitetura_sistema.png}}
-    \caption{Arquitetura de ponta a ponta do sistema: dispositivo embarcado
-    ESP8266 com sensor FC-28, \textit{backend} Node.js/PostgreSQL e
-    interface \textit{web} React/Next.js.}
-    \label{fig:arquitetura_sistema}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% =============================================================
-\section{Dispositivo Embarcado em Operação}
-\label{sec:embarcado}
-% =============================================================
+Em todos os ciclos registrados, o \textit{backend} confirmou o
+recebimento da leitura pela rota \texttt{POST /leituras}, com o código
+201. Quando há print do painel, ele foi obtido no mesmo cenário, mas
+não necessariamente no mesmo ciclo; por isso, alguns valores podem
+diferir, sempre dentro da mesma faixa da \autoref{tab:limiares}.
 
 % -------------------------------------------------------------
-\subsection{Inicialização e Testes de Hardware}
-\label{subsec:inicializacao}
+\subsection{Casos do Modelo de Alerta}
+\label{subsec:res-modelo}
 % -------------------------------------------------------------
 
-Ao ser energizado, o dispositivo embarcado realiza uma sequência de
-verificações antes de declarar-se operacional. As
-\autoref{fig:prototipo_hardware_pt1} e \autoref{fig:prototipo_hardware_pt2}
-exibem o protótipo montado com seus cinco componentes: o ESP8266 NodeMCU
-ao centro, o sensor FC-28 com sonda à esquerda, os três LEDs indicadores
-(azul, amarelo e vermelho) no topo e o \textit{buzzer} passivo à direita.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[angle=90, width=\textwidth]{figures/cap5_prototipo_hardware_pt1.jpeg}}
-    \caption{Protótipo de \textit{hardware} embarcado montado (parte~1): visão
-    geral do conjunto com ESP8266 NodeMCU, sensor FC-28 com sonda, LEDs
-    indicadores azul, amarelo e vermelho, e \textit{buzzer} passivo.}
-    \label{fig:prototipo_hardware_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_prototipo_hardware_pt2.jpeg}}
-    \caption{Protótipo de \textit{hardware} embarcado montado (parte~2): detalhe
-    das conexões entre os componentes.}
-    \label{fig:prototipo_hardware_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-No monitor serial do Arduino IDE, o início da sequência de inicialização
-exibe o banner de identificação do sistema, seguido da leitura dos valores
-de calibração armazenados na memória EEPROM --- confirmando os pontos de
-referência do sensor em solo seco e em solo saturado. Em seguida, os três
-LEDs são acionados sequencialmente por 400\,ms cada, permitindo verificar
-visualmente a integridade de todos os indicadores antes da operação. Ao concluir o teste de
-\textit{hardware}, o sistema conecta ao Wi-Fi, sincroniza o horário via
-NTP, consulta as APIs externas BNDMET e OWM, conforme mostra a
-\autoref{fig:serial_inicializacao_pt1}. Por
-fim, realiza a primeira coleta de dados, conforme registrado nas \autoref{fig:serial_inicializacao_pt2} a \autoref{fig:serial_inicializacao_pt4}, 
-e declara operacional com a mensagem ``SISTEMA TOTALMENTE INICIADO'', conforme mostra a
-\autoref{fig:serial_inicializacao_pt5}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_inicializacao_pt1.png}}
-    \caption{Monitor serial durante a inicialização (parte~1): banner de
-    identificação do sistema, leitura dos valores de calibração da EEPROM
-    para solo seco e solo saturado, teste sequencial dos três LEDs indicadores; conexão
-    Wi-Fi estabelecida, sincronização NTP concluída e consulta as APIs externas BNDMET e OWM.}
-    \label{fig:serial_inicializacao_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_inicializacao_pt2.png}}
-    \caption{Monitor serial durante a inicialização (parte~2): primeira
-    coleta de dados realizada - parte 1.}
-    \label{fig:serial_inicializacao_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_inicializacao_pt3.png}}
-    \caption{Monitor serial durante a inicialização (parte~3): primeira
-    coleta de dados realizada - parte 2.}
-    \label{fig:serial_inicializacao_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_inicializacao_pt4.png}}
-    \caption{Monitor serial durante a inicialização (parte~4): primeira
-    coleta de dados realizada - parte 3.}
-    \label{fig:serial_inicializacao_pt4}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_inicializacao_pt5.png}}
-    \caption{Monitor serial durante a inicialização (parte~5): sistema declarado operacional com a mensagem
-    ``SISTEMA TOTALMENTE INICIADO''.}
-    \label{fig:serial_inicializacao_pt5}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando o \textit{backend} está inacessível no momento da inicialização,
-o sistema registra a falha no monitor serial, mantém a variável de
-controle de API como inativa e prossegue normalmente em modo local, sem
-travar a execução. As leituras continuam sendo realizadas e o cálculo
-de risco é executado normalmente; o envio ao banco de dados retomará
-assim que a conectividade for restabelecida. De forma análoga, se a
-conexão Wi-Fi não for estabelecida após as tentativas iniciais, o
-dispositivo opera em modo local, calculando o risco com os dados
-disponíveis em memória e aguardando reconexão automática a cada 30
-segundos, conforme ilustram as \autoref{fig:serial_backend_inacessivel_pt1}
-e \autoref{fig:serial_backend_inacessivel_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_backend_inacessivel_pt1.png}}
-    \caption{Monitor serial durante inicialização com \textit{backend} inacessível (parte~1): falha de conexão registrada e variável de controle da API definida como inativa.}
-    \label{fig:serial_backend_inacessivel_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_backend_inacessivel_pt2.png}}
-    \caption{Monitor serial durante inicialização com \textit{backend} inacessível (parte~2): sistema prosseguindo em modo local sem interromper a execução.}
-    \label{fig:serial_backend_inacessivel_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando a rede Wi-Fi está inacessível após as tentativas iniciais, o comportamento observado no monitor serial é distinto: o sistema registra cada tentativa malsucedida e, ao esgotar o limite, declara operação em modo local, conforme ilustram as \autoref{fig:serial_wifi_sem_conexao_pt1} e \autoref{fig:serial_wifi_sem_conexao_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_wifi_sem_conexao_pt1.png}}
-    \caption{Monitor serial com Wi-Fi inacessível (parte~1): tentativas de conexão malsucedidas registradas sequencialmente.}
-    \label{fig:serial_wifi_sem_conexao_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_wifi_sem_conexao_pt2.png}}
-    \caption{Monitor serial com Wi-Fi inacessível (parte~2): sistema declarando operação em modo local após esgotar o limite de tentativas, com leituras acumuladas em memória para envio posterior.}
-    \label{fig:serial_wifi_sem_conexao_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Leitura do Sensor e Indicadores Visuais}
-\label{subsec:sensor-leds}
-% -------------------------------------------------------------
-
-A cada ciclo de leitura --- a cada 30 segundos em nível VERDE, 10
-segundos em AMARELO e 5 segundos em VERMELHO ou RUPTURA, conforme
-modelado na \autoref{subsec:arquitetura} do \autoref{cap:materiais-metodos} --- o
-monitor serial exibe o valor bruto do conversor analógico-digital, a
-umidade calculada em porcentagem, o fator do lençol freático normalizado
-e a confirmação de que o sensor está conectado e operando corretamente,
-como ilustra a \autoref{fig:serial_sensor}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_sensor.png}}
-    \caption{Monitor serial durante leitura do sensor FC-28: valor ADC
-    bruto, umidade calculada em porcentagem, fator do lençol freático e
-    confirmação de \textit{sensorOk}.}
-    \label{fig:serial_sensor}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O LED correspondente ao nível de alerta calculado é acionado ao final de
-cada ciclo de análise. A \autoref{fig:leds_niveis} mostra os três estados
-visuais do protótipo: LED azul aceso quando o índice de risco não supera
-45\% (situação segura), LED amarelo aceso entre 46\% e 75\% (atenção) e
-LED vermelho aceso acima de 75\% (situação crítica). Neste último caso,
-o \textit{buzzer} também é ativado em modo intermitente, com frequência e
-cadência que crescem proporcionalmente à gravidade: 2.000\,Hz com
-\textit{beep} a cada 800\,ms entre 75 e 84\%, 2.200\,Hz a cada 500\,ms
-entre 85 e 89\%, e 2.400\,Hz a cada 300\,ms para índices iguais ou
-superiores a 90\%.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.90\textwidth]{figures/cap5_leds_niveis.png}}
-    \caption{Estados visuais do protótipo: LED azul aceso (nível VERDE,
-    situação segura), LED amarelo aceso (nível AMARELO, atenção) e LED
-    vermelho aceso com \textit{buzzer} ativo (nível VERMELHO, situação
-    crítica).}
-    \label{fig:leds_niveis}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Se o sensor for desconectado ou apresentar curto-circuito, o sistema
-identifica a falha, registra \textit{sensorOk} como inativo no monitor
-serial e aplica um desconto no índice de confiabilidade da análise.
-A detecção é precisa: \texttt{sensorOk} é definido como \texttt{false}
-exclusivamente quando o ADC retorna o valor~0 --- indicando
-curto-circuito na sonda --- ou o valor~1023 --- indicando circuito
-aberto por desconexão. Qualquer leitura intermediária, mesmo que produza
-uma umidade calculada duvidosa, é tratada como operação normal pelo
-firmware. O cálculo de risco prossegue com os demais componentes
-disponíveis, conforme ilustram as \autoref{fig:serial_sensor_falha_pt1}
-e \autoref{fig:serial_sensor_falha_pt2}. Quando o administrador acessa
-o comando de simulação via monitor serial (\texttt{alerta amarelo} ou
-\texttt{alerta vermelho}, por exemplo), o LED correspondente ao nível
-forçado acende imediatamente e o intervalo de envio ao \textit{backend}
-assume o valor do nível simulado, conforme ilustram a
-\autoref{fig:serial_modo_manual} e a \autoref{fig:serial_modo_manual_vermelho}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_sensor_falha_pt1.png}}
-    \caption{Monitor serial com sensor FC-28 desconectado (parte~1): leitura ADC nos limites do conversor e \textit{sensorOk} registrado como inativo.}
-    \label{fig:serial_sensor_falha_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_sensor_falha_pt2.png}}
-    \caption{Monitor serial com sensor FC-28 desconectado (parte~2): desconto de 40 pontos aplicado ao índice de confiabilidade; o cálculo de risco prossegue com os demais componentes disponíveis.}
-    \label{fig:serial_sensor_falha_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_modo_manual.png}}
-    \caption{Monitor serial após execução do comando \texttt{alerta amarelo}: LED amarelo acionado, intervalo de envio ao \textit{backend} ajustado para 20 segundos e nível forçado mantido até a próxima leitura real do sensor.}
-    \label{fig:serial_modo_manual}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_modo_manual_vermelho.png}}
-    \caption{Monitor serial após execução do comando \texttt{alerta vermelho}: LED vermelho acionado, intervalo de envio ao \textit{backend} ajustado para 10 segundos e nível forçado mantido até a próxima leitura real do sensor.}
-    \label{fig:serial_modo_manual_vermelho}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Consultas às APIs Externas e Análise de Risco}
-\label{subsec:apis-risco}
-% -------------------------------------------------------------
-
-Após cada consulta bem-sucedida à API BNDMET/DECEA, o monitor serial
-confirma os acumulados pluviométricos obtidos para as janelas de 24
-horas, 7 dias e 30 dias, a precipitação horária atual e o percentual de
-qualidade dos dados da estação D6594, conforme a
-\autoref{fig:serial_bndmet}. Da mesma forma, ao consultar a
-OpenWeatherMap, o sistema exibe a pressão atmosférica, a temperatura,
-a chuva atual, o acumulado previsto para as próximas 24 horas e a
-classificação de intensidade atribuída ao evento, como mostra a
-\autoref{fig:serial_owm}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_bndmet.png}}
-    \caption{Monitor serial após consulta bem-sucedida à API BNDMET/DECEA:
-    acumulados pluviométricos para 24h, 7 dias e 30 dias, precipitação
-    horária I175 e índice de qualidade dos dados da estação.}
-    \label{fig:serial_bndmet}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_serial_owm.png}}
-    \caption{Monitor serial após consulta à OpenWeatherMap: pressão
-    atmosférica, temperatura, chuva atual, acumulado previsto para 24h e
-    classificação de intensidade (Fraca / Moderada / Forte / Muito Forte /
-    Pancada).}
-    \label{fig:serial_owm}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Com todos os dados coletados, o ciclo de análise calcula os sete
-componentes individuais do modelo de risco definido no
-\autoref{cap:materiais-metodos} e produz o fator integrado, o nível de alerta, o
-índice de confiabilidade e a recomendação operacional. O comando
-\texttt{debug} exibe esse painel completo no monitor serial, como
-ilustrado nas \autoref{fig:serial_debug_pt1} e
-\autoref{fig:serial_debug_pt2}. Quando o mecanismo de
-amplificação é ativado --- situação em que o solo apresenta saturação
-elevada ao mesmo tempo em que a previsão indica chuva moderada ou
-superior ---, o monitor serial registra explicitamente ``Amplificado:
-SIM (1,2$\times$)'', conforme demonstra a
-\autoref{fig:serial_amplificado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_debug_pt1.png}}
-    \caption{Painel de análise de risco exibido pelo comando \texttt{debug}
-    (parte~1): os sete componentes individuais do modelo e o fator de risco
-    integrado.}
-    \label{fig:serial_debug_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_debug_pt2.png}}
-    \caption{Painel de análise de risco exibido pelo comando \texttt{debug}
-    (parte~2): nível de alerta, índice de confiabilidade e recomendação
-    operacional.}
-    \label{fig:serial_debug_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_amplificado.png}}
-    \caption{Monitor serial com mecanismo de amplificação $\times 1{,}20$
-    ativado: solo em estado avançado de saturação e previsão de chuva
-    moderada ou superior satisfeitas simultaneamente.}
-    \label{fig:serial_amplificado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A recomendação operacional gerada em cada ciclo é composta dinamicamente
-pela função \texttt{gerarRecomendacaoDetalhada()}: parte de uma mensagem
-base correspondente ao nível de alerta e acrescenta sufixos contextuais
-de acordo com o estado atual do sistema. Quando o acumulado de 7 dias
-supera 50\,mm, é adicionado ``\texttt{| Solo saturado por chuvas
-recentes}''; quando a API BNDMET está indisponível, acrescenta-se
-``\texttt{| Dados BNDMET indisponíveis}''; e quando o mecanismo de
-amplificação está ativo, inclui-se ``\texttt{| Amplificação de risco
-ativa}''. Esses sufixos podem ser combinados, de modo que a recomendação
-exibida no \textit{dashboard} e enviada nos alertas por e-mail reflete
-com precisão o conjunto de condições vigentes em cada momento.
-
-Quando a API BNDMET retorna erro ou JSON inválido, o sistema exibe
-``BNDMET FALHA'' no monitor serial, zera os componentes pluviométricos
-históricos e aplica desconto de 25 pontos na confiabilidade da análise.
-As tentativas de reconexão passam a ocorrer a cada 30 segundos em vez
-do intervalo normal adaptativo, conforme ilustram as
-\autoref{fig:serial_bndmet_falha_pt1} e
-\autoref{fig:serial_bndmet_falha_pt2}. Se a sincronização NTP ainda não tiver
-sido concluída no momento em que a consulta BNDMET seria realizada,
-o sistema a adia, exibindo ``NTP ainda não sincronizado --- consulta
-BNDMET adiada''. Nesses registros, o campo \texttt{bndmetInicializado}
-é serializado como \texttt{false} no \textit{payload} JSON enviado ao
-\textit{backend}, que os identifica e os exclui do cálculo da qualidade
-média BNDMET exibido no relatório --- evitando que zeros transitórios
-dos primeiros ciclos contaminem as estatísticas do período. Dados BNDMET
-disponíveis mas com qualidade inferior a 80\% também geram um desconto
-adicional de 10 pontos na confiabilidade, porém são utilizados
-normalmente no modelo. Se a precipitação horária I175 não registrar
-medições para o horário atual, o valor de chuva atual é assumido como
-zero, sem prejuízo às demais variáveis.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_bndmet_falha_pt1.png}}
-    \caption{Monitor serial com falha na API BNDMET/DECEA (parte~1): mensagem ``BNDMET FALHA'' e componentes pluviométricos zerados.}
-    \label{fig:serial_bndmet_falha_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_bndmet_falha_pt2.png}}
-    \caption{Monitor serial com falha na API BNDMET/DECEA (parte~2): desconto de 25 pontos registrado na confiabilidade e reconexão acelerada a cada 30 segundos.}
-    \label{fig:serial_bndmet_falha_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Antes da sincronização NTP ser concluída, o comportamento é distinto da falha de API: o monitor serial exibe a postergação explícita da consulta, como mostra a \autoref{fig:serial_ntp_pendente}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_ntp_pendente.png}}
-    \caption{Monitor serial com NTP ainda não sincronizado: mensagem ``NTP ainda não sincronizado --- consulta BNDMET adiada'' e consulta postergada para o próximo ciclo, sem penalidade de indisponibilidade de API.}
-    \label{fig:serial_ntp_pendente}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando os dados BNDMET estão disponíveis mas a estação registra muitas medições nulas, o índice de qualidade fica abaixo de 80\% e um desconto adicional é aplicado, conforme ilustram as \autoref{fig:serial_bndmet_qualidade_baixa_pt1} e \autoref{fig:serial_bndmet_qualidade_baixa_pt2}. Esta condição não ocorreu espontaneamente durante os testes em tempo real; para viabilizar a captura, a data da consulta foi ajustada para um intervalo histórico real da estação D6594 em que o número de medições nulas foi elevado, validando o comportamento do sistema sem reproduzir a situação em operação contínua.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_bndmet_qualidade_baixa_pt1.png}}
-    \caption{Monitor serial com dados BNDMET disponíveis mas índice de qualidade inferior a 80\% (parte~1): qualidade dos dados registrada abaixo do limiar aceitável.}
-    \label{fig:serial_bndmet_qualidade_baixa_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_bndmet_qualidade_baixa_pt2.png}}
-    \caption{Monitor serial com dados BNDMET disponíveis mas índice de qualidade inferior a 80\% (parte~2): desconto adicional de 10 pontos registrado na confiabilidade; precipitações utilizadas normalmente no modelo de risco.}
-    \label{fig:serial_bndmet_qualidade_baixa_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A ausência de medições horárias I175 para o momento da consulta é tratada de forma silenciosa, como demonstram as \autoref{fig:serial_i175_sem_medicao_pt1} e \autoref{fig:serial_i175_sem_medicao_pt2}: o sistema assume precipitação atual zero sem interromper o ciclo, mantendo valores anteriores. Esta condição foi observada em período noturno durante os testes, sendo um evento de ocorrência irregular que não pôde ser reproduzido de forma controlada.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_i175_sem_medicao_pt1.png}}
-    \caption{Monitor serial com fenômeno I175 sem medições para o horário atual (parte~1): ausência de dados horários identificada pelo sistema e precipitação horária assumida como zero; mantendo valores anteriores.}
-    \label{fig:serial_i175_sem_medicao_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_i175_sem_medicao_pt2.png}}
-    \caption{Monitor serial com fenômeno I175 sem medições para o horário atual (parte~2): mantêm valores anteriores ao erro e demais variáveis do modelo calculadas normalmente.}
-    \label{fig:serial_i175_sem_medicao_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A OpenWeatherMap segue comportamento simétrico: quando indisponível, os
-componentes de previsão e pressão atmosférica são zerados e a
-confiabilidade perde 15 pontos, com \textit{retry} acelerado a cada 30
-segundos, conforme ilustram as \autoref{fig:serial_owm_falha_pt1} e \autoref{fig:serial_owm_falha_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_owm_falha_pt1.png}}
-    \caption{Monitor serial com OpenWeatherMap indisponível (parte~1): componentes de previsão e pressão zerados.}
-    \label{fig:serial_owm_falha_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_owm_falha_pt2.png}}
-    \caption{Monitor serial com OpenWeatherMap indisponível (parte~2): desconto de 15 pontos na confiabilidade e \textit{retry} acelerado ativado para a próxima tentativa.}
-    \label{fig:serial_owm_falha_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Durante o estado de ruptura ativa, a confiabilidade é fixada em 100\% independentemente de qualquer fonte indisponível, pois o hardware confirma o estado diretamente, conforme demonstram as \autoref{fig:serial_ruptura_confiabilidade_100_pt1} e \autoref{fig:serial_ruptura_confiabilidade_100_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_ruptura_confiabilidade_100_pt1.png}}
-    \caption{Monitor serial durante ruptura ativa com API local indisponível (parte~1): estado de RUPTURA ativo com API local indisponível e fontes de dados disponíveis.}
-    \label{fig:serial_ruptura_confiabilidade_100_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_ruptura_confiabilidade_100_pt2.png}}
-    \caption{Monitor serial durante ruptura ativa com API indisponível (parte~2): confiabilidade fixada em 100\% pelo estado especial de RUPTURA, sobrepondo todos os descontos que seriam aplicados.}
-    \label{fig:serial_ruptura_confiabilidade_100_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O \textit{firmware} implementa um mecanismo de supervisão periódica ---
-executado a cada cinco minutos --- que monitora três condições de falha e
-toma a ação corretiva correspondente a cada uma delas.
-
-O primeiro gatilho atua sobre a conectividade Wi-Fi: a cada 30 segundos,
-a função de verificação tenta reconectar o módulo à rede. Quando o número
-de tentativas consecutivas sem sucesso ultrapassa dez, o dispositivo
-executa uma reinicialização completa via \texttt{ESP.restart()},
-garantindo que o sistema retorne a um estado inicial limpo, conforme
-ilustra a \autoref{fig:serial_wifi_falha_envio}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_wifi_falha_envio.png}}
-    \caption{Monitor serial durante falha persistente de Wi-Fi: tentativas
-    de reconexão automática a cada 30 segundos e reinicialização completa
-    do dispositivo ao atingir dez falhas consecutivas sem sucesso.}
-    \label{fig:serial_wifi_falha_envio}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O segundo gatilho atua sobre as falhas de comunicação com o
-\textit{backend}: quando o contador de envios sem resposta ultrapassa dez
-ocorrências consecutivas, o módulo Wi-Fi é desconectado e reconectado sem
-reinicializar o dispositivo --- o contador é zerado e o sistema retoma as
-tentativas de envio normalmente, conforme ilustra a
-\autoref{fig:serial_backend_sem_resposta}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_backend_sem_resposta.png}}
-    \caption{Monitor serial com \textit{backend} sem resposta e Wi-Fi
-    ativo: contador de falhas incrementado ciclo a ciclo e reconexão do
-    módulo Wi-Fi ao atingir dez falhas consecutivas, sem reinicialização
-    do dispositivo.}
-    \label{fig:serial_backend_sem_resposta}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O terceiro gatilho atua sobre a memória disponível: quando a
-\textit{heap} livre cai abaixo de 5.000 bytes, o dispositivo reinicia
-automaticamente para prevenir travamentos por esgotamento de memória,
-conforme demonstra a \autoref{fig:serial_heap_critico}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_heap_critico.png}}
-    \caption{Monitor serial com \textit{heap} crítico detectado: memória
-    livre abaixo de 5.000 bytes e reinicialização automática do
-    dispositivo.}
-    \label{fig:serial_heap_critico}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Protocolo de Ruptura}
-\label{subsec:ruptura}
-% -------------------------------------------------------------
-
-Quando a umidade do solo atinge ou supera 30\%, o sistema aciona o
-protocolo de ruptura de forma imediata, sem aguardar o próximo ciclo
-de análise programado. O monitor serial exibe o banner de emergência
-mostrado na \autoref{fig:serial_ruptura}: a umidade registrada, o limiar
-ultrapassado e a mensagem de evacuação imediata. O LED vermelho acende
-e o \textit{buzzer} dispara na frequência máxima de 2.400\,Hz,
-independentemente do índice calculado pelos componentes do modelo.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_ruptura.png}}
-    \caption{Monitor serial no acionamento do protocolo de ruptura: umidade
-    acima de 30\%, LED vermelho e \textit{buzzer} em 2.400\,Hz acionados
-    imediatamente, mensagem de evacuação exibida.}
-    \label{fig:serial_ruptura}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Assim que a umidade retorna abaixo de 30\%, inicia-se o período de
-\textit{cooldown}: o sistema aguarda três leituras consecutivas com
-valores seguros antes de retomar o cálculo normal de risco. Durante esse
-intervalo, o monitor serial exibe a contagem progressiva de cada leitura
-segura --- ``Retorno de ruptura --- leitura 1/3'', ``leitura 2/3'' e
-``leitura 3/3'' --- até a mensagem ``RUPTURA ENCERRADA'' confirmar o
-retorno ao fluxo normal, conforme ilustrado na
-\autoref{fig:serial_cooldown}. Esse mecanismo de três confirmações
-consecutivas protege o sistema contra oscilações na leitura do sensor
-imediatamente após o pico de umidade.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_cooldown.png}}
-    \caption{Monitor serial durante o \textit{cooldown} de ruptura:
-    contagem das três leituras consecutivas com umidade abaixo de 30\%
-    e confirmação do encerramento do estado de ruptura.}
-    \label{fig:serial_cooldown}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Comandos via Serial Monitor}
-\label{subsec:serial}
-% -------------------------------------------------------------
-
-O dispositivo disponibiliza onze comandos acessíveis pelo monitor serial
-do Arduino IDE durante a operação, listados na
-\autoref{tab:comandos_serial}. Os três comandos de simulação de nível
-(\texttt{alerta verde}, \texttt{alerta amarelo} e \texttt{alerta
-vermelho}) foram especialmente úteis durante os testes: ao forçar um
-nível específico, é possível observar a resposta dos LEDs, o comportamento
-do \textit{buzzer} e a alteração do intervalo de envio ao
-\textit{backend} sem aguardar condições naturais que acionem o alerta.
-Cada simulação realiza exatamente três envios ao \textit{backend} com os
-dados do nível forçado e, ao concluir o terceiro envio, encerra-se
-automaticamente: as \textit{flags} \texttt{simulacaoAtiva} e
-\texttt{modoManual} retornam a \texttt{false}, o \textit{buzzer} é
-silenciado e o sistema retorna ao modo automático sem intervenção do
-operador. Durante toda a simulação, a leitura do higrômetro é suspensa
---- a função \texttt{atualizarDadosLocais()} retorna imediatamente
-quando \texttt{modoManual = true} --- garantindo que nenhuma leitura
-real sobrescreva os valores forçados antes que os três envios sejam
-concluídos. Quando um comando não reconhecido é digitado, o sistema
-responde com ``Comando não reconhecido. Digite \texttt{help}'', conforme
-ilustra a \autoref{fig:serial_comando_nao_reconhecido}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_comando_nao_reconhecido.png}}
-    \caption{Monitor serial com comando não reconhecido digitado: resposta ``Comando não reconhecido. Digite \texttt{help}'' exibida imediatamente, sem interromper o ciclo de operação do sistema.}
-    \label{fig:serial_comando_nao_reconhecido}
-    \fonte{Autora, 2026.}
-\end{figure}
+Os casos C01 a C09 seguem a \autoref{tab:casos-modelo}. O valor de $S$
+foi ajustado no potenciômetro do solo, dentro da faixa de cada caso, e
+$P_{72}$ foi informado pelo comando \texttt{chuva <mm>}. O caso C00
+verifica o intervalo entre ciclos.
+
+Nos casos C01, C04 e C07, o ciclo registrado usou o $P_{72}$ obtido das
+APIs no dia do teste: 10,9\,mm no caso C01 e 19,1\,mm nos casos C04 e
+C07. Esses valores pertencem à mesma faixa do valor previsto nos casos
+(abaixo de $P_1$), e a saída esperada não muda.
+A \autoref{tab:res-modelo} resume os nove casos.
 
 \begin{table}[htb]
 \centering
-\caption{Comandos disponíveis via Serial Monitor e resultados observados}
-\label{tab:comandos_serial}
-\begin{tabular}{lp{9.5cm}}
+\caption{Resultados dos casos do modelo de alerta na simulação}
+\label{tab:res-modelo}
+\small
+\begin{tabular}{p{0.9cm}p{1.2cm}p{2.4cm}p{4.2cm}p{4.6cm}}
 \hline
-\textbf{Comando} & \textbf{Resultado observado} \\
+\textbf{Caso} & \textbf{$S$} & \textbf{$P_{72}$ (mm)} & \textbf{Saída esperada} & \textbf{Saída observada} \\
 \hline
-\texttt{status}          & Painel com estado de Wi-Fi, BNDMET, OWM, sensor, \textit{backend}, memória livre, \textit{uptime} e RSSI \\
-\texttt{analise}         & Executa imediatamente um ciclo de análise com os dados em memória \\
-\texttt{debug}           & Painel detalhado com os sete componentes do modelo, fator de risco integrado, nível, confiabilidade e recomendação \\
-\texttt{calibrar}        & Inicia recalibração: solicita leituras em solo seco e saturado e persiste os novos valores na EEPROM \\
-\texttt{reset}           & Apaga LEDs e \textit{buzzer}, reinicia estruturas de memória e reinicia o dispositivo após 3 segundos \\
-\texttt{teste}           & Rotina de sete etapas: \textit{hardware}, conectividade, sensor, BNDMET, OWM, cálculos e análise \\
-\texttt{enviar}          & Força envio imediato dos dados em memória ao \textit{backend} \\
-\texttt{api}             & Testa conectividade com o \textit{backend} e exibe ``API OK'' ou ``API falha'' \\
-\texttt{help}            & Exibe lista completa de comandos disponíveis \\
-\texttt{alerta verde}    & Força nível VERDE; LED azul acende; intervalo de envio: 60 s \\
-\texttt{alerta amarelo}  & Força nível AMARELO; LED amarelo acende; intervalo de envio: 20 s \\
-\texttt{alerta vermelho} & Força nível VERMELHO; LED vermelho acende; \textit{buzzer} ativa; envio: 10 s \\
+C00 & 0,15 & 0 (informado) & VERDE; próximo ciclo em 30\,s & VERDE; próximo ciclo em 30\,s \\
+C01 & 0,11 & 10,9 (APIs) & VERDE & VERDE; LED verde \\
+C02 & 0,06 & 80 (informado) & VERDE & VERDE; LED verde \\
+C03 & 0,18 & 120 (informado) & VERDE & VERDE; LED verde \\
+C04 & 0,80 & 19,1 (APIs) & VERDE & VERDE; LED verde \\
+C05 & 0,83 & 80 (informado) & AMARELO & AMARELO; LED amarelo \\
+C06 & 0,79 & 120 (informado) & AMARELO & AMARELO; LED amarelo \\
+C07 & 0,93 & 19,1 (APIs) & VERDE & VERDE; LED verde \\
+C08 & 0,93 & 80 (informado) & AMARELO & AMARELO; LED amarelo \\
+C09 & 0,95 & 120 (informado) & VERMELHO; \textit{buzzer} acionado & VERMELHO; LED vermelho \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026.}
+\fonte{Elaborado pela autora com base nos registros da simulação (valores da simulação).}
 \end{table}
 
-As \autoref{fig:serial_comando_teste_pt1},
-\autoref{fig:serial_comando_teste_pt2} e
-\autoref{fig:serial_comando_teste_pt3} exibem a saída do comando \texttt{teste}, que percorre as sete etapas de verificação sequencialmente e reporta o resultado de cada uma.
+Nos nove casos, o nível observado foi igual ao esperado pela
+\autoref{tab:matriz}. Os casos C03 e C07 mostram que a chuva sem solo
+úmido, e o solo úmido sem chuva, não elevaram o nível. Os casos C06 e
+C09 tiveram a mesma chuva e níveis diferentes, definidos apenas por $S$.
+
+\paragraph*{Caso C00 --- intervalo entre ciclos}
+
+Entrada: $S = 0{,}15$ e $P_{72} = 0$ (\texttt{chuva 0}). Saída esperada:
+VERDE e próximo ciclo em 30\,s, correspondentes aos 60~minutos sem
+chuva (\autoref{subsec:energia}). Saída observada: VERDE e
+``\texttt{proximo em 30 s}''. Nos ciclos anteriores, com
+$P_{72} = 120$\,mm, o intervalo foi de 5\,s
+(\autoref{fig:res-c00}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_comando_teste_pt1.png}}
-    \caption{Monitor serial durante execução do comando \texttt{teste} (parte~1): verificação de \textit{hardware} e conectividade.}
-    \label{fig:serial_comando_teste_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C00_intervalo_60min.png}}
+\caption{Caso C00: intervalo de 30\,s (60~min em operação) sem chuva e no nível VERDE}
+\label{fig:res-c00}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C01 --- $S$ baixo e $P_{72}$ baixo}
+
+Entrada: $S = 0{,}11$ e $P_{72} = 10{,}9$\,mm, obtido das APIs
+($P_{48} = 4{,}0$\,mm e $P_{24} = 6{,}9$\,mm). Saída esperada: VERDE.
+Saída observada: VERDE, com o LED verde aceso
+(\autoref{fig:res-c01}).
+
+No painel, com $S = 0{,}11$ e $P_{72} = 30$\,mm informado, o nível foi
+VERDE, com a rede presente e a bateria normal (\autoref{fig:res-w05}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C01_Sbaixo_P30.png}}
+\caption{Caso C01 na simulação: nível VERDE com $S = 0{,}11$ e $P_{72} = 10{,}9$\,mm}
+\label{fig:res-c01}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_comando_teste_pt2.png}}
-    \caption{Monitor serial durante execução do comando \texttt{teste} (parte~2): verificação do sensor e BNDMET.}
-    \label{fig:serial_comando_teste_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W05_painel_C01_verde.pdf}}
+\caption{Painel no cenário do caso C01: VERDE, com $S = 0{,}11$ e $P_{72} = 30$\,mm informado para teste}
+\label{fig:res-w05}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C02 --- $S$ baixo e $P_{72}$ moderado}
+
+Entrada: $S = 0{,}06$ e $P_{72} = 80$\,mm. Saída esperada: VERDE.
+Saída observada: VERDE, com o LED verde aceso (\autoref{fig:res-c02}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C02_Sbaixo_P80.png}}
+\caption{Caso C02 na simulação: nível VERDE com $S = 0{,}06$ e $P_{72} = 80$\,mm}
+\label{fig:res-c02}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C03 --- $S$ baixo e $P_{72}$ alto}
+
+Entrada: $S = 0{,}18$ e $P_{72} = 120$\,mm. Saída esperada: VERDE.
+Saída observada: VERDE, com o LED verde aceso (\autoref{fig:res-c03}).
+A chuva acima de $P_2$ não elevou o nível, pois $S$ ficou abaixo de
+$S_1$.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C03_Sbaixo_P120.png}}
+\caption{Caso C03 na simulação: nível VERDE com $S = 0{,}18$ e $P_{72} = 120$\,mm}
+\label{fig:res-c03}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C04 --- $S$ moderado e $P_{72}$ baixo}
+
+Entrada: $S = 0{,}80$ e $P_{72} = 19{,}1$\,mm, obtido das APIs. Saída
+esperada: VERDE. Saída observada: VERDE, com o LED verde aceso
+(\autoref{fig:res-c04}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C04_Smedio_P30.png}}
+\caption{Caso C04 na simulação: nível VERDE com $S = 0{,}80$ e $P_{72} = 19{,}1$\,mm}
+\label{fig:res-c04}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C05 --- $S$ moderado e $P_{72}$ moderado}
+
+Entrada: $S = 0{,}83$ e $P_{72} = 80$\,mm. Saída esperada: AMARELO.
+Saída observada: AMARELO, com o LED amarelo aceso
+(\autoref{fig:res-c05}).
+
+No painel, o nível AMARELO apareceu com a orientação do nível e o selo
+``Chuva de 72 h injetada para teste''. Os cartões de $P_{48}$ e
+$P_{24}$ indicaram que esses valores não foram usados na leitura
+(\autoref{fig:res-w06}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C05_Smedio_P80.png}}
+\caption{Caso C05 na simulação: nível AMARELO com $S = 0{,}83$ e $P_{72} = 80$\,mm}
+\label{fig:res-c05}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_comando_teste_pt3.png}}
-    \caption{Monitor serial durante execução do comando \texttt{teste} (parte~3): verificação OWM.}
-    \label{fig:serial_comando_teste_pt3}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W06_painel_C05_amarelo.pdf}}
+\caption{Painel no cenário do caso C05: AMARELO, com $S = 0{,}83$ e $P_{72} = 80$\,mm informado para teste}
+\label{fig:res-w06}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C06 --- $S$ moderado e $P_{72}$ alto}
+
+Entrada: $S = 0{,}79$ e $P_{72} = 120$\,mm. Saída esperada: AMARELO.
+Saída observada: AMARELO, com o LED amarelo aceso
+(\autoref{fig:res-c06}). Mesmo com $P_{72}$ acima de $P_2$, o nível não
+chegou a VERMELHO, pois $S$ ficou abaixo de $S_2$.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C06_Smedio_P120.png}}
+\caption{Caso C06 na simulação: nível AMARELO com $S = 0{,}79$ e $P_{72} = 120$\,mm}
+\label{fig:res-c06}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C07 --- $S$ alto e $P_{72}$ baixo}
+
+Entrada: $S = 0{,}93$ e $P_{72} = 19{,}1$\,mm, obtido das APIs. Saída
+esperada: VERDE. Saída observada: VERDE, com o LED verde aceso
+(\autoref{fig:res-c07}). O ciclo anterior do mesmo registro, com
+$P_{72} = 120$\,mm informado, resultou em VERMELHO.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C07_Salto_P30.png}}
+\caption{Caso C07 na simulação: nível VERDE com $S = 0{,}93$ e $P_{72} = 19{,}1$\,mm}
+\label{fig:res-c07}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C08 --- $S$ alto e $P_{72}$ moderado}
+
+Entrada: $S = 0{,}93$ e $P_{72} = 80$\,mm. Saída esperada: AMARELO.
+Saída observada: AMARELO, com o LED amarelo aceso
+(\autoref{fig:res-c08}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C08_Salto_P80.png}}
+\caption{Caso C08 na simulação: nível AMARELO com $S = 0{,}93$ e $P_{72} = 80$\,mm}
+\label{fig:res-c08}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso C09 --- $S$ alto e $P_{72}$ alto}
+
+Entrada: $S = 0{,}95$ e $P_{72} = 120$\,mm. Saída esperada: VERMELHO,
+com o \textit{buzzer} acionado. Saída observada: VERMELHO, com o LED
+vermelho aceso (\autoref{fig:res-c09}).
+
+O sinal de 2300\,Hz do \textit{buzzer} virtual é sonoro e não aparece na
+imagem; a evidência registrada é o LED vermelho e a linha
+\texttt{[NIVEL] VERMELHO}. No painel, o nível VERMELHO apareceu com a
+orientação de deslocamento (\autoref{fig:res-w07}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/C09_Salto_P120.png}}
+\caption{Caso C09 na simulação: nível VERMELHO com $S = 0{,}95$ e $P_{72} = 120$\,mm}
+\label{fig:res-c09}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_serial_comando_teste_pt4.png}}
-    \caption{Monitor serial durante execução do comando \texttt{teste} (parte~3): verificação de cálculos e análise de risco, com resultado individual de cada etapa.}
-    \label{fig:serial_comando_teste_pt4}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W07_painel_C09_vermelho.pdf}}
+\caption{Painel no cenário do caso C09: VERMELHO, com $S = 0{,}95$ e $P_{72} = 120$\,mm informado para teste}
+\label{fig:res-w07}
+\fonte{Autora, 2026.}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{Casos de Contingência}
+\label{subsec:res-contingencia}
+% -------------------------------------------------------------
+
+Os casos X01 a X09 seguem a \autoref{tab:casos-contingencia}. A
+\autoref{tab:res-contingencia} resume as entradas e as saídas. Em todos
+os casos, o nível observado foi igual ao esperado pela
+\autoref{tab:contingencia}.
+
+\begin{table}[htb]
+\centering
+\caption{Resultados dos casos de contingência na simulação}
+\label{tab:res-contingencia}
+\small
+\begin{tabular}{p{0.9cm}p{5.2cm}p{3.6cm}p{4.4cm}}
+\hline
+\textbf{Caso} & \textbf{Entrada observada} & \textbf{Saída esperada} & \textbf{Saída observada} \\
+\hline
+X01 & Higrômetro indisponível (leitura 4095 e 0); $P_{72} = 80$\,mm & AMARELO & AMARELO; aviso de higrômetro indisponível \\
+X02 & Higrômetro indisponível; $P_{72} = 120$\,mm & VERMELHO & VERMELHO; LED vermelho \\
+X03 & $S = 0{,}96$; sem dados de chuva & AMARELO (caso especial) & AMARELO; ``sem dados de chuva'' \\
+X04 & $S = 0{,}72$; sem dados de chuva & VERDE & VERDE; ``sem dados de chuva'' \\
+X05 & $S = 0{,}72$; APIs reais, $P_{72} = 10{,}9$\,mm & VERDE & VERDE; dados completos \\
+X06 & Higrômetro indisponível; sem dados de chuva & AMARELO (precaução) & AMARELO; os dois avisos \\
+X07 & $S = 0{,}96$; dados incompletos, mínimo de 120\,mm & VERMELHO & VERMELHO; ``dados de chuva incompletos'' \\
+X08 & $S = 0{,}76$; dados incompletos, mínimo de 80\,mm & AMARELO & AMARELO; ``dados de chuva incompletos'' \\
+X09 & $S = 0{,}76$ e $S = 0{,}96$; dados incompletos, mínimo de 30\,mm & VERDE e AMARELO (caso especial) & VERDE e AMARELO; mínimo tratado como falta de dados de chuva \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora com base nos registros da simulação (valores da simulação).}
+\end{table}
+
+\paragraph*{Caso X01 --- higrômetro indisponível e $P_{72}$ moderado}
+
+Entrada: potenciômetro do solo nos extremos do curso (leituras 4095 e
+0) e $P_{72} = 80$\,mm. Saída esperada: AMARELO, definido só pela
+chuva. Saída observada: ``\texttt{HIGROMETRO INDISPONIVEL}'' nas duas
+leituras, nível AMARELO e JSON com \texttt{"S":null} e
+\texttt{"sensorIndisponivel":true} (\autoref{fig:res-x01}).
+
+O painel exibiu o nível AMARELO e os avisos ``Sensor de umidade
+(higrômetro) indisponível'' e ``O nível foi definido só com a chuva de
+72 h'' (\autoref{fig:res-w08}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X01_sem_sensor_P80.png}}
+\caption{Caso X01 na simulação: higrômetro indisponível e nível AMARELO pela chuva ($P_{72} = 80$\,mm)}
+\label{fig:res-x01}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1292 236 0,clip]{figures/cap5/W08_painel_X01_sem_sensor.pdf}}
+\caption{Painel no caso X01: higrômetro indisponível e nível AMARELO definido só pela chuva ($P_{72} = 80$\,mm informado para teste)}
+\label{fig:res-w08}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X02 --- higrômetro indisponível e $P_{72}$ alto}
+
+Entrada: higrômetro indisponível e $P_{72} = 120$\,mm. Saída esperada:
+VERMELHO, definido só pela chuva. Saída observada: VERMELHO, com o LED
+vermelho aceso (\autoref{fig:res-x02}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X02_sem_sensor_P120.png}}
+\caption{Caso X02 na simulação: higrômetro indisponível e nível VERMELHO pela chuva ($P_{72} = 120$\,mm)}
+\label{fig:res-x02}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X03 --- $S$ alto sem dados de chuva}
+
+Entrada: $S = 0{,}96$ e APIs indisponíveis (\texttt{chuva na}). Saída
+esperada: AMARELO, pelo caso especial da \autoref{subsec:contingencia}.
+Saída observada: ``\texttt{SEM DADOS DE CHUVA}'', nível AMARELO e JSON
+com \texttt{"P72":null} e \texttt{"semDadosChuva":true}
+(\autoref{fig:res-x03}).
+
+O painel exibiu o nível AMARELO, os avisos de chuva observada e prevista
+indisponíveis e o cartão de $P_{72}$ com ``Sem dados de chuva''
+(\autoref{fig:res-w09}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X03_sem_chuva_Salto.png}}
+\caption{Caso X03 na simulação: sem dados de chuva e $S = 0{,}96$, nível AMARELO (caso especial)}
+\label{fig:res-x03}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1298 236 0,clip]{figures/cap5/W09_painel_X03_sem_chuva_Salto.pdf}}
+\caption{Painel no caso X03: AMARELO com $S = 0{,}96$ e sem dados de chuva (caso especial)}
+\label{fig:res-w09}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X04 --- $S$ moderado sem dados de chuva}
+
+Entrada: $S = 0{,}72$ e APIs indisponíveis. Saída esperada: VERDE, com
+aviso de falta de dados de chuva. Saída observada: VERDE e
+``\texttt{SEM DADOS DE CHUVA}'', com próximo ciclo em 30\,s
+(\autoref{fig:res-x04}). O painel exibiu o nível VERDE e os mesmos
+avisos do caso X03 (\autoref{fig:res-w10}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X04_sem_chuva_Smedio.png}}
+\caption{Caso X04 na simulação: sem dados de chuva e $S = 0{,}72$, nível VERDE}
+\label{fig:res-x04}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1298 236 0,clip]{figures/cap5/W10_painel_X04_sem_chuva_Smedio.pdf}}
+\caption{Painel no caso X04: sem dados de chuva e com $S = 0{,}72$, nível VERDE}
+\label{fig:res-w10}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X05 --- APIs reais}
+
+Entrada: $S = 0{,}72$ e consulta às APIs em 4 de outubro de 2026. A
+BNDMET retornou 0,0\,mm para 2 de outubro e 4,0\,mm para 3 de outubro,
+e a soma dos oito blocos da OpenWeatherMap foi de 6,9\,mm. Saída
+esperada: $P_{72}$ do dia e nível pela \autoref{tab:matriz}.
+
+Saída observada: ``\texttt{P48=4.0 + P24=6.9 = P72=10.9 mm}'' e nível
+VERDE, com o LED verde aceso (\autoref{fig:res-x05}). O painel mostrou
+os mesmos valores: $P_{48} = 4{,}0$\,mm, $P_{24} = 6{,}9$\,mm,
+$P_{72} = 10{,}9$\,mm e nível VERDE (\autoref{fig:res-w24}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X05_apis_reais.png}}
+\caption{Caso X05 na simulação: consulta às APIs BNDMET e OpenWeatherMap com dados completos}
+\label{fig:res-x05}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1290 236 0,clip]{figures/cap5/W24_painel_X05_apis_reais.pdf}}
+\caption{Painel no caso X05: leitura com as APIs reais, $P_{72} = 10{,}9$\,mm e nível VERDE}
+\label{fig:res-w24}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X06 --- higrômetro indisponível e sem dados de chuva}
+
+Entrada: higrômetro indisponível e APIs indisponíveis. Saída esperada:
+AMARELO, por precaução. Saída observada:
+``\texttt{HIGROMETRO INDISPONIVEL}'', ``\texttt{SEM DADOS DE CHUVA}'' e
+nível AMARELO, com \texttt{"sensorIndisponivel":true} e
+\texttt{"semDadosChuva":true} no JSON (\autoref{fig:res-x06}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X06_sem_sensor_sem_chuva.png}}
+\caption{Caso X06 na simulação: higrômetro e dados de chuva indisponíveis, nível AMARELO}
+\label{fig:res-x06}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X07 --- dados incompletos com mínimo acima de $P_2$}
+
+Entrada: $S = 0{,}96$ e \texttt{chuva parcial 120}, que simula um dia
+sem registro na BNDMET. Saída esperada: VERMELHO, avaliado com o mínimo
+garantido. Saída observada: ``\texttt{DADOS DE CHUVA INCOMPLETOS -
+P72 >= 120.0 mm}'' e nível VERMELHO (\autoref{fig:res-x07}).
+
+O JSON trouxe \texttt{"P72":null}, \texttt{"p72Minimo":120},
+\texttt{"p48DiasNulos":1} e \texttt{"chuvaIncompleta":true}.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X07_incompleto_Salto_P120.png}}
+\caption{Caso X07 na simulação: dados de chuva incompletos, mínimo de 120\,mm e nível VERMELHO}
+\label{fig:res-x07}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X08 --- dados incompletos com mínimo entre $P_1$ e $P_2$}
+
+Entrada: $S = 0{,}76$ e \texttt{chuva parcial 80}. Saída esperada:
+AMARELO, avaliado com o mínimo garantido. Saída observada:
+``\texttt{DADOS DE CHUVA INCOMPLETOS - P72 >= 80.0 mm}'' e nível
+AMARELO, com o LED amarelo aceso e \texttt{"p72Minimo":80} no JSON
+(\autoref{fig:res-x08}).
+
+O painel exibiu o nível AMARELO e os avisos ``1 dia(s) sem registro na
+estação BNDMET'' e ``Dados de chuva incompletos --- P72 $\geq$ 80,0 mm.
+O nível foi definido com esse mínimo'' (\autoref{fig:res-w21}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X08_incompleto_Smedio_P80.png}}
+\caption{Caso X08 na simulação: dados de chuva incompletos, mínimo de 80\,mm e nível AMARELO}
+\label{fig:res-x08}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1328 236 0,clip]{figures/cap5/W21_painel_incompleta_dia_nulo.pdf}}
+\caption{Painel no caso X08: dados de chuva incompletos, mínimo de 80\,mm e nível AMARELO}
+\label{fig:res-w21}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso X09 --- dados incompletos com mínimo abaixo de $P_1$}
+
+Entrada: \texttt{chuva parcial 30}, com $S = 0{,}76$ e, em seguida,
+$S = 0{,}96$. Saída esperada: mínimo garantido de 30\,mm, abaixo de
+$P_1$, tratado como falta de dados de chuva; VERDE com $S < S_2$ e
+AMARELO com $S \geq S_2$ (caso especial).
+
+Saída observada: ``\texttt{DADOS DE CHUVA INCOMPLETOS - P72 >= 30.0
+mm}'' e ``\texttt{Minimo abaixo de P1: tratado como sem dados de
+chuva}'' nos dois ciclos. O nível foi VERDE com $S = 0{,}76$ e AMARELO
+com $S = 0{,}96$, com o LED amarelo aceso (\autoref{fig:res-x09}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/X09_incompleto_Salto_P30.png}}
+\caption{Caso X09 na simulação: dados de chuva incompletos, mínimo de 30\,mm; VERDE com $S = 0{,}76$ e AMARELO com $S = 0{,}96$ (caso especial)}
+\label{fig:res-x09}
+\fonte{Autora, 2026.}
+\end{figure}
+
+O painel exibiu o nível AMARELO e o aviso de que a chuva não entrou na
+regra e o nível foi definido só com a saturação do solo
+(\autoref{fig:res-w23}). Com o mínimo abaixo de $P_1$ e $S$ moderado, o
+nível é VERDE, como na \autoref{fig:res-w22}, uma leitura enviada por
+requisição manual em que a previsão da OpenWeatherMap ficou
+indisponível.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1290 236 0,clip]{figures/cap5/W23_painel_incompleta_Salto.pdf}}
+\caption{Painel no caso X09: dados de chuva incompletos, mínimo abaixo de $P_1$ e $S = 0{,}96$, nível AMARELO}
+\label{fig:res-w23}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 2506 236 0,clip]{figures/cap5/W22_painel_incompleta_owm_fora.pdf}}
+\caption{Painel com previsão indisponível, mínimo de 30\,mm e $S = 0{,}70$: VERDE (leitura enviada por requisição manual, teste da interface)}
+\label{fig:res-w22}
+\fonte{Autora, 2026.}
 \end{figure}
 
 % =============================================================
-\section{Validação em Ambiente de Emulação Virtual (Wokwi)}
-\label{sec:wokwi-resultados}
+\section{Supervisão de Energia}
+\label{sec:res-energia}
 % =============================================================
 
-Complementarmente aos testes com o protótipo físico apresentados na
-Seção~\ref{sec:embarcado}, o \textit{firmware} adaptado
-(\texttt{sketch.ino}) foi executado no ambiente de emulação Wokwi,
-conforme descrito na Seção~\ref{subsec:wokwi}, por meio da extensão
-Wokwi para o Visual Studio Code. O objetivo desta etapa foi reproduzir
-de forma controlada e repetível cenários que, com o sensor físico
-FC-28 em solo real, dependeriam de condições difíceis de padronizar em
-laboratório.
+Os casos E01 a E04 seguem a \autoref{tab:casos-energia}. A rede
+elétrica foi representada pela chave, e a tensão da bateria, pelo
+potenciômetro, conforme a \autoref{tab:componentes-wokwi}. O nível de
+alerta permaneceu VERDE em todos os casos, para isolar a energia.
 
-A \autoref{fig:wokwi_boot} apresenta o monitor serial durante a
-inicialização do dispositivo virtual: conexão à rede
-\texttt{Wokwi-GUEST}, sincronização NTP e primeira consulta às APIs
-externas, replicando a sequência observada no protótipo físico
-(\autoref{fig:serial_inicializacao_pt1}).
+A \autoref{tab:res-energia} resume os resultados. As tensões são
+valores da simulação, e não medições de uma bateria.
+
+\begin{table}[htb]
+\centering
+\caption{Resultados dos casos de energia na simulação}
+\label{tab:res-energia}
+\small
+\begin{tabular}{p{1.0cm}p{4.4cm}p{3.8cm}p{4.8cm}}
+\hline
+\textbf{Caso} & \textbf{Entrada} & \textbf{Saída esperada} & \textbf{Saída observada} \\
+\hline
+E01 & Rede presente; 4,20\,V & Normal; LED REDE & \texttt{rede=PRESENTE}, \texttt{bateria=NORMAL}; LED REDE aceso \\
+E02 & Rede ausente; 4,20\,V & Falta de rede; LED BACKUP & \texttt{rede=AUSENTE (backup)}; evento de energia; LED BACKUP aceso \\
+E03a & Rede ausente; 3,15\,V & Bateria baixa; LED ATENÇÃO piscando & \texttt{bateria=BAIXA}; LED ATENÇÃO aceso no instante do registro \\
+E03b & Rede ausente; 2,61\,V & Bateria crítica; LED ATENÇÃO piscando & \texttt{bateria=CRITICA}; LED ATENÇÃO aceso no instante do registro \\
+E04a & Rede presente; 3,61\,V & Normal, com indicação de recarga & \texttt{NORMAL (recarregando)}; 557\,s de 585\,s \\
+E04b & Rede presente; 3,60\,V após 585\,s & Falha, sem indicação de recarga; LED ATENÇÃO aceso & \texttt{bateria=FALHA}, sem ``recarregando''; LED ATENÇÃO aceso \\
+E04c & Rede presente; 4,20\,V & Volta ao normal & \texttt{bateria=NORMAL}; evento de energia \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora com base nos registros da simulação (valores da simulação).}
+\end{table}
+
+\paragraph*{Caso E01 --- rede presente}
+
+Entrada: chave ligada e bateria em 4,20\,V. Saída esperada: LED REDE
+aceso e bateria normal. Saída observada:
+``\texttt{rede=PRESENTE | vbat=4.20 V | bateria=NORMAL}'', com o LED
+REDE aceso e os LEDs BACKUP e ATENÇÃO apagados (\autoref{fig:res-e01}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_wokwi_boot.png}}
-    \caption{Monitor serial do ambiente Wokwi durante a inicialização:
-    conexão à rede virtual, sincronização NTP e primeira coleta de dados.}
-    \label{fig:wokwi_boot}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E01_rede_ok.png}}
+\caption{Caso E01 na simulação: rede presente e bateria normal}
+\label{fig:res-e01}
+\fonte{Autora, 2026.}
 \end{figure}
 
-A \autoref{fig:wokwi_apis} mostra as consultas às APIs BNDMET e
-OpenWeatherMap realizadas a partir do ambiente simulado, confirmando
-que o \textit{gateway} de rede virtual do Wokwi permite tráfego HTTPS
-real para a internet, requisito que motivou a escolha desta plataforma
-em detrimento do TinkerCad.
+\paragraph*{Caso E02 --- falta de rede}
+
+Entrada: chave desligada, com a bateria em 4,20\,V, $S = 0{,}29$ e
+$P_{72} = 30$\,mm. Saída esperada: LED BACKUP aceso, aviso de falta de
+rede e nível de alerta mantido. Saída observada:
+``\texttt{rede=AUSENTE (backup)}'', JSON com \texttt{"evento":"energia"}
+e \texttt{"rede":false}, e LED BACKUP aceso (\autoref{fig:res-e02}).
+
+Os ciclos seguintes continuaram a calcular o nível (VERDE) e a enviar
+as leituras. O painel exibiu ``Ausente: operando na bateria''
+(\autoref{fig:res-w11}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap5_wokwi_apis.png}}
-    \caption{Consultas às APIs BNDMET/DECEA e OpenWeatherMap realizadas
-    a partir do ambiente de emulação Wokwi via \textit{gateway} de
-    rede virtual.}
-    \label{fig:wokwi_apis}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A principal vantagem observada no ambiente emulado foi o controle
-direto sobre a variável de umidade do solo: o potenciômetro virtual,
-diferentemente do sensor resistivo em solo real, permite ajustar o
-valor do ADC de forma imediata e reprodutível. A
-\autoref{fig:wokwi_potenciometro} ilustra esse ajuste, com o valor de
-ADC e a umidade calculada refletidos em tempo real no monitor serial.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_wokwi_potenciometro.png}}
-    \caption{Ajuste do potenciômetro virtual no simulador Wokwi, com o
-    valor de ADC e a umidade calculada correspondente exibidos no
-    monitor serial.}
-    \label{fig:wokwi_potenciometro}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Durante o período em que os testes de emulação foram conduzidos, não
-houve ocorrência de chuva na região de referência, de modo que as
-variáveis de precipitação retornadas pelas APIs BNDMET e
-OpenWeatherMap ($V_{ch.atual}$, $V_{ch.histórica}$, $V_{ch.mensal}$ e
-$V_{ch.futura}$ da Equação~\ref{eq:frisco}) permaneceram próximas de zero durante
-toda a coleta. Nessa condição, o ajuste isolado do potenciômetro não
-era suficiente para elevar o fator de risco integrado até as faixas
-AMARELO e VERMELHO, uma vez que os componentes pluviométricos
-respondem por parcela relevante do peso total da equação. Para
-viabilizar a demonstração desses níveis sem depender da ocorrência
-natural de precipitação, o \textit{firmware} foi ajustado com um modo
-de teste acionado via comando serial (\texttt{chuva sintetica}), que
-fixa os quatro componentes pluviométricos em valores de referência
-(precip24h=40mm, precip7d=100mm, precip30d=200mm, previsao24h=10mm),
-mantendo os demais componentes ($V_{lencol}$, $V_{taxa\_var}$ e
-$V_{pressão}$) vinculados às leituras reais do potenciômetro e do
-sensor OpenWeatherMap. A partir dessa condição fixa, a variação do
-potenciômetro entre aproximadamente 13\% e 23\% de umidade escala
-naturalmente o nível para AMARELO, valores a partir de 24\% a 29\% escalam
-para VERMELHO (faixa em que a amplificação de 1,2× da
-Seção~\ref{subsec:wokwi} passa a ser aplicada), e valores a partir de
-30\% acionam a rotina de ruptura, descrita a seguir.
-
-As \autoref{fig:wokwi_led_verde} e \autoref{fig:wokwi_led_amarelo}
-apresentam, respectivamente, o nível VERDE (obtido com dados reais de
-chuva, sem necessidade do modo sintético, já que a condição de solo
-seco e ausência de precipitação por si só caracteriza segurança) e o
-nível AMARELO (obtido com o modo de chuva sintética ativo, conforme
-descrito acima).
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap5_wokwi_led_verde.png}}
-    \caption{Circuito simulado no Wokwi com LED verde aceso (nível
-    VERDE, condição segura).}
-    \label{fig:wokwi_led_verde}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E02_falta_rede.png}}
+\caption{Caso E02 na simulação: falta de rede, operação na bateria e nível de alerta mantido}
+\label{fig:res-e02}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap5_wokwi_led_amarelo.png}}
-    \caption{Circuito simulado no Wokwi com LED amarelo aceso (nível
-    AMARELO, atenção).}
-    \label{fig:wokwi_led_amarelo}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W11_painel_E02_falta_rede.pdf}}
+\caption{Painel no caso E02: rede elétrica ausente e operação na bateria}
+\label{fig:res-w11}
+\fonte{Autora, 2026.}
 \end{figure}
 
-A \autoref{fig:wokwi_led_vermelho} apresenta o nível VERMELHO crítico,
-também obtido com o modo de chuva sintética ativo e o potenciômetro
-ajustado acima do limiar de 24\% a 29\%. Neste estado, o sistema aciona o
-LED vermelho e um alarme sonoro intermitente, cuja frequência de repique
-aumenta conforme o índice de risco se aproxima de 100\% -- 1000ms de
-intervalo entre bipes para índices moderados, chegando a 300ms para
-índices acima de 90\%.
+\paragraph*{Caso E03 --- bateria baixa e bateria crítica}
+
+Entrada: rede ausente e tensão reduzida no potenciômetro. Saída
+esperada: bateria baixa abaixo de 3,30\,V e crítica abaixo de 3,00\,V
+(\autoref{tab:estados-energia}), com o LED ATENÇÃO piscando.
+
+Saída observada: em 3,15\,V, ``\texttt{bateria=BAIXA}'', com JSON
+\texttt{"estadoBateria":"BAIXA"} e LED ATENÇÃO aceso
+(\autoref{fig:res-e03a}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textheight, height=\textwidth, keepaspectratio, angle=-90]{figures/cap5_wokwi_led_vermelho.png}}
-    \caption{Circuito simulado no Wokwi com LED vermelho aceso e
-    \textit{buzzer} ativo (nível VERMELHO, situação crítica).}
-    \label{fig:wokwi_led_vermelho}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E03a_bateria_baixa.png}}
+\caption{Caso E03a na simulação: bateria baixa (3,15\,V) com a rede ausente}
+\label{fig:res-e03a}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Já a \autoref{fig:wokwi_led_vermelho_ruptura} apresenta o quarto
-e último cenário: a condição de RUPTURA, disparada de forma
-independente da Equação~\ref{eq:frisco} sempre que a umidade do solo atinge ou
-supera o limiar de 30\%, definido na Tabela~\ref{tab:alertas}. Embora
-o LED aceso seja visualmente idêntico ao do estado VERMELHO crítico,
-o \textit{firmware} trata as duas condições de forma distinta: a
-ruptura substitui o alarme intermitente por um tom contínuo fixo em
-2400Hz e força o índice de risco para 100\%, refletindo a natureza de
-emergência absoluta desse estado -- razão pela qual a evidência deste
-cenário é apresentada a partir do monitor serial, onde a rotina de
-\textit{override} de ruptura (\texttt{RUPTURA - UMIDADE ACIMA DO
-LIMIAR!}) é explicitamente reportada.
+Em 2,61\,V, a bateria passou a ``\texttt{CRITICA}'', com
+\texttt{"estadoBateria":"CRITICA"} no JSON (\autoref{fig:res-e03b}). O
+LED ATENÇÃO aparece aceso nos dois registros, que captam um instante do
+piscar.
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_wokwi_led_vermelho_ruptura.png}}
-    \caption{Monitor serial do ambiente Wokwi durante o acionamento da
-    rotina de ruptura (umidade $\geq$ 30\%), distinta do estado
-    VERMELHO crítico por seu tom sonoro contínuo e índice de risco
-    forçado a 100\%.}
-    \label{fig:wokwi_led_vermelho_ruptura}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E03b_bateria_critica.png}}
+\caption{Caso E03b na simulação: bateria crítica (2,61\,V) com a rede ausente}
+\label{fig:res-e03b}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Por fim, a \autoref{fig:wokwi_envio_backend} confirma a integração
-ponta a ponta a partir do ambiente virtual: o dispositivo emulado
-envia seus dados ao mesmo \textit{backend} local utilizado pelo
-protótipo físico, via \path{POST /api/sensor/dados}, e o registro
-correspondente é persistido e exibido normalmente no \textit{dashboard}
---- validando que a lógica de cálculo de risco, a integração com as
-APIs externas e a comunicação com o \textit{backend} funcionam de
-forma equivalente independentemente do hardware (físico ou emulado)
-que origina os dados.
+O painel exibiu ``Baixa · 3,15 V'' (\autoref{fig:res-w12}) e
+``Crítica · 2,61 V'' (\autoref{fig:res-w12b}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_wokwi_envio_backend.png}}
-    \caption{Envio bem-sucedido dos dados do dispositivo emulado ao
-    \textit{backend} local, com persistência confirmada e leitura
-    refletida no \textit{dashboard}.}
-    \label{fig:wokwi_envio_backend}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W12_painel_E03_bateria_baixa.pdf}}
+\caption{Painel no caso E03a: bateria baixa (3,15\,V, valor da simulação)}
+\label{fig:res-w12}
+\fonte{Autora, 2026.}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1254 236 0,clip]{figures/cap5/W12b_painel_E03_bateria_critica.pdf}}
+\caption{Painel no caso E03b: bateria crítica (2,61\,V, valor da simulação)}
+\label{fig:res-w12b}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso E04 --- recarga e falha de bateria}
+
+Entrada: rede religada e bateria mantida abaixo de 4,20\,V. Saída
+esperada: durante $T_{\mathrm{carga}}$ (585\,s no modo de demonstração),
+estado normal com indicação de recarga; após esse tempo, falha de
+bateria, sem a indicação de recarga.
+
+Saída observada: em 3,61\,V, ``\texttt{bateria=NORMAL (recarregando)}''
+e ``\texttt{recarga: 557 s de 585 s ate FALHA}''
+(\autoref{fig:res-e04a}). Após 585\,s, ``\texttt{bateria=FALHA}'', sem
+``recarregando'', JSON com \texttt{"estadoBateria":"FALHA"} e LED
+ATENÇÃO aceso (\autoref{fig:res-e04b}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E04a_recarga.png}}
+\caption{Caso E04a na simulação: rede presente e bateria em recarga (contagem até $T_{\mathrm{carga}}$)}
+\label{fig:res-e04a}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E04b_falha_bateria.png}}
+\caption{Caso E04b na simulação: falha de bateria após $T_{\mathrm{carga}}$, sem indicação de recarga}
+\label{fig:res-e04b}
+\fonte{Autora, 2026.}
+\end{figure}
+
+Com o potenciômetro levado a 4,20\,V, que representa a troca da
+bateria, o estado voltou a normal e um novo evento de energia foi
+enviado, com o LED ATENÇÃO apagado (\autoref{fig:res-e04c}). Em outro
+registro do mesmo cenário, o painel exibiu ``Falha: substituir''
+(\autoref{fig:res-w13}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/E04c_bateria_substituida.png}}
+\caption{Caso E04c na simulação: bateria em 4,20\,V e retorno ao estado normal}
+\label{fig:res-e04c}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1102 236 0,clip]{figures/cap5/W13_painel_E04b_falha.pdf}}
+\caption{Painel no caso E04b: rede presente e bateria com falha (``Falha: substituir'')}
+\label{fig:res-w13}
+\fonte{Autora, 2026.}
+\end{figure}
+
+Cada mudança de energia gerou um evento no \textit{backend} e um e-mail
+automático aos administradores, registrados no painel
+(\autoref{fig:res-w18}, na \autoref{sec:res-web}).
+
+% -------------------------------------------------------------
+\subsection{Autonomia Calculada}
+\label{subsec:res-autonomia}
+% -------------------------------------------------------------
+
+A autonomia da bateria não foi ensaiada: o simulador não reproduz o
+consumo, e a bateria não foi montada no protótipo físico. A
+\autoref{tab:autonomia} reúne os valores teóricos obtidos com as
+equações e a corrente da \autoref{subsec:energia}.
+
+\begin{table}[htb]
+\centering
+\caption{Autonomia da alimentação redundante (valores teóricos, não medidos)}
+\label{tab:autonomia}
+\small
+\begin{tabular}{p{7.0cm}p{3.2cm}p{3.8cm}}
+\hline
+\textbf{Grandeza} & \textbf{Valor calculado} & \textbf{Origem} \\
+\hline
+Corrente na placa em supervisão & 167\,mA & \autoref{tab:consumo} \\
+Corrente na placa em alarme & 202\,mA & \autoref{tab:consumo} \\
+Capacidade na entrada da placa ($C_{\mathrm{carga}}$) & 4870,2\,mAh & \autoref{eq:cap-carga} \\
+Capacidade necessária na bateria ($C_{\mathrm{bat}}$) & 7816\,mAh & \autoref{eq:cap-celula} \\
+Células NCR18650B em paralelo ($n$) & 3 (9600\,mAh) & \autoref{eq:num-celulas} \\
+Corrente na bateria em supervisão & 268,0\,mA & \autoref{eq:cap-celula}, com 167\,mA \\
+Corrente na bateria em alarme & 324,2\,mA & \autoref{eq:cap-celula}, com 202\,mA \\
+Carga usada em 24\,h de supervisão e 15\,min de alarme & 6513\,mAh (68\% de 9600\,mAh) & $268{,}0 \times 24 + 324{,}2 \times 0{,}25$ \\
+Autonomia em supervisão, sem margem & cerca de 36\,h & $9600 / 268{,}0$ \\
+Autonomia em alarme contínuo, sem margem & cerca de 29,6\,h & $9600 / 324{,}2$ \\
+Operação restante a partir de 3,3\,V (bateria baixa) & cerca de 5\,h & \autoref{subsec:energia} \\
+Operação restante a partir de 3,0\,V (bateria crítica) & cerca de 1,4\,h & \autoref{subsec:energia} \\
+Tempo máximo de recarga ($T_{\mathrm{carga}}$) & 19,5\,h (585\,s na simulação) & \autoref{eq:tempo-carga} \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora com base nas \autoref{eq:cap-carga} a \autoref{eq:tempo-carga}, na \autoref{tab:consumo} e em \citeonline{panasonic_ncr18650b}.}
+\end{table}
+
+Pelo cálculo, as três células atendem ao requisito de 24~horas de
+supervisão e 15~minutos de alarme \cite[item~5.3]{cbmmg2017it14} com
+cerca de 32\% da capacidade restante. Esses valores dependem das
+correntes adotadas dos \textit{datasheets} e não foram verificados em
+ensaio.
+
+Na simulação, foram verificados apenas a lógica dos estados de energia
+e os avisos correspondentes (\autoref{tab:res-energia}), e não a
+duração da bateria.
 
 % =============================================================
-\section{Interface \textit{Web} --- Autenticação}
-\label{sec:autenticacao}
+\section{Protótipo Físico}
+\label{sec:res-fisico}
 % =============================================================
 
-% -------------------------------------------------------------
-\subsection{Cadastro para Receber Alertas}
-\label{subsec:landing-cadastro}
-% -------------------------------------------------------------
+Os casos F01 a F08 seguem a \autoref{tab:casos-fisico}, com o
+\textit{firmware} do ESP8266 gravado pela Arduino IDE e o monitor serial
+na porta COM3. Os mesmos comandos de teste da simulação foram usados, e
+o modo de demonstração também reduziu os intervalos entre ciclos.
 
-A porta de entrada pública do sistema é a \textit{landing page}, acessível
-sem autenticação. Nela, qualquer pessoa pode conhecer as funcionalidades
-da plataforma e se cadastrar para receber notificações de alerta. A
-\autoref{fig:landing_page_pt1} e \autoref{fig:landing_page_pt2} exibem a tela com o cabeçalho de identificação
-do sistema, a seção de apresentação e os dois botões principais: ``Login''
---- para administradores --- e ``Cadastrar para Receber Alertas'' ---
-para o público em geral.
+A \autoref{fig:res-f00-foto} mostra o protótipo em operação, alimentado
+pela porta USB-C, com o LED azul aceso no nível VERDE. A umidade em
+torno da sonda foi variada mantendo-a fora da água, com as pontas na
+água ou imersa em água em um recipiente; essas condições não
+representam o maciço de uma barragem.
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_landing_page_pt1.png}}
-    \caption{\textit{Landing page} do sistema: cabeçalho com identificação,
-    apresentação das funcionalidades e botões de acesso ao login e ao
-    cadastro público.}
-    \label{fig:landing_page_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=0.85\textwidth]{figures/cap5/F00_firmware.jpg}}
+\caption{Protótipo físico em operação, com a sonda imersa em água e o LED azul aceso (nível VERDE)}
+\label{fig:res-f00-foto}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Calibração}
+
+Antes dos casos, o higrômetro foi calibrado pelos comandos
+\texttt{calibrar seco}, com a sonda seca e fora da água, e
+\texttt{calibrar sat}, com a sonda imersa em água. As leituras gravadas
+foram $L_{\mathrm{seco}} = 886$ e $L_{\mathrm{sat}} = 233$, usadas na
+\autoref{eq:saturacao} (\autoref{fig:res-f00}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F00_calibracao.png}}
+\caption{Calibração do higrômetro no protótipo físico: $L_{\mathrm{seco}} = 886$ e $L_{\mathrm{sat}} = 233$}
+\label{fig:res-f00}
+\fonte{Autora, 2026.}
+\end{figure}
+
+A \autoref{tab:res-fisico} resume os resultados. Como a umidade em torno
+da sonda não pode ser ajustada com precisão, a saída esperada foi
+definida pela faixa do $S$ lido (\autoref{tab:matriz}).
+
+\begin{table}[htb]
+\centering
+\caption{Resultados dos casos no protótipo físico}
+\label{tab:res-fisico}
+\small
+\begin{tabular}{p{0.9cm}p{5.0cm}p{3.6cm}p{4.6cm}}
+\hline
+\textbf{Caso} & \textbf{Entrada observada} & \textbf{Saída esperada} & \textbf{Saída observada} \\
+\hline
+F01 & Sonda fora da água, $S$ de 0,25 a 0,30; $P_{72} = 120$\,mm & VERDE & VERDE; LED azul; \textit{buzzer} desligado \\
+F02 & Pontas da sonda na água, $S$ de 0,77 a 0,81; $P_{72} = 80$\,mm & AMARELO & AMARELO; LED amarelo; \textit{buzzer} desligado \\
+F03 & Sonda imersa, $S$ de 0,93 a 0,95; $P_{72} = 120$\,mm & VERMELHO; \textit{buzzer} acionado & VERMELHO; LED vermelho; \textit{buzzer} ligado \\
+F04 & Sonda imersa, $S$ de 0,93 a 0,94; $P_{72} = 30$\,mm & VERDE & VERDE; LED azul \\
+F05 & Sonda desconectada (leitura 1023); $P_{72} = 80$\,mm & AMARELO, pela chuva & AMARELO; higrômetro indisponível; LED amarelo \\
+F06 & Sonda imersa, $S = 1{,}00$; sem dados de chuva & AMARELO (caso especial) & AMARELO; ``sem dados de chuva''; LED amarelo \\
+F07 & APIs reais; um dia sem registro; mínimo de 1,3\,mm & Mínimo tratado como falta de dados de chuva & VERDE com $S$ de 0,00 e 0,83; AMARELO com $S = 1{,}00$ \\
+F08 & Sonda imersa, $S = 1{,}00$; dados incompletos, mínimo de 120\,mm & VERMELHO; \textit{buzzer} acionado & VERMELHO; LED vermelho; \textit{buzzer} ligado \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora com base nos registros do protótipo físico.}
+\end{table}
+
+\paragraph*{Caso F01 --- sonda fora da água e $P_{72}$ alto}
+
+Entrada: sonda fora da água ($S$ de 0,25 a 0,30) e $P_{72} = 120$\,mm.
+Saída esperada: VERDE, com o LED azul. Saída observada:
+``\texttt{VERDE | buzzer desligado}'' e LED azul aceso
+(\autoref{fig:res-f01-foto} e \autoref{fig:res-f01-serial}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F01_foto.jpg}}
+\caption{Caso F01 no protótipo físico: sonda fora da água e LED azul aceso (VERDE)}
+\label{fig:res-f01-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_landing_page_pt2.png}}
-    \caption{\textit{Landing page} do sistema: apresentação das funcionalidades e botão de cadastro público.}
-    \label{fig:landing_page_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F01_serial.png}}
+\caption{Caso F01: monitor serial com $S$ de 0,25 a 0,30 e $P_{72} = 120$\,mm, nível VERDE}
+\label{fig:res-f01-serial}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Ao clicar em ``Cadastrar para Receber Alertas'', um modal é exibido com
-os campos nome, e-mail, telefone --- com máscara automática no formato
-\texttt{(XX) XXXXX-XXXX} aplicada à medida que o usuário digita ---,
-preferência de recebimento de notificações e tipo de notificação. Após
-o preenchimento e confirmação, o sistema exibe o \textit{toast} ``Cadastro
-realizado com sucesso! Você receberá notificações sobre os alertas de
-barragem'' e o modal é fechado, conforme ilustra a \autoref{fig:cadastro_modal_preenchido_pt1} e a \autoref{fig:cadastro_modal_preenchido_pt2}.
+\paragraph*{Caso F02 --- sonda com as pontas na água e $P_{72}$ moderado}
+
+Entrada: sonda com apenas as pontas imersas em água ($S$ de 0,77 a
+0,81, entre $S_1$ e $S_2$) e $P_{72} = 80$\,mm. Saída esperada:
+AMARELO. Saída observada: ``\texttt{AMARELO | buzzer desligado}'' e LED
+amarelo aceso (\autoref{fig:res-f02-foto} e
+\autoref{fig:res-f02-serial}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_cadastro_modal_preenchido_pt1.png}}
-    \caption{Modal de cadastro para receber alertas com campos preenchidos: nome, e-mail, telefone com máscara automática e preferência de notificação.}
-    \label{fig:cadastro_modal_preenchido_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_cadastro_modal_preenchido_pt2.png}}
-    \caption{\textit{toast} de confirmação exibido após envio bem-sucedido.}
-    \label{fig:cadastro_modal_preenchido_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando o e-mail informado já consta no cadastro, o \textit{backend}
-retorna erro e o sistema exibe uma mensagem de alerta ao usuário,
-mantendo o formulário aberto para correção, conforme ilustra a \autoref{fig:cadastro_email_duplicado}. 
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_cadastro_email_duplicado.png}}
-    \caption{Modal de cadastro com \textit{toast} de erro retornado pelo \textit{backend}: e-mail já registrado no sistema; formulário mantido aberto para correção do dado.}
-    \label{fig:cadastro_email_duplicado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Campos obrigatórios não preenchidos impedem o envio
-e exibem mensagem de erro inline no próprio campo, conforme ilustra a \autoref{fig:cadastro_campos_vazios}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_cadastro_campos_vazios.png}}
-    \caption{Modal de cadastro com validação de campos: mensagens de erro inline em campos obrigatórios não preenchidos.}
-    \label{fig:cadastro_campos_vazios}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Campos com formato inválido
---- como nome menor que 2 caracteres, e-mail sem o símbolo @, e telefone com menos de 11 dígitos, por exemplo --- também impedem o envio
-e exibem mensagem de erro inline no próprio campo, conforme ilustra a \autoref{fig:cadastro_campos_invalidos}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_cadastro_campos_invalidos.png}}
-    \caption{Modal de cadastro com validação de campos: mensagens de erro inline em campos obrigatórios com formato inválido.}
-    \label{fig:cadastro_campos_invalidos}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Login}
-\label{subsec:login}
-% -------------------------------------------------------------
-
-O acesso ao painel administrativo é feito por e-mail e senha na tela
-de \textit{login} exibida na \autoref{fig:tela_login}. Ao confirmar as
-credenciais, o sistema autentica o administrador, armazena o token de
-sessão e o redireciona imediatamente para o \textit{dashboard}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_login.png}}
-    \caption{Tela de \textit{login}: campos de e-mail e senha com
-    \textit{link} para recuperação de senha e botão de acesso.}
-    \label{fig:tela_login}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando as credenciais são inválidas --- seja por senha incorreta ou por
-e-mail inexistente --- o \textit{backend} retorna a mensagem ``Credenciais
-inválidas'' sem especificar qual campo está errado, preservando a
-segurança do sistema, conforme ilustra a \autoref{fig:login_erro_credenciais}. O mesmo comportamento se aplica a contas
-desativadas: a mensagem genérica não revela que a conta existe mas
-está inativa.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_login_erro_credenciais.png}}
-    \caption{Tela de \textit{login} com mensagem de credenciais inválidas: resposta genérica ``Credenciais inválidas'' sem indicar qual campo está incorreto, preservando a segurança da conta.}
-    \label{fig:login_erro_credenciais}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Se o token de sessão expirar durante o uso do sistema, o
-\textit{middleware} de autenticação rejeita a próxima requisição, o
-\textit{frontend} remove os dados de sessão armazenados e redireciona
-o usuário à tela de \textit{login}, conforme demonstram as
-\autoref{fig:login_sessao_expirada_pt1},
-\autoref{fig:login_sessao_expirada_pt2} e
-\autoref{fig:login_sessao_expirada_pt3}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_login_sessao_expirada_pt1.png}}
-    \caption{Sessão expirada (parte~1): dados de sessão locais removidos
-    pelo \textit{frontend} após rejeição do token.}
-    \label{fig:login_sessao_expirada_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F02_foto.jpg}}
+\caption{Caso F02 no protótipo físico: sonda com as pontas na água e LED amarelo aceso (AMARELO)}
+\label{fig:res-f02-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_login_sessao_expirada_pt2.png}}
-    \caption{Sessão expirada (parte~2): token rejeitado pelo
-    \textit{middleware} de autenticação na próxima requisição.}
-    \label{fig:login_sessao_expirada_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F02_serial.png}}
+\caption{Caso F02: monitor serial com $S = 0{,}81$ e $P_{72} = 80$\,mm, nível AMARELO}
+\label{fig:res-f02-serial}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso F03 --- sonda imersa e $P_{72}$ alto}
+
+Entrada: sonda imersa ($S$ de 0,93 a 0,95) e $P_{72} = 120$\,mm. Saída
+esperada: VERMELHO, com o \textit{buzzer} acionado. Saída observada:
+``\texttt{VERMELHO | buzzer LIGADO}'', LED vermelho aceso e
+\textit{buzzer} TMB-12A03 soando (\autoref{fig:res-f03-foto} e
+\autoref{fig:res-f03-serial}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F03_foto.jpg}}
+\caption{Caso F03 no protótipo físico: sonda imersa e LED vermelho aceso (VERMELHO)}
+\label{fig:res-f03-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_login_sessao_expirada_pt3.png}}
-    \caption{Sessão expirada (parte~3): tela de \textit{login} exibida
-    após redirecionamento automático; administrador retorna ao fluxo de
-    autenticação sem ação manual.}
-    \label{fig:login_sessao_expirada_pt3}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F03_serial.png}}
+\caption{Caso F03: monitor serial com $S$ de 0,93 a 0,95 e $P_{72} = 120$\,mm, nível VERMELHO e \textit{buzzer} ligado}
+\label{fig:res-f03-serial}
+\fonte{Autora, 2026.}
 \end{figure}
 
-% -------------------------------------------------------------
-\subsection{Logout}
-\label{subsec:logout}
-% -------------------------------------------------------------
+\paragraph*{Caso F04 --- sonda imersa e $P_{72}$ baixo}
 
-O \textit{logout} é realizado pelo botão ``Sair'' disponível no menu
-lateral. Ao clicar, a sessão é invalidada no servidor, os dados locais
-são removidos e o administrador é redirecionado para a tela de
-\textit{login} com o \textit{toast} ``Logout realizado com sucesso!''.
-Mesmo que ocorra um erro na chamada ao \textit{backend} durante o
-\textit{logout}, o \textit{frontend} remove os dados locais e realiza o
-redirecionamento de qualquer forma, garantindo que o administrador não
-permaneça preso no sistema, conforme ilustra a \autoref{fig:logout_redirecionamento}.
+Entrada: sonda imersa ($S$ de 0,93 a 0,94) e $P_{72} = 30$\,mm. Saída
+esperada: VERDE. Saída observada: ``\texttt{VERDE | buzzer
+desligado}'' e LED azul aceso (\autoref{fig:res-f04-foto} e
+\autoref{fig:res-f04-serial}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_logout_redirecionamento.png}}
-    \caption{Tela de \textit{login} exibida após \textit{logout}: sessão encerrada no servidor, dados locais removidos e administrador redirecionado automaticamente; comportamento idêntico em caso de erro silencioso na chamada ao \textit{backend}.}
-    \label{fig:logout_redirecionamento}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Recuperação de Senha}
-\label{subsec:reset-senha}
-% -------------------------------------------------------------
-
-A recuperação de senha é acessada pelo \textit{link} ``Esqueci minha
-senha'' na tela de \textit{login}. O administrador informa seu e-mail
-cadastrado e o sistema exibe uma resposta genérica --- sem indicar se
-o endereço existe ou não --- para não expor informações sobre as contas
-cadastradas, conforme demonstram as \autoref{fig:reset_solicitar_email_pt1} e \autoref{fig:reset_solicitar_email_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_solicitar_email_pt1.png}}
-    \caption{Tela de solicitação de recuperação de senha: campo de e-mail preenchido.}
-    \label{fig:reset_solicitar_email_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F04_foto.jpg}}
+\caption{Caso F04 no protótipo físico: sonda imersa e LED azul aceso (VERDE)}
+\label{fig:res-f04-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_solicitar_email_pt2.png}}
-    \caption{Tela de solicitação de recuperação de senha: resposta genérica exibida pelo sistema independente de o endereço existir ou não na base de dados.}
-    \label{fig:reset_solicitar_email_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F04_serial.png}}
+\caption{Caso F04: monitor serial com $S$ de 0,93 a 0,94 e $P_{72} = 30$\,mm, nível VERDE}
+\label{fig:res-f04-serial}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Tentativas de recuperação de senha para e-mails de usuários básicos ---
-que não possuem acesso administrativo --- recebem a mesma resposta
-genérica, sem gerar token ou enviar e-mail, conforme ilustram as \autoref{fig:reset_usuario_basico_pt1} e \autoref{fig:reset_usuario_basico_pt2}.
+O painel recebeu a leitura do protótipo físico sem dados de energia e
+exibiu ``Esta leitura não traz dados de energia''
+(\autoref{fig:res-painel-f04}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_usuario_basico_pt1.png}}
-    \caption{Tela de solicitação de recuperação de senha: campo de e-mail preenchido com e-mail de usuário básico.}
-    \label{fig:reset_usuario_basico_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/P_painel_fisico_verde.png}}
+\caption{Painel com leitura do protótipo físico no cenário do caso F04: VERDE, $S = 1{,}00$ e $P_{72} = 30$\,mm informado}
+\label{fig:res-painel-f04}
+\fonte{Autora, 2026.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_usuario_basico_pt2.png}}
-    \caption{Tela de solicitação de recuperação de senha: resposta genérica exibida pelo sistema independente de o endereço existir ou não na base de dados.}
-    \label{fig:reset_usuario_basico_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
+\paragraph*{Caso F05 --- sonda desconectada}
 
-Quando o e-mail é válido e pertence a um administrador
-ativo, um token de redefinição é gerado e enviado por e-mail com
-validade de 2 horas, acompanhado das instruções para utilizá-lo, conforme ilustram as \autoref{fig:reset_email_recebido_pt1} e \autoref{fig:reset_email_recebido_pt2}.
+Entrada: sonda desconectada do módulo e $P_{72} = 80$\,mm. Saída
+esperada: AMARELO, definido só pela chuva. Saída observada: leitura
+1023, ``\texttt{HIGROMETRO INDISPONIVEL}'', nível AMARELO e LED amarelo
+aceso (\autoref{fig:res-f05-foto} e \autoref{fig:res-f05-serial}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_email_recebido_pt1.png}}
-    \caption{Caixa de email com o token de recuperação de senha: o administrador ativo recebe por email o token de 64 caracteres.}
-    \label{fig:reset_email_recebido_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F05_foto.jpg}}
+\caption{Caso F05 no protótipo físico: sonda desconectada e LED amarelo aceso}
+\label{fig:res-f05-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_email_recebido_pt2.png}}
-    \caption{Caixa de email com o token de recuperação de senha: token de 64 caracteres e instruções de uso.}
-    \label{fig:reset_email_recebido_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F05_serial.png}}
+\caption{Caso F05: monitor serial com higrômetro indisponível e nível AMARELO pela chuva}
+\label{fig:res-f05-serial}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Com o token em mãos, o administrador acessa a etapa 1, com o formulário de redefinição,
-informa o token, conforme ilustra a \autoref{fig:reset_formulario_valida_token}.
+\paragraph*{Caso F06 --- sonda imersa sem dados de chuva}
+
+Entrada: sonda imersa ($S = 1{,}00$) e APIs indisponíveis
+(\texttt{chuva na}). Saída esperada: AMARELO, pelo caso especial. Saída
+observada: ``\texttt{SEM DADOS DE CHUVA}'', ``\texttt{AMARELO | buzzer
+desligado}'' e LED amarelo aceso (\autoref{fig:res-f06-foto} e
+\autoref{fig:res-f06-serial}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_formulario_valida_token.png}}
-    \caption{Etapa 1: Formulário de validação de token}
-    \label{fig:reset_formulario_valida_token}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Ao clicar no botão ``Validar Token'', o sistema exibe a etapa 2, com o formulário para definir a nova senha, com os campos, nova senha e a confirmação, conforme ilustra a \autoref{fig:reset_formulario_nova_senha_pt1}. 
-Quando preenche os campos corretamente, conforme ilustra a \autoref{fig:reset_formulario_nova_senha_pt2}, e pressiona o botão ``Redefinir Senha'', a redefinição é bem-sucedida, e o sistema redireciona para a etapa 3, com a mensagem ``Senha redefinida com sucesso!'' e o botão ``Ir para o Login'' para a tela de \textit{login}, conforme mostra a \autoref{fig:reset_formulario_nova_senha_pt3}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_formulario_nova_senha_pt1.png}}
-    \caption{Etapa 2: Formulário de redefinição de senha vazio.}
-    \label{fig:reset_formulario_nova_senha_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F06_foto.jpg}}
+\caption{Caso F06 no protótipo físico: sonda imersa, sem dados de chuva e LED amarelo aceso}
+\label{fig:res-f06-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_formulario_nova_senha_pt2.png}}
-    \caption{Etapa 2: Formulário de redefinição de senha preenchido - campos de nova senha e confirmação com os critérios de complexidade exibidos preenchidos.}
-    \label{fig:reset_formulario_nova_senha_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F06_serial.png}}
+\caption{Caso F06: monitor serial com $S = 1{,}00$, sem dados de chuva, nível AMARELO (caso especial)}
+\label{fig:res-f06-serial}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\paragraph*{Caso F07 --- APIs reais}
+
+Entrada: consulta às APIs em 4 de outubro de 2026. A BNDMET retornou
+0,0\,mm para 2 de outubro e nenhum valor para 3 de outubro, e a
+previsão foi de 1,3\,mm. Saída esperada: dados incompletos, com mínimo
+de 1,3\,mm tratado como falta de dados de chuva.
+
+Saída observada: ``\texttt{DADOS DE CHUVA INCOMPLETOS - P72 >= 1.3
+mm}'' e ``\texttt{Minimo abaixo de P1}''. O nível foi VERDE com
+$S = 0{,}00$ e $S = 0{,}83$, e AMARELO com $S = 1{,}00$, pelo caso
+especial (\autoref{fig:res-f07}).
+
+O painel exibiu o nível AMARELO, o aviso de um dia sem registro na
+estação e o cartão ``Dados de chuva incompletos --- P72 $\geq$ 1,3 mm''
+(\autoref{fig:res-painel-f07}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F07_apis_reais.png}}
+\caption{Caso F07: APIs reais com um dia sem registro na BNDMET, mínimo de 1,3\,mm}
+\label{fig:res-f07}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_formulario_nova_senha_pt3.png}}
-    \caption{Etapa 3: Modal informativo de senha redefinida com sucesso e botão ``Ir para o Login'' para redirecionamento ao \textit{login} após confirmação.}
-    \label{fig:reset_formulario_nova_senha_pt3}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/P_painel_fisico_amarelo.png}}
+\caption{Painel com leitura do protótipo físico no caso F07: AMARELO com $S = 1{,}00$ e dados de chuva incompletos}
+\label{fig:res-painel-f07}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Se o token for inválido
-ou já tiver expirado, o sistema exibe a mensagem ``Token inválido ou
-expirado'' e orienta o usuário a solicitar um novo \textit{link}, conforme ilustra a \autoref{fig:reset_token_expirado}.
+\paragraph*{Caso F08 --- dados incompletos com mínimo acima de $P_2$}
+
+Entrada: sonda imersa ($S = 1{,}00$) e \texttt{chuva parcial 120}.
+Saída esperada: VERMELHO, avaliado com o mínimo garantido, com o
+\textit{buzzer} acionado. Saída observada: ``\texttt{DADOS DE CHUVA
+INCOMPLETOS - P72 >= 120.0 mm}'', ``\texttt{VERMELHO | buzzer
+LIGADO}'' e LED vermelho aceso (\autoref{fig:res-f08-foto} e
+\autoref{fig:res-f08-serial}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_token_expirado.png}}
-    \caption{Tela de redefinição de senha com token inválido ou expirado: mensagem ``Token inválido ou expirado'' e orientação para solicitar novo \textit{link} de recuperação.}
-    \label{fig:reset_token_expirado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Senhas
-que não atendam ao critério mínimo --- ao menos 6 caracteres, com
-letras maiúsculas, minúsculas e um número --- são recusadas com mensagem
-de erro inline antes mesmo do envio ao servidor, conforme ilustra a \autoref{fig:reset_senha_padrao_invalido}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_reset_senha_padrao_invalido.png}}
-    \caption{Formulário de redefinição com mensagem de erro inline: nova senha não atende aos critérios mínimos de complexidade; formulário retorna para correção sem enviar ao \textit{backend}.}
-    \label{fig:reset_senha_padrao_invalido}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% =============================================================
-\section{\textit{Dashboard} --- Monitoramento em Tempo Real}
-\label{sec:dashboard}
-% =============================================================
-
-O \textit{dashboard} é a primeira tela exibida após o \textit{login} e
-a central de monitoramento do sistema. Ao carregá-lo, o administrador
-visualiza de imediato o estado atual da barragem, os principais
-indicadores das últimas 24 horas e a situação das integrações externas.
-
-% -------------------------------------------------------------
-\subsection{Sistema em Nível VERDE}
-\label{subsec:dashboard-verde}
-% -------------------------------------------------------------
-
-Quando o índice de risco integrado não supera 45\%, o \textit{dashboard}
-apresenta borda verde ao redor do card de situação atual, identificando
-a condição como segura. A \autoref{fig:dashboard_verde} ilustra essa
-configuração: o fator de risco exibido em porcentagem, os cinco KPIs
-resumindo as últimas 24 horas --- total de leituras, umidade média, risco
-médio, precipitação média e alertas críticos --- o gráfico histórico com
-as séries de umidade, precipitação e risco, e o painel lateral com o
-status das APIs BNDMET e OWM, o estado do sensor e a recomendação
-operacional gerada pelo dispositivo.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_verde.png}}
-    \caption{\textit{Dashboard} com sistema em nível VERDE: borda verde
-    no card de situação, KPIs das últimas 24 horas, gráfico histórico e
-    painel de status das APIs e do sensor.}
-    \label{fig:dashboard_verde}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Sistema em Nível AMARELO}
-\label{subsec:dashboard-amarelo}
-% -------------------------------------------------------------
-
-Com o índice de risco entre 46\% e 75\%, o card de situação atual
-assume borda amarela e o rótulo muda para ``ATENÇÃO''. A
-\autoref{fig:dashboard_amarelo} mostra essa configuração, com o KPI
-de alertas críticos incrementado em relação ao estado anterior.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_amarelo.png}}
-    \caption{\textit{Dashboard} com sistema em nível AMARELO: borda
-    amarela no card de situação, índice de risco entre 46 e 75\% e KPI
-    de alertas críticos atualizado.}
-    \label{fig:dashboard_amarelo}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Sistema em Nível VERMELHO}
-\label{subsec:dashboard-vermelho}
-% -------------------------------------------------------------
-
-Acima de 75\% no índice de risco, o card assume borda vermelha e o
-rótulo ``CRÍTICO''. Quando o mecanismo de amplificação está ativo, o
-\textit{badge} ``Amplificado $\times 1{,}20$'' aparece em laranja
-imediatamente abaixo do índice, como demonstra a
-\autoref{fig:dashboard_vermelho}. O sino de notificações no
-\textit{header} exibe um indicador de alerta crítico pendente.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_vermelho.png}}
-    \caption{\textit{Dashboard} com sistema em nível VERMELHO: borda
-    vermelha, índice acima de 75\% e, quando aplicável, \textit{badge}
-    ``Amplificado $\times 1{,}20$'' em laranja.}
-    \label{fig:dashboard_vermelho}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Sistema em Nível RUPTURA}
-\label{subsec:dashboard-ruptura}
-% -------------------------------------------------------------
-
-Quando a umidade do solo atinge ou supera 30\%, o protocolo de ruptura
-é acionado de forma imediata e o \textit{dashboard} assume sua
-representação visual mais crítica: borda roxa ao redor do card de
-situação atual e rótulo ``RUPTURA'' em destaque. Esse estado independe
-do índice calculado pelos sete componentes do modelo --- a leitura
-direta do sensor é suficiente para acionar o protocolo, conforme
-demonstra a \autoref{fig:dashboard_ruptura}. O sino de notificações
-no \textit{header} exibe um indicador de alerta crítico pendente,
-e o intervalo de transmissão do dispositivo é reduzido para 5 segundos.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_ruptura.png}}
-    \caption{\textit{Dashboard} com sistema em estado de RUPTURA: borda
-    roxa no card de situação, rótulo ``RUPTURA'' e indicador de alerta
-    crítico no \textit{header}; protocolo acionado quando a umidade
-    do solo atinge ou supera 30\%.}
-    \label{fig:dashboard_ruptura}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Atividade Recente, Gráfico Histórico e Status do Sistema}
-\label{subsec:dashboard-atividade}
-% -------------------------------------------------------------
-
-O gráfico histórico (\autoref{fig:dashboard_grafico}) sobrepõe quatro
-séries temporais referentes às últimas 24 horas: umidade do solo,
-precipitação acumulada de 24 horas, previsão de precipitação e índice
-de risco. Ao posicionar o cursor sobre qualquer ponto do gráfico, um
-\textit{tooltip} exibe os valores exatos das quatro séries naquele
-instante.
-
-A parte inferior do \textit{dashboard} apresenta dois painéis
-complementares (\autoref{fig:dashboard_grafico_inferior}). O painel de atividade recente lista as últimas
-interações do sistema --- leituras recebidas, alertas registrados e
-eventos de conectividade --- com rótulos de tempo relativo. O painel
-meteorológico exibe temperatura, umidade relativa do ar, pressão
-atmosférica e velocidade do vento da última leitura disponível.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_grafico.png}}
-    \caption{Gráfico histórico com quatro séries temporais das últimas
-    24 horas: umidade do solo, precipitação acumulada, previsão de
-    chuva e índice de risco integrado.}
-    \label{fig:dashboard_grafico}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.42\textheight,keepaspectratio]{figures/cap5/F08_foto.jpg}}
+\caption{Caso F08 no protótipo físico: sonda imersa, dados de chuva incompletos e LED vermelho aceso}
+\label{fig:res-f08-foto}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_grafico_inferior.png}}
-    \caption{Parte inferior do \textit{dashboard}: painel de atividade recente e painel meteorológico.}
-    \label{fig:dashboard_grafico_inferior}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/F08_serial.png}}
+\caption{Caso F08: monitor serial com mínimo garantido de 120\,mm, nível VERMELHO e \textit{buzzer} ligado}
+\label{fig:res-f08-serial}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Em condições normais de operação, o \textit{header} exibe o status "Online" em verde, 
-confirmando que o dispositivo embarcado está enviando leituras dentro do intervalo 
-esperado, conforme ilustra a \autoref{fig:dashboard_verde}. Esse indicador
-é atualizado a cada 30 segundos pela consulta de saúde do \textit{backend},
-e as notificações de novos alertas são verificadas a cada 60 segundos.
-
-Quando o sensor para de enviar dados por mais de 3 minutos, o indicador
-no \textit{header} passa a exibir ``Degradado'' em laranja, conforme
-ilustra a \autoref{fig:dashboard_degradado}. Esse estado reflete um
-atraso nas leituras do dispositivo embarcado, mas o sistema continua
-operacional: o \textit{backend} e o banco de dados permanecem acessíveis
-e os KPIs exibem os valores da última leitura disponível.
+Em uma leitura anterior do protótipo físico, com dados de chuva
+completos ($P_{48} = 2{,}0$\,mm e $P_{24} = 0{,}0$\,mm) e $S = 0{,}30$,
+o painel exibiu o nível VERDE (\autoref{fig:res-w14}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_degradado.png}}
-    \caption{\textit{Header} do \textit{dashboard} com status ``Degradado''
-    em laranja: sensor sem envio de dados há mais de 3 minutos; demais
-    KPIs exibidos com os valores da última leitura disponível.}
-    \label{fig:dashboard_degradado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando o próprio \textit{backend} fica inacessível --- por desligamento
-do servidor ou falha de rede local ---, o \textit{frontend} não consegue
-completar a verificação de saúde e força o estado mais grave: o indicador
-muda para ``Offline'' em vermelho, conforme mostra a
-\autoref{fig:dashboard_indisponivel}. Nesse caso, nenhum dado novo pode
-ser recebido ou exibido até que o serviço seja restaurado.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_indisponivel.png}}
-    \caption{\textit{Header} do \textit{dashboard} com status ``Offline''
-    em vermelho: \textit{backend} inacessível, verificação de saúde sem
-    resposta e sistema incapaz de receber ou exibir novos dados.}
-    \label{fig:dashboard_indisponivel}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Falhas ao carregar as estatísticas fazem com que os KPIs sejam exibidos
-com valor zero enquanto o sistema aguarda nova tentativa, conforme ilustra a \autoref{fig:dashboard_kpis_zerados}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_dashboard_kpis_zerados.png}}
-    \caption{\textit{Dashboard} com KPIs em valor zero por falha ao carregar estatísticas.}
-    \label{fig:dashboard_kpis_zerados}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,trim=232 1070 236 0,clip]{figures/cap5/W14_painel_fisico.pdf}}
+\caption{Painel com leitura do protótipo físico e dados de chuva completos: VERDE, sem dados de energia}
+\label{fig:res-w14}
+\fonte{Autora, 2026.}
 \end{figure}
 
 % =============================================================
-\section{Tela de Sensores e Histórico}
-\label{sec:sensores}
+\section{Plataforma \textit{Web}}
+\label{sec:res-web}
 % =============================================================
 
+A plataforma foi testada nas três telas descritas na
+\autoref{subsec:arquitetura}: a página inicial, o acesso do
+administrador e o painel. Os estados do painel ligados aos casos de
+teste foram apresentados nas \autoref{sec:res-simulacao} a
+\autoref{sec:res-fisico}.
+
 % -------------------------------------------------------------
-\subsection{Carregamento Inicial e Período Padrão}
-\label{subsec:sensores-inicial}
+\subsection{Página Inicial e Cadastro do Morador}
+\label{subsec:res-landing}
 % -------------------------------------------------------------
 
-A tela de Sensores apresenta ao administrador o histórico completo e
-filtrável das leituras do sistema. Ao ser aberta, ela carrega
-automaticamente as leituras das últimas 24 horas na tabela paginada,
-acompanhadas dos KPIs calculados para esse período e do gráfico
-histórico. As \autoref{fig:sensores_tabela_pt1} a
-\autoref{fig:sensores_tabela_pt4} exibem essa configuração
-inicial, com a tabela mostrando 15 registros por página, cada um com
-\textit{timestamp}, umidade, valor ADC, índice de risco, nível de
-alerta --- representado por um \textit{badge} colorido --- e status
-das APIs e do sensor.
+Entrada: acesso à página inicial. Saída esperada: resumo do sistema e
+botão de cadastro. Saída observada: a página apresentou o que o sistema
+acompanha (saturação do solo, chuva das últimas 48~h e previsão para
+24~h) e o botão ``Quero receber alertas'' (\autoref{fig:res-w01}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_tabela_pt1.png}}
-    \caption{Tela de Sensores com período padrão de 24 horas (parte~1):
-    KPIs do período, dados da última leitura, e filtros de período fixo e customizado disponíveis na interface.}
-    \label{fig:sensores_tabela_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W01_landing.png}}
+\caption{Página inicial da plataforma \textit{web}}
+\label{fig:res-w01}
+\fonte{Autora, 2026.}
+\end{figure}
+
+Entrada: formulário preenchido com nome, e-mail, telefone e localidade
+(\autoref{fig:res-w02a}). Saída esperada: cadastro do morador. Saída
+observada: mensagem ``Cadastro feito'', com o e-mail que receberá os
+avisos (\autoref{fig:res-w02b}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W02_cadastro_preenchido.png}}
+\caption{Explicação dos três níveis e formulário de cadastro preenchido (dados fictícios)}
+\label{fig:res-w02a}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_tabela_pt2.png}}
-    \caption{Tela de Sensores com período padrão de 24 horas (parte~2):
-    gráfico histórico das séries de umidade, precipitação e risco.}
-    \label{fig:sensores_tabela_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_tabela_pt3.png}}
-    \caption{Tela de Sensores com período padrão de 24 horas (parte~3):
-    início da tabela paginada com \textit{badges} de nível de alerta.}
-    \label{fig:sensores_tabela_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_tabela_pt4.png}}
-    \caption{Tela de Sensores com período padrão de 24 horas (parte~4):
-    continuação da tabela paginada com registros de leituras.}
-    \label{fig:sensores_tabela_pt4}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Caso ocorra falha na comunicação com o \textit{backend} durante o
-carregamento, o sistema exibe o \textit{toast} ``Erro ao carregar dados
-dos sensores'' e mantém os dados zerados nos KPIs; na área de Gráfico de Daods, exibe o texto ``Nenhum dado disponível'' em tela, e na área Registros do Período, exibe o texto ``Nenhum dado para o período selecionado'' em tela, conforme ilustra a \autoref{fig:sensores_erro_carregamento}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_erro_carregamento.png}}
-    \caption{Tela de Sensores com \textit{toast} de erro ao carregar dados: falha na comunicação com o \textit{backend}.}
-    \label{fig:sensores_erro_carregamento}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W02_cadastro_ok.png}}
+\caption{Confirmação do cadastro do morador}
+\label{fig:res-w02b}
+\fonte{Autora, 2026.}
 \end{figure}
 
 % -------------------------------------------------------------
-\subsection{Seleção de Período e Filtros}
-\label{subsec:sensores-filtros}
+\subsection{Acesso do Administrador e Painel}
+\label{subsec:res-painel}
 % -------------------------------------------------------------
 
-A \autoref{fig:sensores_tabela_pt1} exibe o estado inicial
-da tela com o período padrão de 24 horas ativo e o botão
-``Últimas 24h'' destacado. Três botões de período fixo
---- ``Últimas 24h'', ``7 dias'' e
-``30 dias'' --- permitem alternar o intervalo de análise
-com um clique. Ao selecionar um novo período, por exemplo em ``7 dias'', o botão anterior
-perde o destaque, o botão selecionado passa a ser exibido em
-azul e a tabela é recarregada com os dados do intervalo
-escolhido e os KPIs recalculados, conforme ilustra a
-\autoref{fig:sensores_periodo_fixo}.
-
-Para intervalos específicos, o
-filtro de período customizado aceita data e hora de início e de fim;
-ao clicar em ``Aplicar'', os dados do intervalo definido são carregados, conforme ilustra a \autoref{fig:sensores_periodo_data}.
+Entrada: e-mail e senha do administrador (\autoref{fig:res-w03}). Saída
+esperada: acesso ao painel. Saída observada: o painel foi aberto. Sem
+nenhuma leitura no banco de dados, ele exibiu ``Nenhuma leitura recebida
+do dispositivo'' e os indicadores como indisponíveis
+(\autoref{fig:res-w04}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_periodo_fixo.png}}
-    \caption{Tela de Sensores com período fixo: botão ativo fica destacado em azul e a tabela é recarregada com os dados do novo período.}
-    \label{fig:sensores_periodo_fixo}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=0.75\textwidth]{figures/cap5/W03_login.png}}
+\caption{Tela de acesso do administrador}
+\label{fig:res-w03}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_periodo_data.png}}
-    \caption{Tela de Sensores com período customizado: aceita data e hora de início e de fim.}
-    \label{fig:sensores_periodo_data}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio,trim=232 0 236 0,clip]{figures/cap5/W04_painel_sem_leitura.pdf}}
+\caption{Painel do administrador antes da primeira leitura}
+\label{fig:res-w04}
+\fonte{Autora, 2026.}
 \end{figure}
 
-Se as datas não forem preenchidas, o botão ``Aplicar'' fica desabilitado, conforme ilustra a \autoref{fig:sensores_filtro_datas_vazias};
-se a data de início for posterior à data de fim, outro \textit{toast}
-informa o erro sem executar a consulta, conforme ilustra a \autoref{fig:sensores_filtro_datas_invalidas}.
+Após os casos de teste, o histórico exibiu os gráficos de $S$ e de
+$P_{72}$, com as linhas dos limiares e o nível de cada leitura
+(\autoref{fig:res-w15}). Em tela de celular, o painel foi exibido em
+uma coluna, sem rolagem lateral (\autoref{fig:res-w20}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_filtro_datas_vazias.png}}
-    \caption{Tela de Sensores com validação do filtro de período customizado: datas não preenchidas.}
-    \label{fig:sensores_filtro_datas_vazias}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_filtro_datas_invalidas.png}}
-    \caption{Tela de Sensores com validação do filtro de período customizado: \textit{toast} para data de início posterior à data de fim.}
-    \label{fig:sensores_filtro_datas_invalidas}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Um quinto filtro, por nível de alerta, é aplicado localmente sobre os
-dados já carregados, sem nova chamada ao servidor. Ao selecioná-lo, a
-tabela restringe a exibição às leituras do nível escolhido e a paginação
-é recalculada, conforme ilustra as \autoref{fig:sensores_filtro_com_resultado_pt1} e \autoref{fig:sensores_filtro_com_resultado_pt2}. Quando nenhum registro corresponde ao filtro combinado de
-período e nível, a tabela exibe estado vazio com mensagem informativa, conforme ilustra a \autoref{fig:sensores_filtro_sem_resultado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_filtro_com_resultado_pt1.png}}
-    \caption{Tela de Sensores com filtro por nível de alerta (parte~1):
-    KPIs calculados para o subconjunto filtrado e dados da última leitura.}
-    \label{fig:sensores_filtro_com_resultado_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W15_historico.png}}
+\caption{Histórico de $S$ e de $P_{72}$ após os casos de teste (valores da simulação)}
+\label{fig:res-w15}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_filtro_com_resultado_pt2.png}}
-    \caption{Tela de Sensores com filtro por nível de alerta (parte~2): tabela paginada com registros de leituras.}
-    \label{fig:sensores_filtro_com_resultado_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_filtro_sem_resultado.png}}
-    \caption{Tela de Sensores com filtro por nível de alerta sem registros correspondentes: tabela em estado vazio com mensagem informativa e KPIs zerados para o subconjunto filtrado.}
-    \label{fig:sensores_filtro_sem_resultado}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[height=0.8\textheight,trim=0 1700 0 0,clip,keepaspectratio]{figures/cap5/W20_painel_celular.pdf}}
+\caption{Painel do administrador em tela de celular (parte superior)}
+\label{fig:res-w20}
+\fonte{Autora, 2026.}
 \end{figure}
 
 % -------------------------------------------------------------
-\subsection{Detalhamento de Leitura}
-\label{subsec:sensores-detalhe}
+\subsection{Envio do E-mail de Alerta}
+\label{subsec:res-envio}
 % -------------------------------------------------------------
 
-Cada linha da tabela pode ser expandida ao clicar sobre ela, revelando
-quatro blocos de informação. O primeiro bloco exibe os sete
-componentes individuais do modelo de risco com três casas decimais e a
-soma do fator integrado.
-O segundo apresenta o contexto meteorológico
-completo: precipitações acumuladas nas três janelas temporais, previsão
-de 24 horas com a classificação de intensidade, temperatura, umidade
-relativa do ar, pressão atmosférica e descrição textual das condições.
-O terceiro bloco traz o diagnóstico de \textit{hardware}: memória livre
-em bytes, intensidade do sinal Wi-Fi em dBm, tempo de operação desde o
-último \textit{boot}, tentativas de envio e estado do \textit{buzzer}.
-O quarto bloco exibe a recomendação operacional gerada pelo dispositivo. 
-Os níveis ``Normal'' e ``Atenção'' são
-exibidos conforme ilustram as \autoref{fig:sensores_expandido_pt1} e \autoref{fig:sensores_expandido_pt2}, respectivamente; já 
-os níveis ``Crítico'' e ``Ruptura'' são ilustrados como ilustram as \autoref{fig:sensores_expandido_pt3} e \autoref{fig:sensores_expandido_pt4}, nesta ordem.
+O envio foi testado logo após o caso C09, com o nível atual VERMELHO e
+cinco moradores cadastrados. Entrada: escolha do nível VERMELHO no
+painel. Saída esperada: mensagem-modelo do nível
+(\autoref{qua:mensagens-alerta}), com os dados da última leitura, e
+pedido de confirmação.
+
+Saída observada: o assunto e a mensagem do nível VERMELHO foram
+preenchidos com a leitura de 4 de outubro de 2026, às 12h25
+($S = 0{,}94$ e $P_{72} = 120{,}0$\,mm), e o painel pediu a confirmação
+do envio para cinco moradores (\autoref{fig:res-w16}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_expandido_pt1.png}}
-    \caption{Linha expandida na tela de Sensores (parte~1): Nível Normal.}
-    \label{fig:sensores_expandido_pt1}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W16_envio_confirmacao.png}}
+\caption{Envio do e-mail de alerta: nível VERMELHO escolhido e pedido de confirmação (e-mails dos moradores ocultados)}
+\label{fig:res-w16}
+\fonte{Autora, 2026.}
+\end{figure}
+
+Após a confirmação, o botão passou a ``Enviando...''
+(\autoref{fig:res-w17a}). Ao final, o painel informou ``Enviado a 5 de
+5 morador(es)'', e o envio foi registrado com data, nível,
+administrador e número de e-mails (\autoref{fig:res-w17b}).
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W17_envio_registrado_durante.png}}
+\caption{Envio do e-mail de alerta em andamento (e-mails dos moradores ocultados)}
+\label{fig:res-w17a}
+\fonte{Autora, 2026.}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_expandido_pt2.png}}
-    \caption{Linha expandida na tela de Sensores (parte~2): Nível Crítico (Ruptura).}
-    \label{fig:sensores_expandido_pt2}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W17_envio_registrado_depois.png}}
+\caption{Resultado do envio e registro na lista de envios}
+\label{fig:res-w17b}
+\fonte{Autora, 2026.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_expandido_pt3.png}}
-    \caption{Linha expandida na tela de Sensores (parte~3): Nível Crítico.}
-    \label{fig:sensores_expandido_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
+O e-mail chegou à caixa de entrada do morador com o assunto do nível
+VERMELHO, a mensagem e o rodapé que informa que as cores não
+correspondem aos níveis oficiais de emergência
+(\autoref{fig:res-w19}). A mensagem recebida trouxe os valores da
+leitura usada no envio ($S = 0{,}94$ e $P_{72} = 120{,}0$\,mm).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_expandido_pt4.png}}
-    \caption{Linha expandida na tela de Sensores (parte~4): Nível Atenção.}
-    \label{fig:sensores_expandido_pt4}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W19_email_recebido.png}}
+\caption{E-mail de alerta de nível VERMELHO recebido pelo morador}
+\label{fig:res-w19}
+\fonte{Autora, 2026.}
 \end{figure}
 
-% -------------------------------------------------------------
-\subsection{Exportação de Leituras em CSV}
-\label{subsec:sensores-csv}
-% -------------------------------------------------------------
-Quando o período selecionado contém leituras, o botão
-\textbf{"CSV"} é exibido habilitado na interface, conforme
-ilustra a \autoref{fig:sensores_csv_habilitado}. Ao clicar, o
-sistema gera um arquivo com BOM UTF-8 para compatibilidade com
-o Microsoft Excel, contendo todas as leituras do período com
-41 colunas, e ao concluir, o \textit{toast} ``CSV exportado!'' confirma o 
-\textit{download} automaticamente no navegador, conforme ilustra a \autoref{fig:sensores_csv_toast}.
-O nome do arquivo inclui a data do dia da exportação.
- 
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]
-        {figures/cap5_sensores_csv_habilitado.png}}
-    \caption{Tela de Sensores com botão \textbf{"CSV"} habilitado:
-    período selecionado contém leituras disponíveis para
-    exportação.}
-    \label{fig:sensores_csv_habilitado}
-    \fonte{Autora, 2026.}
-\end{figure}
- 
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]
-        {figures/cap5_sensores_csv_toast.png}}
-    \caption{Tela de Sensores após exportação em CSV:
-    \textit{download} iniciado e arquivo disponível no
-    navegador.}
-    \label{fig:sensores_csv_toast}
-    \fonte{Autora, 2026.}
-\end{figure}
- 
-As \autoref{fig:sensores_csv_pt1},
-\autoref{fig:sensores_csv_pt2} e
-\autoref{fig:sensores_csv_pt3} exibem o arquivo aberto no
-Excel, com os cabeçalhos das colunas identificados.
+Com o filtro ``Todos'', a lista exibiu o envio aos moradores e os
+eventos automáticos: subidas de nível e mudanças de energia, como falta
+de rede, bateria baixa, bateria crítica e falha de bateria. Cada evento
+automático gerou um e-mail aos administradores (\autoref{fig:res-w18}).
 
 \begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_csv_pt1.png}}
-    \caption{Arquivo CSV exportado pela tela de Sensores aberto no
-    Microsoft Excel (parte~1): cabeçalhos das primeiras colunas com dados
-    de identificação e leitura do sensor.}
-    \label{fig:sensores_csv_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_csv_pt2.png}}
-    \caption{Arquivo CSV exportado pela tela de Sensores aberto no
-    Microsoft Excel (parte~2): colunas dos componentes individuais do
-    modelo de risco.}
-    \label{fig:sensores_csv_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_csv_pt3.png}}
-    \caption{Arquivo CSV exportado pela tela de Sensores aberto no
-    Microsoft Excel (parte~3): colunas de dados meteorológicos e
-    diagnóstico de \textit{hardware}, totalizando 41 colunas.}
-    \label{fig:sensores_csv_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando o conjunto de dados filtrado está vazio, o botão de exportação é
-exibido desabilitado, conforme ilustra a \autoref{fig:sensores_csv_desabilitado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_sensores_csv_desabilitado.png}}
-    \caption{Tela de Sensores com botão ``CSV'' desabilitado: nenhum registro disponível no conjunto filtrado atualmente visível na tabela.}
-    \label{fig:sensores_csv_desabilitado}
-    \fonte{Autora, 2026.}
+\centering
+\fbox{\includegraphics[width=\textwidth]{figures/cap5/W18_eventos_todos.png}}
+\caption{Envios e eventos registrados, com o filtro ``Todos''}
+\label{fig:res-w18}
+\fonte{Autora, 2026.}
 \end{figure}
 
 % =============================================================
-\section{Central de Alertas}
-\label{sec:alertas}
+\section{Síntese dos Resultados}
+\label{sec:res-sintese}
 % =============================================================
 
-% -------------------------------------------------------------
-\subsection{Listagem e Filtro de Alertas Críticos}
-\label{subsec:alertas-listagem}
-% -------------------------------------------------------------
-
-A Central de Alertas reúne todos os ciclos de leitura classificados como
-AMARELO, VERMELHO ou RUPTURA. A \autoref{fig:alertas_lista} mostra a tela
-com os cinco KPIs de contagem por categoria no topo --- Total, Crítico,
-Atenção, Ruptura e Alertas enviados (30 dias) --- seguidos da lista
-de alertas ordenada do mais recente para o mais antigo, com paginação
-a 10 registros por página. Cada card exibe, em seu estado fechado, o \textit{timestamp},
-o nível de alerta representado por um \textit{badge} colorido,
-o índice de risco integrado e o botão \textbf{"Notificar"}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_lista.png}}
-    \caption{Central de Alertas: KPIs de contagem por categoria e lista paginada de registros com card em estado fechado.}
-    \label{fig:alertas_lista}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando nenhum alerta está registrado no sistema, a tela exibe o estado
-vazio com a mensagem ``Nenhum alerta encontrado'', conforme ilustra a \autoref{fig:alertas_lista_vazia}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_lista_vazia.png}}
-    \caption{Central de Alertas em estado vazio: mensagem ``Nenhum alerta encontrado'' exibida quando não há ciclos classificados como AMARELO, VERMELHO ou RUPTURA no sistema.}
-    \label{fig:alertas_lista_vazia}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Ao clicar em ``Notificar'' em um card específico, o formulário é aberto pré-preenchido com dados daquele ciclo de leitura, facilitando a composição da notificação pelo
-administrador, como demonstram as \autoref{fig:alertas_form_preenchido_notificar_pt1} e \autoref{fig:alertas_form_preenchido_notificar_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_form_preenchido_notificar_pt1.png}}
-    \caption{Formulário de envio de alerta aberto a partir do botão ``Notificar'' de um card (parte~1): título pré-preenchido com os dados do ciclo de leitura selecionado.}
-    \label{fig:alertas_form_preenchido_notificar_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_form_preenchido_notificar_pt2.png}}
-    \caption{Formulário de envio de alerta aberto a partir do botão ``Notificar'' de um card (parte~2): mensagem pré-preenchida com os dados do ciclo de leitura selecionado na Central de Alertas.}
-    \label{fig:alertas_form_preenchido_notificar_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Cada card de alerta é expansível ao clicar em ``Detalhes'' e, além dos quatro blocos de detalhe
-presentes na tela de Sensores, exibe um quinto bloco exclusivo ---
-``Cálculo de Confiabilidade'' --- que apresenta os descontos individuais
-aplicados naquele ciclo, com desconto máximo possível, valor aplicado e
-descrição da condição que motivou cada penalidade. A linha de rodapé do
-bloco mostra o resultado final: 100\% menos o total de descontos
-acumulados. Na situação especial de RUPTURA, o bloco exibe a mensagem
-``100\% --- Estado Especial: RUPTURA'', informando que a confiabilidade
-é fixada pelo hardware e não sofre descontos. Os níveis Vermelho, Amarelo e Ruptura são exibidos
-conforme ilustram as \autoref{fig:alertas_expandido_pt1},
-\autoref{fig:alertas_expandido_pt2} e
-\autoref{fig:alertas_expandido_pt3}, respectivamente.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_expandido_pt1.png}}
-    \caption{Card de alerta expandido na Central de Alertas (parte~1): nível Vermelho.}
-    \label{fig:alertas_expandido_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_expandido_pt2.png}}
-    \caption{Card de alerta expandido na Central de Alertas (parte~2): nível Amarelo.}
-    \label{fig:alertas_expandido_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_expandido_pt3.png}}
-    \caption{Card de alerta expandido na Central de Alertas (parte~3): nível Ruptura.}
-    \label{fig:alertas_expandido_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Envio de Alerta Manual em Massa}
-\label{subsec:alertas-envio}
-% -------------------------------------------------------------
-
-O envio de alertas é sempre acionado manualmente pelo administrador.
-Ao clicar em ``Enviar Alerta'' --- seja no cabeçalho da tela para um
-alerta novo, seja no botão ``Notificar'' de um card específico ---,
-o formulário \texttt{AlertForm} é aberto em um modal, como ilustra a
-\autoref{fig:alertas_formulario}. O formulário apresenta os campos de
-título (de 5 a 200 caracteres), mensagem (de 10 a 1.000 caracteres),
-nível de criticidade com prévia visual da cor, tipo de destinatário
-(todos os usuários ativos, apenas usuários básicos ou apenas administradores)
-e canal de envio. Três \textit{templates} pré-definidos permitem
-preencher título e mensagem com um clique; o administrador pode editar
-os campos antes de confirmar.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_formulario.png}}
-    \caption{Formulário de envio de alerta manual: campos de título,
-    mensagem, nível de criticidade, tipo de destinatário e botões de
-    \textit{template} pré-definidos.}
-    \label{fig:alertas_formulario}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Ao confirmar o envio, o sistema processa os destinatários elegíveis e
-exibe o \textit{toast} ``Alerta enviado: X sucessos e 0 falhas. Verifiquue os logs para detalhes.'', conforme ilustra a \autoref{fig:alertas_sucesso}. Quando nenhum
-destinatário é encontrado para os critérios selecionados --- por exemplo,
-se nenhum usuário básico tiver notificações habilitadas ---, o
-\textit{backend} retorna erro e o sistema exibe uma mensagem de alerta
-sem fechar o modal, permitindo que o administrador ajuste os critérios
-e tente novamente, conforme ilustra a \autoref{fig:alertas_sem_destinatario}, e o registro detalhado por
-destinatário fica disponível nos logs do sistema.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_sucesso.png}}
-    \caption{Formulário de envio de alerta com \textit{toast} de sucesso: confirmação discrimina sucessos e zero falhas.}
-    \label{fig:alertas_sucesso}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_sem_destinatario.png}}
-    \caption{Formulário de envio de alerta com \textit{toast} de erro por ausência de destinatários: nenhum usuário ativo com notificações habilitadas para os critérios selecionados; modal mantido aberto para ajuste.}
-    \label{fig:alertas_sem_destinatario}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando parte das entregas falha, o \textit{toast} de confirmação discrimina sucessos e falhas, conforme ilustram as \autoref{fig:alertas_entrega_parcial_pt1} e \autoref{fig:alertas_entrega_parcial_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_entrega_parcial_pt1.png}}
-    \caption{Alerta com falhas parciais de entrega (parte~1): destinatários selecionados.}
-    \label{fig:alertas_entrega_parcial_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_alertas_entrega_parcial_pt2.png}}
-    \caption{\textit{Toast} de confirmação de envio de alerta com falhas parciais de entrega (parte~2): número de e-mails enviados com sucesso e falha.}
-    \label{fig:alertas_entrega_parcial_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Recebimento do E-mail de Alerta}
-\label{subsec:alertas-email}
-% -------------------------------------------------------------
-
-O destinatário recebe um e-mail HTML com cabeçalho colorido conforme o
-nível de criticidade --- verde para baixo, amarelo para médio e vermelho
-para crítico --- como mostram as \autoref{fig:email_recebido_pt1} a
-\autoref{fig:email_recebido_pt3}. O corpo do e-mail apresenta o título,
-a mensagem composta pelo administrador, a data e hora no fuso horário de
-Brasília e o rodapé de identificação do sistema, conforme ilustra a
-\autoref{fig:email_recebido_pt4}.
-
-Falhas síncronas de entrega SMTP --- como endereços com formato inválido,
-rejeitados pelo próprio \textit{Nodemailer} antes do envio --- são
-detectadas imediatamente pelo \textit{backend}, registradas individualmente
-em \texttt{logs\_alertas} e contabilizadas no \textit{toast} de confirmação
-exibido ao administrador, conforme ilustra a
-\autoref{fig:alertas_entrega_parcial_pt2}, sem interromper os demais envios
-do lote. Após recarregar a tela, a lista de alertas críticos reflete o
-estado atualizado do sistema, como mostra a
-\autoref{fig:email_recebido_pt5}. Falhas assíncronas, como
-rejeições por domínio inexistente (\textit{bounce}), ocorrem após o servidor
-SMTP aceitar a mensagem: o \textit{backend} registra o envio como
-bem-sucedido e a notificação de falha retorna posteriormente à caixa do
-remetente, conforme ilustra a \autoref{fig:email_recebido_pt6}, fora do
-controle do sistema. Esse comportamento é inerente ao protocolo SMTP e
-exigiria integração com serviço especializado de monitoramento de
-\textit{bounces} para tratamento automatizado.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_email_recebido_pt1.png}}
-    \caption{E-mail de alerta recebido pelo destinatário (parte~1):
-    nível Informativo.}
-    \label{fig:email_recebido_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_email_recebido_pt2.png}}
-    \caption{E-mail de alerta recebido pelo destinatário (parte~2):
-    nível Atenção.}
-    \label{fig:email_recebido_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_email_recebido_pt3.png}}
-    \caption{E-mail de alerta recebido pelo destinatário (parte~3):
-    nível Crítico.}
-    \label{fig:email_recebido_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_email_recebido_pt4.png}}
-    \caption{E-mail de alerta recebido pelo destinatário (parte~4):
-    corpo da mensagem composta pelo administrador, data e hora no fuso horário de Brasília e rodapé de identificação
-    do sistema.}
-    \label{fig:email_recebido_pt4}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_email_recebido_pt5.png}}
-    \caption{Modal ``Log de Alertas Enviados'' (parte~5): Tela de Alertas atualizada (parte~5):
-    registradas individualmente em \texttt{logs\_alertas} os sucessos e falhas.}
-    \label{fig:email_recebido_pt5}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.80\textwidth]{figures/cap5_email_recebido_pt6.png}}
-    \caption{E-mail de alerta recebido pelo remetente (parte~6):
-    notificação de falha retorna posteriormente à caixa do remetente.}
-    \label{fig:email_recebido_pt6}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Log de Alertas Enviados}
-\label{subsec:alertas-log}
-% -------------------------------------------------------------
-
-O botão ``Log de Envios'', posicionado no cabeçalho da tela de Alertas
-ao lado dos botões ``Atualizar'' e ``Enviar Alerta'', abre um modal com
-o histórico completo de alertas disparados pela Central de Alertas. Ao
-ser acionado, o \textit{frontend} consulta o endpoint
-\path{GET /auth/logs-alertas} e exibe os registros da tabela
-\texttt{logs\_alertas} em ordem decrescente de data e hora, paginados
-a dez por página. A \autoref{fig:alertas_log} mostra o modal com a
-tabela de registros.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_log.png}}
-    \caption{Modal ``Log de Alertas Enviados'': tabela paginada com
-    data e hora, título, nível de criticidade, tipo de destinatário,
-    canal e resultado discriminado por sucessos e falhas.}
-    \label{fig:alertas_log}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Cada linha da tabela exibe sete colunas: data e hora do disparo,
-título do alerta (truncado com \textit{tooltip} ao passar o cursor),
-nível de criticidade representado por \textit{badge} colorido
-(Informativo, Atenção ou Crítico), tipo de destinatário selecionado
-(Todos, Usuários Básicos ou Administradores), canal de envio, e o
-resultado do envio indicado pelo par \textit{sucessos}/\textit{total}
-com ícone verde quando todos os e-mails foram entregues, amarelo quando
-houve entregas parciais e vermelho quando todos falharam. Quando um
-registro apresenta falhas, o número de e-mails não entregues é exibido
-abaixo do par de contagem.
-
-Ao clicar em ``Detalhes'' em qualquer linha, uma sub-tabela
-expande-se imediatamente abaixo, exibindo o resultado individual por
-destinatário: nome, endereço de e-mail, status de entrega e, quando
-aplicável, a mensagem de erro retornada pelo servidor SMTP. A
-\autoref{fig:alertas_log_detalhe} ilustra a linha expandida com os
-detalhes de entrega por destinatário.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_log_detalhe.png}}
-    \caption{Log de Alertas com linha expandida: sub-tabela de
-    detalhes por destinatário exibindo nome, e-mail, status de
-    entrega e mensagem de erro quando aplicável.}
-    \label{fig:alertas_log_detalhe}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando nenhum alerta foi enviado até o momento, o modal exibe o estado
-vazio com a mensagem ``Nenhum alerta foi enviado ainda.''. O botão
-``Atualizar'' no cabeçalho do modal recarrega a lista sem necessidade de
-fechar e reabrir o painel. Os dados exibidos são somente de leitura e
-não alteram nenhum registro no banco de dados, conforme ilustra a
-\autoref{fig:alertas_log_vazio}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_alertas_log_vazio.png}}
-    \caption{Log de Alertas vazio: modal exibe o estado
-vazio com a mensagem ``Nenhum alerta foi enviado ainda.''.}
-    \label{fig:alertas_log_vazio}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% =============================================================
-\section{Relatórios e Exportações}
-\label{sec:relatorios}
-% =============================================================
-
-% -------------------------------------------------------------
-\subsection{Geração de Relatório por Período}
-\label{subsec:relatorio-geracao}
-% -------------------------------------------------------------
-
-Ao acessar a tela de Relatórios, o administrador visualiza os
-campos de seleção de período --- data de início e data de fim
---- e o botão \textbf{"Gerar Relatório"}, enquanto o sistema
-carrega automaticamente o relatório dos últimos sete dias,
-conforme ilustra a \autoref{fig:relatorios_estado_inicial}. 
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]
-        {figures/cap5_relatorios_estado_inicial.png}}
-    \caption{Tela de Relatórios ao ser aberta: campos de seleção
-    de período disponíveis e relatório padrão dos últimos sete
-    dias carregado automaticamente pelo sistema.}
-    \label{fig:relatorios_estado_inicial}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Para redefinir o intervalo de análise, o administrador informa
-as datas de início e fim e clica em \textbf{"Gerar Relatório"};
-o relatório atualizado é exibido nas seis seções colapsáveis,
-conforme ilustram as \autoref{fig:relatorio_gerado_pt1} a
-\autoref{fig:relatorio_gerado_pt6}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt1.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~1): configuração
-    do período e seção Resumo Executivo com KPIs de contagem por nível de
-    alerta, risco médio, confiabilidade média, eventos com amplificação
-    ativa e barra proporcional de distribuição.}
-    \label{fig:relatorio_gerado_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O relatório é organizado em seis seções colapsáveis. A primeira, Resumo
-Executivo, exibe o total de leituras do período e oito KPIs: contagens por
-nível de alerta --- Normal, Atenção, Crítico e Ruptura ---, risco médio,
-confiabilidade média e número de eventos com amplificação ×1,20 ativa.
-Uma barra proporcional colore a distribuição percentual por nível e, abaixo
-dela, a Tabela~9~TCC apresenta os limiares do fator de risco integrado com
-os níveis, situações e ações recomendadas correspondentes, como
-ilustra a \autoref{fig:relatorio_gerado_pt1}.
-
-A segunda seção, Dados Meteorológicos e Pluviométricos, organiza os valores
-médios do período em duas colunas: à esquerda, precipitações históricas via
-BNDMET/DECEA --- acumulados de 24~horas, 7~dias e 30~dias, e precipitação
-horária atual pelo fenômeno I175 ---; à direita, condições e previsão via
-OpenWeatherMap --- temperatura, umidade relativa do ar, pressão atmosférica
-ao nível do solo, velocidade do vento, chuva atual (\textit{rain.1h}) e
-previsão acumulada para 24~horas. A seção exibe ainda a Tabela~7~TCC de
-classificação da intensidade pluviométrica prevista, com os cinco níveis
-(Fraca, Moderada, Forte, Muito Forte e Pancada de Chuva), os intervalos
-de acumulado previsto, o fator \textit{ch.fut} correspondente e o valor
-resultante de $V_{ch.futura}$, como mostra a
-\autoref{fig:relatorio_gerado_pt2}.
-
-A terceira seção, Componentes da Equação~5 TCC, apresenta a fórmula do
-fator de risco integrado FR com a definição de cada variável ponderada,
-os intervalos válidos de cada componente, a regra de amplificação ×1,20 e
-a condição de ruptura imediata. A tabela exibe, para cada um dos sete
-componentes individuais --- $V_{lençol}$, $V_{ch.24h}$, $V_{ch.7d}$,
-$V_{ch.30d}$, $V_{ch.futura}$, $V_{taxa}$ e $V_{pressão}$ ---, a fonte
-de dado, o valor mínimo, a média e o máximo observados no período, e o
-intervalo válido do componente, conforme ilustra a
-\autoref{fig:relatorio_gerado_pt3}.
-
-A quarta seção, Qualidade Técnica do Sistema, organiza os indicadores em
-duas colunas. À esquerda, Disponibilidade das Fontes informa os percentuais
-de operação do sensor ESP8266, da API BNDMET, da qualidade média dos dados
-BNDMET, da API OWM, da conectividade Wi-Fi e o código da estação
-pluviométrica consultada. À direita, Eventos e Limites registra as
-contagens de acionamentos de amplificação ×1,20, de ciclos com
-\textit{buzzer} ativo e de registros em modo manual, além dos valores
-mínimo e máximo de risco e de confiabilidade observados no período. A
-quinta seção, Diagnóstico de Hardware ESP8266, divide-se em Memória ---
-com os valores mínimo e médio de memória livre (\textit{freeHeap}) e o
-maior tempo de operação contínua --- e Conectividade --- com o RSSI médio
-e mínimo do sinal Wi-Fi e as tentativas de envio média e máxima ---, como
-mostra a \autoref{fig:relatorio_gerado_pt4}.
-
-A sexta e última seção, Registros do Período, exibe em tabela paginada os
-primeiros 20 registros do período, com as colunas \textit{timestamp},
-umidade do solo, valor ADC, fator local, índice de risco, nível de alerta,
-confiabilidade, e \textit{status} de BNDMET, OWM e sensor. Cada linha pode
-ser expandida para revelar os componentes $V_x$ da Equação~5, o diagnóstico
-de \textit{hardware} e a recomendação operacional. O rodapé da seção informa
-o total de registros do período e recomenda a exportação CSV para acesso
-ao conjunto completo com os 41~campos, como demonstram as
-\autoref{fig:relatorio_gerado_pt5} e \autoref{fig:relatorio_gerado_pt6}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt2.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~2): seção
-    Dados Meteorológicos e Pluviométricos com valores médios do período
-    via BNDMET/DECEA e OpenWeatherMap, e Tabela~7~TCC de classificação
-    da intensidade pluviométrica prevista.}
-    \label{fig:relatorio_gerado_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt3.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~3): seção
-    Componentes da Equação~5 TCC com fórmula do fator de risco integrado,
-    regras de amplificação e ruptura, e estatísticas dos sete componentes
-    individuais do modelo.}
-    \label{fig:relatorio_gerado_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt4.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~4): seção
-    Qualidade Técnica do Sistema com disponibilidade das fontes e eventos
-    e limites do período, e seção Diagnóstico de Hardware ESP8266 com
-    estatísticas de memória e conectividade.}
-    \label{fig:relatorio_gerado_pt4}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt5.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~5): seção
-    Registros do Período com tabela paginada exibindo os primeiros
-    registros --- \textit{timestamp}, umidade, ADC, risco, nível,
-    confiabilidade e \textit{status} das fontes.}
-    \label{fig:relatorio_gerado_pt5}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_gerado_pt6.png}}
-    \caption{Tela de Relatórios com relatório gerado (parte~6): continuação
-    da tabela de registros e rodapé informando o total de leituras no
-    período, com recomendação de exportação CSV para acesso aos 41~campos
-    completos.}
-    \label{fig:relatorio_gerado_pt6}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando as datas não são informadas, ao clicar em ``Gerar Relatório'',
-o sistema exibe o \textit{toast} ``Selecione as datas de início e fim'', conforme ilustra a \autoref{fig:relatorio_erros_validacao_pt_1}.
-Falhas de comunicação com o \textit{backend} exibem o \textit{toast} ``Erro
-ao gerar relatório. Verifique se o servidor está acessível'' e mantêm o relatório com os campos zerados em tela, conforme
-ilustra a \autoref{fig:relatorio_erros_validacao_pt_2}. Quando há
-dados no período mas as estatísticas resultam em valores zerados por não
-haver leituras em alguma janela específica, o \textit{toast} ``Nenhum dado
-encontrado para o período selecionado'' é exibido e as seções são apresentadas com os zeros
-correspondentes, conforme ilustra a \autoref{fig:relatorio_erros_validacao_pt_3}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_erros_validacao_pt1.png}}
-    \caption{Tela de Relatórios com cenários de erro: \textit{toast} ``Selecione as datas de início e fim'' por datas não informadas.}
-    \label{fig:relatorio_erros_validacao_pt_1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_erros_validacao_pt2.png}}
-    \caption{Tela de Relatórios com cenários de erro: \textit{toast} ``Erro ao gerar relatório. Verifique se o servidor está acessível'' por falha de comunicação.}
-    \label{fig:relatorio_erros_validacao_pt_2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_erros_validacao_pt3.png}}
-    \caption{Tela de Relatórios com cenários de erro: \textit{toast} ``Nenhum dado encontrado para o período selecionado'' por período sem leituras.}
-    \label{fig:relatorio_erros_validacao_pt_3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Exportação em CSV}
-\label{subsec:relatorio-csv}
-% -------------------------------------------------------------
-
-O botão ``CSV Completo'' gera um arquivo com BOM UTF-8 e 41 colunas,
-nomeado com as datas de início e fim do período analisado no formato
-\textit{relatorio\_AAAA-MM-DD\_AAAA-MM-DD.csv}. Ao concluir, o
-\textit{toast} ``CSV exportado com sucesso!'' confirma o \textit{download}, conforme mostra a \autoref{fig:relatorio_csv_sucesso}.
-Quando o relatório não contém dados, o \textit{toast} ``Nenhum dado para
-exportar'' é exibido e nenhum arquivo é gerado, conforme ilustra a \autoref{fig:relatorio_csv_sem_dados}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_csv_sucesso.png}}
-    \caption{Tela de Relatórios com \textit{toast} ``CSV exportado com sucesso!'' e o arquivo baixado, ao gerar CSV de relatório com leituras no período selecionado.}
-    \label{fig:relatorio_csv_sucesso}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_csv_sem_dados.png}}
-    \caption{Tela de Relatórios com \textit{toast} ``Nenhum dado para exportar'' ao tentar gerar CSV de relatório sem leituras no período selecionado.}
-    \label{fig:relatorio_csv_sem_dados}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Exportação em HTML}
-\label{subsec:relatorio-html}
-% -------------------------------------------------------------
-
-O botão ``Exportar HTML'' gera um relatório completo com todos os estilos
-\textit{inline}, que pode ser aberto em qualquer navegador sem dependências
-externas, arquivado ou enviado por e-mail como anexo. As
-\autoref{fig:relatorio_html_pt1}, \autoref{fig:relatorio_html_pt2} e
-\autoref{fig:relatorio_html_pt3} exibem o arquivo aberto no navegador com a
-mesma estrutura das seis seções, formatação de tabelas e barra de
-distribuição por nível de alerta. Após clicar no botão ``Exportar HTML'', o \textit{toast} ``Relatório HTML
-exportado!'' confirma o \textit{download}, em que o arquivo é nomeado com as datas de início e fim do período analisado no formato
-\texttt{relatorio\_AAAA-MM-DD\_AAAA-MM-DD.html}
-conforme ilustra a \autoref{fig:relatorio_html_sucesso}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_html_sucesso.png}}
-    \caption{Tela de Relatórios com \textit{toast} ``Relatório HTML exportado!'' e o arquivo baixado, ao gerar HTML de relatório com leituras no período selecionado.}
-    \label{fig:relatorio_html_sucesso}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_html_pt1.png}}
-    \caption{Relatório HTML exportado aberto no navegador (parte~1):
-    cabeçalho do documento, seção Resumo Executivo com barra de
-    distribuição por nível de alerta e início da seção de dados meteorológicos.}
-    \label{fig:relatorio_html_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_html_pt2.png}}
-    \caption{Relatório HTML exportado aberto no navegador (parte~2):
-    continuação da seção de dados meteorológicos e componentes do modelo de risco
-    com tabelas estatísticas.}
-    \label{fig:relatorio_html_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_relatorio_html_pt3.png}}
-    \caption{Relatório HTML exportado aberto no navegador (parte~3):
-    seções de qualidade técnica e diagnóstico de \textit{hardware}o.}
-    \label{fig:relatorio_html_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% =============================================================
-\section{Gestão de Usuários e Administradores}
-\label{sec:usuarios}
-% =============================================================
-
-% -------------------------------------------------------------
-\subsection{Listagem, Abas e Filtro}
-\label{subsec:usuarios-listagem}
-% -------------------------------------------------------------
-
-A tela de Gestão de Usuários organiza em duas abas o acesso aos dois
-perfis do sistema. A aba ``Usuários Básicos'' está disponível para todos
-os administradores; a aba ``Administradores'' é restrita ao perfil
-\textit{super\_admin}. A \autoref{fig:usuarios_basicos} mostra a tela
-com a aba de usuários básicos ativa: seis KPIs de contagem --- total de
-usuários, admins ativos, básicos ativos, com notificações, inativos e
-alertas enviados nos últimos 30 dias --- seguidos das abas de alternância,
-um campo de busca por nome ou e-mail e a tabela paginada a 10 registros
-por página.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_basicos.png}}
-    \caption{Tela de Gestão de Usuários com aba ``Usuários Básicos'' ativa:
-    KPIs de contagem, campo de busca e tabela paginada com ações por linha.}
-    \label{fig:usuarios_basicos}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Ao clicar em
-\textbf{"Administradores"}, a lista é recarregada com os
-registros de administradores, os filtros anteriores são limpos
-e as opções de exportação refletem o novo contexto, conforme
-ilustra a \autoref{fig:usuarios_admins}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]
-        {figures/cap5_usuarios_admins.png}}
-    \caption{Tela de Gestão de Usuários após alternância para a
-    aba \textbf{"Administradores"} (perfil \texttt{super\_admin}):
-    lista recarregada, filtros limpos e opções de exportação
-    atualizadas para o contexto de administradores.}
-    \label{fig:usuarios_aba_admins}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando a busca não encontra resultado, o sistema exibe o \textit{toast} ``Erro ao carregar usuários'', 
-conforme ilustra a \autoref{fig:usuarios_filtro_sem_resultado}. 
-O botão ``Limpar'' remove o filtro e recarrega a lista completa. Administradores sem perfil \textit{super\_admin}
-que acessam a aba de Administradores visualizam a tabela, mas os botões
-de editar e desativar ficam desabilitados, conforme ilustra a \autoref{fig:usuarios_admins_sem_permissao}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_filtro_sem_resultado.png}}
-    \caption{Tela de Gestão de Usuários com busca sem resultado: \textit{toast} ``Erro ao carregar usuários'' e tabela em estado vazio; botão ``Limpar'' disponível para remover o filtro aplicado.}
-    \label{fig:usuarios_filtro_sem_resultado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_admins_sem_permissao.png}}
-    \caption{Aba ``Administradores'' acessada por conta sem perfil
-    \textit{super\_admin}: botões de editar e desativar desabilitados
-    na tabela; ações de gerenciamento bloqueadas para o perfil sem
-    privilégios elevados.}
-    \label{fig:usuarios_admins_sem_permissao}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O botão ``Usuários Inativos'' no cabeçalho da tela abre o modal de
-inativos com a lista de contas desativadas e a data de desativação de
-cada uma, permitindo reativá-las individualmente com um clique, conforme ilustra a \autoref{fig:usuarios_inativos_modal}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_usuarios_inativos_modal.png}}
-    \caption{Modal de Usuários Inativos: lista de contas desativadas com data de desativação e botão ``Reativar'' por linha.}
-    \label{fig:usuarios_inativos_modal}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Criação e Edição de Usuário}
-\label{subsec:usuarios-crud}
-% -------------------------------------------------------------
-
-O modal de criação é aberto pelo botão ``Novo Usuário'' no cabeçalho.
-Para usuários básicos, o formulário apresenta os campos nome, e-mail,
-telefone com máscara automática e \textit{toggle} de preferência de
-notificações. Para administradores, os campos são nome, e-mail, senha,
-confirmação de senha e perfil. As \autoref{fig:usuario_form} e \autoref{fig:usuario_form_adm} exibem o
-formulário de criação de usuário básico e super administrador preenchido, respectivamente.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_form.png}}
-    \caption{Formulário de criação de usuário básico: campos de nome,
-    e-mail, telefone com máscara automática e \textit{toggle} de
-    notificações.}
-    \label{fig:usuario_form}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_form_adm.png}}
-    \caption{Formulário de criação de usuário super administrador: campos de nome,
-    e-mail, senha, confirmação de senha e perfil.}
-    \label{fig:usuario_form_adm}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Ao salvar, o \textit{toast} ``Usuário criado com sucesso'' confirma a
-operação e a lista é recarregada. Quando o e-mail já está cadastrado, o
-\textit{backend} retorna HTTP 400 e o sistema exibe a mensagem de erro,
-mantendo o formulário aberto para correção, conforme ilustra a \autoref{fig:usuario_criacao_email_duplicado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_criacao_email_duplicado.png}}
-    \caption{Formulário de criação de usuário básico com \textit{toast} de e-mail duplicado: \textit{backend} retorna HTTP 400 ``Email já cadastrado''; formulário mantido aberto para correção.}
-    \label{fig:usuario_criacao_email_duplicado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A edição segue o mesmo
-fluxo, com o formulário pré-preenchido com os dados atuais do usuário
-selecionado, conforme ilustra a \autoref{fig:usuario_edicao_email_duplicado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_edicao_email_duplicado.png}}
-    \caption{Formulário de edição de usuário básico com \textit{toast} de conflito de e-mail: endereço já em uso por outro usuário; formulário pré-preenchido retorna para correção.}
-    \label{fig:usuario_edicao_email_duplicado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Ativação e Desativação de Usuário}
-\label{subsec:usuarios-ativacao}
-% -------------------------------------------------------------
-
-A desativação é sempre lógica --- o registro não é removido do banco ---,
-preservando o histórico de destinatários nos registros de alertas enviados.
-Ao clicar no botão de desativar, o modal de confirmação exibe o nome do
-usuário e as consequências da ação: usuários básicos deixam de receber
-notificações; administradores perdem o acesso ao painel, conforme mostra a \autoref{fig:usuario_modal_desativacao_pt1}. O administrador
-confirma ou cancela; em caso de confirmação, o \textit{toast} ``Usuário
-desativado!'' é exibido e a lista é recarregada, conforme ilustra a \autoref{fig:usuario_modal_desativacao_pt2}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_modal_desativacao_pt1.png}}
-    \caption{Modal de confirmação de desativação de usuário: nome do usuário, consequências da ação (perda de notificações ou de acesso ao painel) e botões ``Confirmar'' e ``Cancelar''.}
-    \label{fig:usuario_modal_desativacao_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_usuario_modal_desativacao_pt2.png}}
-    \caption{\textit{toast} ``Usuário desativado!'' e lista de usuários recarregada.}
-    \label{fig:usuario_modal_desativacao_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A reativação é realizada pelo modal de usuários inativos: ao clicar em
-``Reativar'', o \textit{toast} ``Usuário reativado com sucesso!'' confirma
-a operação e o usuário desaparece da lista de inativos, conforme ilustram
-as \autoref{fig:usuario_reativacao_toast_pt1},
-\autoref{fig:usuario_reativacao_toast_pt2} e
-\autoref{fig:usuario_reativacao_toast_pt3}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_usuario_reativacao_toast_pt1.png}}
-    \caption{Modal de Usuários Inativos com reativação em andamento (parte~1): botão ``Reativar'' acionado para o usuário selecionado.}
-    \label{fig:usuario_reativacao_toast_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_usuario_reativacao_toast_pt2.png}}
-    \caption{Modal de Usuários Inativos com reativação em andamento (parte~2): usuário removido da lista de inativos e \textit{toast} ``Usuário reativado com sucesso!'' confirmando a operação.}
-    \label{fig:usuario_reativacao_toast_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=\textwidth]{figures/cap5_usuario_reativacao_toast_pt3.png}}
-    \caption{Modal de Usuários Inativos após reativação concluída (parte~3): usuário retornado à listagem principal com os dados atualizados.}
-    \label{fig:usuario_reativacao_toast_pt3}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Exportação de Usuários em CSV}
-\label{subsec:usuarios-csv}
-% -------------------------------------------------------------
-
-O botão ``Exportar CSV'' gera um arquivo com os campos correspondentes
-ao tipo de usuário da aba ativa: para básicos, inclui nome, e-mail,
-telefone, preferência de notificação, status e datas de criação e
-atualização; para administradores, inclui nome, e-mail, perfil, último
-\textit{login}, status e datas de criação e
-atualização. O nome do arquivo reflete o tipo e a data da
-exportação. O \textit{toast} confirma a quantidade de registros
-exportados, conforme mostra a \autoref{fig:usuarios_csv_sucesso}. Quando não há dados para exportar, o \textit{toast} ``Nenhum
-dado para exportar'' é exibido sem gerar arquivo, conforme ilustra a \autoref{fig:usuarios_csv_sem_dados}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_csv_sucesso.png}}
-    \caption{Tela de Gestão de Usuários com \textit{toast} ``X registros exportados com sucesso'' ao gerar CSV com registros disponíveis na aba ativa.}
-    \label{fig:usuarios_csv_sucesso}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_csv_sem_dados.png}}
-    \caption{Tela de Gestão de Usuários com \textit{toast} ``Nenhum dado para exportar'' ao tentar gerar CSV sem registros disponíveis na aba ativa.}
-    \label{fig:usuarios_csv_sem_dados}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Falhas de comunicação com o \textit{backend} durante a exportação produzem um erro distinto, conforme ilustra a \autoref{fig:usuarios_csv_erro_backend}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_csv_erro_backend.png}}
-    \caption{Tela de Gestão de Usuários com \textit{toast} ``Erro ao carregar usuários'': falha na requisição ao \textit{backend} durante a geração do arquivo CSV.}
-    \label{fig:usuarios_csv_erro_backend}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Gerenciamento de Administradores e Cadastro}
-\label{subsec:admins}
-% -------------------------------------------------------------
-
-A aba ``Administradores'', exibe a
-tabela de contas com o último \textit{login} de cada uma, os botões de
-editar e desativar por linha, exclusiva ao \textit{super\_admin}, e o botão ``Novo Usuário'' para cadastrar
-um novo administrador. A \autoref{fig:usuarios_admins} ilustra essa tela.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_usuarios_admins.png}}
-    \caption{Tela de Gestão de Usuários com aba ``Administradores'' ativa
-    (perfil \textit{super\_admin}): tabela com último \textit{login}
-    e botões de editar e desativar por linha.}
-    \label{fig:usuarios_admins}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-O formulário de cadastro de administrador inclui o campo de perfil, onde
-se define se o novo usuário terá acesso de administrador padrão ou de
-\textit{super\_admin}. Senhas que não atendam ao critério mínimo são
-recusadas com mensagem de erro antes do envio ao servidor, conforme ilustra a \autoref{fig:admin_form_senha_invalida}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_admin_form_senha_invalida.png}}
-    \caption{Formulário de cadastro de administrador com senha inválida: mensagem de erro inline antes do envio; botão ``Criar Usuário'' permanece habilitado para nova tentativa.}
-    \label{fig:admin_form_senha_invalida}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-E-mails duplicados também geram erro com mensagem de retorno, conforme ilustra a \autoref{fig:admin_form_email_duplicado}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_admin_form_email_duplicado.png}}
-    \caption{Formulário de cadastro de administrador com \textit{toast} de e-mail duplicado: \textit{backend} retorna HTTP 400 ``Email já cadastrado''; formulário retorna para correção do dado.}
-    \label{fig:admin_form_email_duplicado}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Tentativas de
-criação de administradores por contas sem perfil \textit{super\_admin}
-são bloqueadas pelo \textit{middleware} do \textit{backend}, que retorna
-HTTP~403 ``Acesso negado'', que resulta nos botões de editar e desativar desabilitados na tabela, conforme ilustra a \autoref{fig:admins_sem_permissao}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_admins_sem_permissao.png}}
-    \caption{Aba ``Administradores'' acessada por conta sem perfil \textit{super\_admin}: botões de editar e desativar desabilitados na tabela.}
-    \label{fig:admins_sem_permissao}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% =============================================================
-\section{Configurações do Sistema}
-\label{sec:configuracoes}
-% =============================================================
-
-% -------------------------------------------------------------
-\subsection{Atualização de Perfil}
-\label{subsec:config-perfil}
-% -------------------------------------------------------------
-
-A tela de Configurações (\autoref{fig:configuracoes}) apresenta o
-formulário de atualização de dados de conta com os campos nome e e-mail
-pré-preenchidos, além de informações de sessão em modo leitura --- perfil
-de acesso, identificador único e dados do último acesso. Após alterar
-os campos e clicar em ``Salvar Alterações'', o \textit{toast} ``Perfil
-atualizado com sucesso!'' confirma a operação e o nome exibido no
-cabeçalho da aplicação é atualizado sem necessidade de novo \textit{login}, conforme mostra a \autoref{fig:configuracoes_edicao}.
-Quando o e-mail já é utilizado por outro administrador, o \textit{backend}
-retorna erro e o sistema exibe a mensagem ``Este email já está em uso
-por outro usuário'', conforme ilustra a \autoref{fig:config_email_em_uso}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_configuracoes.png}}
-    \caption{Tela de Configurações: formulário de atualização de nome e
-    e-mail com informações de sessão em modo leitura.}
-    \label{fig:configuracoes}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_configuracoes_edicao.png}}
-    \caption{Tela de Configurações: \textit{toast} ``Perfil atualizado com sucesso!'' e dado atualizado sem necessidade de novo \textit{login}.}
-    \label{fig:configuracoes_edicao}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_config_email_em_uso.png}}
-    \caption{Tela de Configurações com \textit{toast} de conflito de e-mail: endereço informado já utilizado por outro administrador; campo retorna para correção.}
-    \label{fig:config_email_em_uso}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Para o perfil \textit{super\_admin}, a tela exibe seção adicional.
-A seção, ``Informações
-Técnicas'', apresenta dados em tempo real obtidos do \textit{backend}:
-status geral, versão da API, ambiente de operação, \textit{uptime} do
-processo, status e latência do banco de dados, status e último contato
-do sensor ESP8266, memória utilizada e nível de alerta atual com
-confiabilidade, como mostra a \autoref{fig:configuracoes_superadmin}.
-Quando os dados técnicos não podem ser carregados, a seção exibe um
-estado de erro com botão ``Tentar novamente'', conforme ilustra a \autoref{fig:config_health_erro}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_configuracoes_superadmin.png}}
-    \caption{Tela de Configurações com seção exclusiva ao
-    \textit{super\_admin}: Informações Técnicas em tempo real.}
-    \label{fig:configuracoes_superadmin}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.95\textwidth]{figures/cap5_config_health_erro.png}}
-    \caption{Seção ``Informações Técnicas'' na tela de Configurações com estado de erro: dados de saúde do \textit{backend} inacessíveis e botão ``Tentar novamente'' disponível para nova tentativa.}
-    \label{fig:config_health_erro}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-% -------------------------------------------------------------
-\subsection{Alteração de Senha}
-\label{subsec:config-senha}
-% -------------------------------------------------------------
-
-O botão ``Alterar Senha'' abre um modal com três campos: senha atual,
-nova senha e confirmação. A nova senha deve conter ao menos 6 caracteres,
-com pelo menos uma letra maiúscula, uma minúscula e um número; senhas
-fora desse padrão geram mensagem de erro inline antes do envio. Após
-a confirmação bem-sucedida, todas as sessões ativas do administrador
-são invalidadas, o \textit{toast} ``Senha alterada com sucesso!'' é
-exibido e o modal é fechado. As \autoref{fig:alterar_senha_modal_pt1} e
-\autoref{fig:alterar_senha_modal_pt2} ilustram o modal com os campos
-preenchidos.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_alterar_senha_modal_pt1.png}}
-    \caption{Modal de alteração de senha (parte~1): campos de senha atual
-    e nova senha preenchidos; critérios de complexidade exigidos (mínimo
-    de 6 caracteres com maiúscula, minúscula e número).}
-    \label{fig:alterar_senha_modal_pt1}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_alterar_senha_modal_pt2.png}}
-    \caption{Modal de alteração de senha (parte~2): campo de confirmação
-    de nova senha preenchido e botão ``Alterar Senha'' pronto para envio.}
-    \label{fig:alterar_senha_modal_pt2}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-Quando a nova senha não atende aos critérios, a mensagem de erro é exibida inline antes do envio ao servidor, conforme ilustra a \autoref{fig:alterar_senha_nova_invalida}.
-
-\begin{figure}[H]
-    \centering
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_alterar_senha_nova_invalida.png}}
-    \caption{Modal de alteração de senha com mensagem de erro inline: nova senha fora dos critérios de complexidade; botão ``Alterar Senha'' permanece habilitado para nova tentativa.}
-    \label{fig:alterar_senha_nova_invalida}
-    \fonte{Autora, 2026.}
-\end{figure}
-
-A senha atual incorreta é detectada apenas no \textit{backend}, produzindo um \textit{toast} de erro distinto do erro inline: o \textit{backend} retorna HTTP~400 ``Senha atual incorreta'' e o formulário retorna para correção, conforme demonstra a \autoref{fig:alterar_senha_atual_incorreta}.
-
-\begin{figure}[H]
-    \centering
-    \caption{Modal de alteração de senha com \textit{toast} de erro por senha atual incorreta: \textit{backend} retorna HTTP 400 ``Senha atual incorreta''; formulário retorna para correção.}
-    \fbox{\includegraphics[width=0.75\textwidth]{figures/cap5_alterar_senha_atual_incorreta.png}}
-    \label{fig:alterar_senha_atual_incorreta}
-    \fonte{Autora, 2026.}
-\end{figure}
+A \autoref{tab:res-sintese} reúne os casos executados. Em todos eles,
+a saída observada foi igual à saída esperada.
+
+\begin{table}[htb]
+\centering
+\caption{Síntese dos casos de teste}
+\label{tab:res-sintese}
+\small
+\begin{tabular}{p{3.6cm}p{2.2cm}p{2.0cm}p{6.2cm}}
+\hline
+\textbf{Grupo} & \textbf{Casos} & \textbf{Conformes} & \textbf{Observação} \\
+\hline
+Modelo de alerta (simulação) & C00 a C09 & 10 de 10 & C01, C04 e C07 com $P_{72}$ das APIs, na mesma faixa \\
+Contingência (simulação) & X01 a X09 & 9 de 9 & X05 com dados reais das APIs \\
+Energia (simulação) & E01 a E04 & 4 de 4 & Lógica dos estados; autonomia apenas calculada (\autoref{tab:autonomia}) \\
+Protótipo físico & F01 a F08 & 8 de 8 & F07 com dado real ausente na BNDMET \\
+Plataforma \textit{web} & Cadastro, acesso, painel e envio & todas & Envio a 5 de 5 moradores; eventos registrados \\
+\hline
+\end{tabular}
+\fonte{Elaborado pela autora.}
+\end{table}
+
+Os casos verificam a lógica de decisão do \textit{firmware}, a
+supervisão de energia e o fluxo da plataforma. Eles não avaliam o
+comportamento do maciço nem a duração real da bateria, que permanece
+como valor calculado.

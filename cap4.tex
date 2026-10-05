@@ -238,11 +238,11 @@ Trata-se, portanto, de valores de referência da literatura. A
 calibração dos limiares para o local monitorado é indicada como
 trabalho futuro.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Limiares do modelo de alerta}
 \label{tab:limiares}
-\begin{tabular}{p{1.3cm}p{4.6cm}p{1.8cm}p{5.4cm}}
+\begin{tabular}{p{1.3cm}p{5.4cm}p{1.1cm}p{5.4cm}}
 \hline
 \textbf{Símbolo} & \textbf{Descrição} & \textbf{Valor} & \textbf{Fonte} \\
 \hline
@@ -265,7 +265,7 @@ A \autoref{tab:matriz} apresenta o resultado da \autoref{eq:nivel}
 para todas as combinações de faixas de $S$ e de $P_{72}$, com os
 limiares da \autoref{tab:limiares}.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Matriz de decisão do nível de alerta}
 \label{tab:matriz}
@@ -359,7 +359,7 @@ base é a mesma do caso especial: sem a confirmação da causa e do
 gatilho \cite{bogaard2018hydrological}, o sistema não permanece em
 VERDE. Trata-se de uma regra de projeto adotada por precaução.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Regras de contingência do modelo de alerta}
 \label{tab:contingencia}
@@ -398,9 +398,9 @@ para as próximas 24 horas, obtida da API OpenWeatherMap.
 \subsection{API BNDMET/DECEA — Precipitação Observada}
 \label{subsec:bndmet}
 
-A Base Nacional de Dados Meteorológicos e Climáticos (BNDMET),
-operada pelo Departamento de Controle do Espaço Aéreo (DECEA), foi
-selecionada como fonte primária de dados de precipitação histórica.
+O Banco Nacional de Dados Meteorológicos (BNDMET),
+operado pelo Departamento de Controle do Espaço Aéreo (DECEA), foi
+selecionado como fonte primária de dados de precipitação histórica.
 O acesso à API exigiu solicitação formal junto ao DECEA, com
 apresentação de credenciais acadêmicas e justificativa técnica para
 uso dos dados em pesquisa científica.
@@ -483,7 +483,7 @@ arquitetura do sistema e os diagramas que representam a sua lógica.
 As tecnologias utilizadas em cada camada estão listadas na
 \autoref{tab:tecnologias}.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Tecnologias utilizadas na plataforma}
 \label{tab:tecnologias}
@@ -545,11 +545,11 @@ bateria, o \textit{backend} envia um e-mail automático aos
 administradores. O banco de dados possui quatro tabelas
 (\autoref{tab:tabelas-banco}).
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Tabelas do banco de dados}
 \label{tab:tabelas-banco}
-\begin{tabular}{p{3.2cm}p{10.8cm}}
+\begin{tabular}{p{3.8cm}p{10.8cm}}
 \hline
 \textbf{Tabela} & \textbf{Conteúdo} \\
 \hline
@@ -652,37 +652,6 @@ O cálculo do nível de alerta continua durante a operação na bateria.
 \fonte{Elaborado pela autora, com utilização do draw.io (diagrams.net), 2026.}
 \end{figure}
 
-O conteúdo das mensagens segue o Plano de Ação de Emergência previsto na Política
-Nacional de Segurança de Barragens, que inclui o planejamento de rotas de fuga e
-pontos de encontro, com a respectiva sinalização \cite{brasil2010pnsb,brasil2020lei14066}.
-A mensagem do nível vermelho orienta o deslocamento, de forma análoga ao nível de
-resposta vermelho do guia da \citeonline{ana2016manualpae}, em que o alerta à
-população visa à evacuação. As cores do sistema não correspondem aos níveis de
-emergência definidos pela \citeonline{anm2022resolucao95}.
-
-\begin{quadro}[htb]
-\centering
-\caption{Mensagens-modelo do e-mail de alerta}
-\label{qua:mensagens-alerta}
-\begin{tabular}{p{1.5cm}p{8.3cm}p{4.0cm}}
-\hline
-\textbf{Nível} & \textbf{Orientação ao morador} & \textbf{Base} \\
-\hline
-Verde & Não há necessidade de deslocamento. Conhecer a rota de fuga e o ponto de
-encontro sinalizados e participar dos simulados. &
-\citeonline{brasil2010pnsb}, art. 12, IV e XIII \\
-Amarelo & Atenção. Confirmar a rota de fuga e o ponto de encontro; acompanhar novos
-avisos e a Defesa Civil; seguir as orientações oficiais se a sirene tocar. &
-\citeonline{ana2016manualpae}; \citeonline{brasil2010pnsb}, art. 12, XII e XIII \\
-Vermelho & Deslocar-se imediatamente ao ponto de encontro pela rota de fuga
-sinalizada e seguir as orientações da Defesa Civil. &
-\citeonline{ana2016manualpae}; \citeonline{anm2022resolucao95}, art. 42 \\
-\hline
-\end{tabular}
-\fonte{Elaborado pela autora com base em \citeonline{brasil2010pnsb},
-\citeonline{ana2016manualpae} e \citeonline{anm2022resolucao95}.}
-\end{quadro}
-
 \paragraph*{Fluxograma do envio de e-mail de alerta}
 
 A \autoref{fig:f4-email} apresenta o envio do e-mail de alerta pelo
@@ -775,7 +744,7 @@ resposta vermelho do guia da \citeonline{ana2016manualpae}, em que o alerta à
 população visa à evacuação. As cores do sistema não correspondem aos níveis de
 emergência definidos pela \citeonline{anm2022resolucao95}.
 
-\begin{quadro}[htb]
+\begin{quadro}[H]
 \centering
 \caption{Mensagens-modelo do e-mail de alerta}
 \label{qua:mensagens-alerta}
@@ -831,7 +800,16 @@ CH340.
 No protótipo, o ESP8266 lê o sensor de umidade, consulta as APIs
 meteorológicas por HTTPS, calcula o nível de alerta, aciona os LEDs e o
 \textit{buzzer} e envia os dados ao \textit{backend}
-\cite{mercadolivre_esp8266, espressif_esp8266_spec2013}.
+\cite{mercadolivre_esp8266, espressif_esp8266_spec2013}. A
+\autoref{fig:esp8266} mostra a placa e a identificação dos seus pinos.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{figures/image63_esp8266_nodemcu.png}}
+    \caption{Placa ESP8266 NodeMCU V3, com o módulo ESP-12E à esquerda, os pinos digitais na parte inferior, o pino analógico A0 no canto superior direito e o conector USB-C à esquerda}
+    \label{fig:esp8266}
+    \fonte{\citeonline{mercadolivre_esp8266}}
+\end{figure}
 
 O ESP8266EX possui um único conversor analógico-digital, de 10
 \textit{bits}, no pino TOUT \cite[Seção~4.9]{espressif_esp8266ex}. Na
@@ -847,6 +825,16 @@ FC-28 e por uma placa com o comparador LM393, com saída analógica (A0) e
 digital (D0) e tensão de operação entre 3,3\,V e 5\,V
 \cite{eletrogate_higrometro,dfrobot_sen0114}. A placa mede
 3$\times$1,5\,cm, e a sonda, 6$\times$2\,cm \cite{eletrogate_higrometro}.
+A \autoref{fig:higrometro} mostra a sonda, que é inserida no solo, e a
+placa com o comparador, ligadas por um cabo.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image50_higrometro.png}}
+    \caption{Módulo sensor de umidade de solo: sonda FC-28, à direita, e placa com o comparador LM393, à esquerda}
+    \label{fig:higrometro}
+    \fonte{\citeonline{eletrogate_higrometro}}
+\end{figure}
 
 No protótipo, apenas a saída analógica é utilizada, ligada ao pino A0 do
 ESP8266. A leitura do conversor é transformada na saturação relativa $S$,
@@ -868,7 +856,15 @@ seu efeito no consumo são descritos na \autoref{subsec:energia}.
 
 Foram utilizados três LEDs difusos de 5\,mm para sinalizar o nível de
 alerta, ligados aos pinos D1 (azul), D2 (amarelo) e D3 (vermelho). Apenas
-o LED do nível atual permanece aceso.
+o LED do nível atual permanece aceso (\autoref{fig:leds}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{figures/image64_leds.png}
+    \caption{LEDs indicadores de 5\,mm e o nível de alerta sinalizado por cada um}
+    \label{fig:leds}
+    \fonte{\citeonline{mercadolivre_leds}}
+\end{figure}
 
 No protótipo físico, o nível VERDE é indicado pelo LED azul, componente
 disponível na montagem. A cor não altera a lógica de alerta: o
@@ -886,7 +882,7 @@ isso, a corrente de cada LED foi considerada igual ao limite de corrente do
 pino, de 12\,mA \cite[Tabela~5-1]{espressif_esp8266ex}, conforme a
 \autoref{tab:consumo}.
 
-----------------------------------------------------------------------
+% -------------------------------------------------------------
 \subsection{\textit{Buzzer} Ativo TMB-12A03}
 \label{subsec:buzzer}
 % -------------------------------------------------------------
@@ -902,7 +898,16 @@ AMARELO são indicados somente pelos LEDs.
 Segundo o fabricante, o TMB-12A03 tem tensão nominal de 3\,V (faixa de
 2,5 a 4\,V), corrente de até 35\,mA, nível sonoro mínimo de 82\,dB a
 10\,cm, frequência de ressonância de 2300\,$\pm$\,500\,Hz e diâmetro de
-12\,mm \cite{quickteck_tmb12a03}.
+12\,mm \cite{quickteck_tmb12a03}. A \autoref{fig:buzzer} mostra o
+componente, com o terminal positivo ligado ao pino D4.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/image65_buzzer_tmb12a03.png}
+    \caption{\textit{Buzzer} ativo TMB-12A03: vista superior e vista lateral, com as dimensões e os terminais}
+    \label{fig:buzzer}
+    \fonte{\citeonline{smartcomponentes_buzzer}.}
+\end{figure}
 
 % -------------------------------------------------------------
 \subsection{Bateria, Carregador e Detecção da Rede}
@@ -914,7 +919,7 @@ redundante e não foram montados no protótipo físico. A quantidade de
 células resulta do cálculo da \autoref{subsec:energia}.
 
 A bateria é formada por três células de íon-lítio Panasonic NCR18650B
-ligadas em paralelo, em um suporte para três células. Cada célula tem
+ligadas em paralelo, cada uma em um suporte individual. Cada célula tem
 capacidade nominal mínima de 3200\,mAh e tensão nominal de 3,6\,V
 \cite{panasonic_ncr18650b}.
 
@@ -989,12 +994,12 @@ e o envia ao \textit{backend} pela rota \texttt{POST /leituras}
 A Tabela~\ref{tab:specs} consolida as principais especificações
 técnicas dos componentes utilizados.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Especificações técnicas dos componentes do protótipo e da alimentação redundante}
 \label{tab:specs}
 \small
-\begin{tabular}{p{4.0cm}p{2.9cm}p{3.6cm}p{3.0cm}}
+\begin{tabular}{p{5.5cm}p{2.9cm}p{3.6cm}p{3.0cm}}
 \hline
 \textbf{Componente} & \textbf{Tensão (V)} & \textbf{Corrente} & \textbf{Interface} \\
 \hline
@@ -1016,13 +1021,14 @@ Módulo carregador e elevador (referência PowerBoost 1000C) & 5,2 (saída) & ca
 
 O custo dos componentes do protótipo físico foi de R\$\,70,30. A
 \autoref{tab:custos} apresenta também os itens da alimentação redundante,
-especificados na \autoref{subsec:energia}, que não foram montados.
+especificados na \autoref{subsec:energia}, que não foram montados. Com
+eles, o custo total passa a R\$\,602,70.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Componentes e custos do protótipo embarcado}
 \label{tab:custos}
-\begin{tabular}{p{8.0cm}cc}
+\begin{tabular}{p{11.0cm}cc}
 \hline
 \textbf{Componente} & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
 \hline
@@ -1033,21 +1039,20 @@ LEDs indicadores (conjunto) & 1 & 0,60 \\
 \hline
 \textbf{Subtotal do protótipo físico} & & \textbf{70,30} \\
 \hline
-Célula Li-ion NCR18650B com proteção & 3 & \textit{a cotar} \\
-%% TODO autora: cotar 3 células NCR18650B PROTEGIDAS (corte 2,50 V), mesmo lote
-Suporte para 3 células 18650 em paralelo & 1 & \textit{a cotar} \\
-%% TODO autora: cotar suporte 3x18650 (ligação em paralelo)
-Módulo carregador e elevador com compartilhamento de carga (MCP73871 + TPS61090) & 1 & \textit{a cotar} \\
-%% TODO autora: cotar PowerBoost 1000C ou equivalente com MCP73871 + TPS61090
+Célula Li-ion Panasonic NCR18650B com proteção$^{\mathrm{a}}$ & 3 & 312,64 \\
+Suporte para uma célula 18650 (ligados em paralelo) & 3 & 14,19 \\
+Módulo carregador e elevador PowerBoost 1000C (MCP73871 + TPS61090) & 1 & 205,57 \\
 \hline
-\textbf{Subtotal da alimentação redundante} & & \textit{a cotar} \\
-%% TODO autora: somar
+\textbf{Subtotal da alimentação redundante} & & \textbf{532,40} \\
 \hline
-\textbf{Total} & & \textit{a cotar} \\
-%% TODO autora: 70,30 + subtotal
+\textbf{Total} & & \textbf{602,70} \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026.}
+\fonte{Autora, 2026, com preços consultados em 4 out. 2026, sem frete
+\cite{taklite_ncr18650b_pcb,usinainfo_suporte_18650,amazon_powerboost1000c}.}
+\nota{$^{\mathrm{a}}$Preço unitário de US\$\,19,95, convertido pela taxa
+PTAX de venda de 2 out. 2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem
+impostos de importação.}
 \end{table}
 
 O protótipo físico é alimentado por fonte externa de 5\,V, pela porta
@@ -1111,12 +1116,12 @@ apenas valor médio, usou-se o médio. Como o regulador de 3,3\,V da placa é
 linear, a corrente na entrada de 5\,V é a soma das correntes da carga com
 a corrente de repouso do regulador \cite{ams1117_datasheet}.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Corrente por componente na entrada de 5\,V da placa}
 \label{tab:consumo}
 \small
-\begin{tabular}{p{4.2cm}p{1.6cm}p{1.4cm}p{6.4cm}}
+\begin{tabular}{p{5.2cm}p{1.8cm}p{1.4cm}p{6.4cm}}
 \hline
 \textbf{Componente} & \textbf{Supervisão (mA)} & \textbf{Alarme (mA)} & \textbf{Valor adotado e fonte} \\
 \hline
@@ -1177,8 +1182,27 @@ $C_{\mathrm{carga}} = (167 \times 24 + 202 \times 0{,}25) \times 1{,}20
 
 Essa capacidade está referida à tensão da placa. A célula, de 3,6\,V,
 alimenta a placa por um conversor elevador de tensão com saída de 5,2\,V
-\cite{adafruit_powerboost1000c}. Pelo balanço de energia no conversor, a
-capacidade necessária na célula é dada pela \autoref{eq:cap-celula}.
+\cite{adafruit_powerboost1000c}. Pelo balanço de potência no conversor
+elevador, a potência de entrada é igual à potência de saída dividida pelo
+rendimento \cite[p.~3, Eq.~1]{ti_snva731}. Como cada potência é o produto
+da tensão pela corrente, a corrente de entrada é a corrente de saída
+multiplicada pela razão entre as tensões de saída e de entrada e dividida
+pelo rendimento \cite[p.~3, Eq.~2]{ti_snva731}.
+
+Essa equação do fabricante soma ainda a metade da ondulação triangular
+de corrente do indutor \cite[p.~3]{ti_snva731}. No conversor elevador, a
+corrente de entrada é a própria corrente do indutor e, em regime
+permanente, o aumento dessa corrente com a chave fechada é igual à sua
+redução com a chave aberta \cite[p.~1 e 5]{ti_slva061}.
+
+Assim, a ondulação oscila em torno do valor médio: a corrente máxima é a
+corrente média somada à metade da ondulação \cite[p.~3, Eq.~4]{ti_slva372}.
+Por isso, a ondulação não altera a corrente média, que é a usada no
+dimensionamento da capacidade.
+
+Como a capacidade é o produto da corrente pelo tempo \cite{bu402_crate},
+a mesma relação vale para as capacidades, e a capacidade necessária na
+célula é dada pela \autoref{eq:cap-celula}.
 
 \begin{equation}
 \label{eq:cap-celula}
@@ -1209,7 +1233,14 @@ $C_{\mathrm{bat}} = 4870{,}2 \times 5{,}2 / (3{,}6 \times 0{,}90)
 Adotou-se a célula de íon-lítio Panasonic NCR18650B, com capacidade
 nominal mínima de 3200\,mAh a 20\,$^\circ$C, tensão nominal de 3,6\,V e carga
 CC-CV padrão de 1625\,mA até 4,20\,V, em 4,0\,h
-\cite{panasonic_ncr18650b}. O número de células em paralelo é dado pela
+\cite{panasonic_ncr18650b}.
+
+Células iguais ligadas em paralelo mantêm a tensão e somam a capacidade
+\cite{bu302_serieparalelo}. Assim, $n$ células fornecem
+$n\,C_{\mathrm{nom}}$, e o menor número que atende à capacidade
+necessária é o menor inteiro maior ou igual a
+$C_{\mathrm{bat}}/C_{\mathrm{nom}}$, dado pela função teto
+\cite[Seção~3.1]{graham1994concrete}, conforme a
 \autoref{eq:num-celulas}.
 
 \begin{equation}
@@ -1231,7 +1262,8 @@ Cada variável da \autoref{eq:num-celulas} é descrita a seguir:
 Resulta $n = \lceil 7816/3200 \rceil = \lceil 2{,}44 \rceil = 3$, ou seja,
 três células em paralelo, com 9600\,mAh, valor superior aos 7816\,mAh
 necessários. Sem a margem de 20\%, a autonomia teórica em supervisão seria
-de cerca de 36\,h.
+de cerca de 36\,h, obtida pela divisão da capacidade pela corrente na
+bateria \cite{bu402_crate}: $9600/268 \approx 35{,}8$\,h.
 
 Esse valor resulta da corrente de 268\,mA na bateria, obtida pela mesma
 relação da \autoref{eq:cap-celula} aplicada a 167\,mA. Cada célula
@@ -1292,7 +1324,14 @@ cerca de 1,4\,h. São estimativas obtidas da curva típica, e não medições.
 A falha de bateria é detectada durante a recarga. No \textit{datasheet}, a
 carga CC-CV padrão de uma célula termina em 4,20\,V, com 1625\,mA, em
 4,0\,h \cite{panasonic_ncr18650b}. Para três células e o carregador de
-referência, o tempo equivalente é estimado pela \autoref{eq:tempo-carga}.
+referência, o tempo foi estimado em duas etapas.
+
+A primeira divide a capacidade pela corrente, como na definição da taxa C
+\cite{bu402_crate}. A segunda multiplica o resultado pela razão entre o
+tempo da carga padrão e o tempo ``capacidade dividida pela corrente'' da
+mesma carga, de cerca de 2,0 ($4{,}0 \times 1625 / 3200$), para incluir a
+etapa de tensão constante. Simplificada, a estimativa é dada pela
+\autoref{eq:tempo-carga}.
 
 \begin{equation}
 \label{eq:tempo-carga}
@@ -1316,9 +1355,14 @@ Cada variável da \autoref{eq:tempo-carga} é descrita a seguir:
 \end{itemize}
 
 Resulta $T_{\mathrm{carga}} = 4{,}0 \times 3 \times 1625 / 1000 = 19{,}5$\,h.
-A relação supõe que o tempo de carga é inversamente proporcional à
-corrente, o que é uma aproximação, pois a etapa de tensão constante não
-depende só da corrente do carregador.
+A estimativa é uma aproximação: na carga CC-CV, o tempo total não é
+inversamente proporcional à corrente, pois a etapa de saturação varia com
+ela \cite{bu409_charging}.
+
+Com 1000\,mA para três células, cerca de 0,1\,C por célula, abaixo dos
+0,5\,C da carga padrão, a etapa de saturação tende a ser relativamente
+mais curta. Assim, 19,5\,h tende a superestimar o tempo real, o que evita
+falso alarme de falha de bateria, mas atrasa a sua detecção.
 
 Com esses valores, foram definidos os estados de energia da
 \autoref{tab:estados-energia}. Na simulação, uma chave representa a rede
@@ -1326,12 +1370,12 @@ elétrica e um potenciômetro representa a tensão da bateria, entre 2,50 e
 4,20\,V. O \textit{buzzer} é reservado ao nível VERMELHO do modelo de
 alerta.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Estados de energia e alertas}
 \label{tab:estados-energia}
 \small
-\begin{tabular}{p{2.6cm}p{4.6cm}p{2.8cm}p{3.6cm}}
+\begin{tabular}{p{3.0cm}p{4.6cm}p{2.8cm}p{3.6cm}}
 \hline
 \textbf{Estado} & \textbf{Condição} & \textbf{Indicação local} & \textbf{Aviso no painel} \\
 \hline
@@ -1406,12 +1450,12 @@ representa.
 \fonte{Autora, 2026.}
 \end{figure}
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Componentes do circuito virtual e o que representam}
 \label{tab:componentes-wokwi}
 \small
-\begin{tabular}{p{3.4cm}p{0.8cm}p{1.7cm}p{8.0cm}}
+\begin{tabular}{p{4.2cm}p{0.8cm}p{1.3cm}p{8.0cm}}
 \hline
 \textbf{Componente} & \textbf{Qtd.} & \textbf{Pino} & \textbf{O que representa} \\
 \hline
@@ -1506,12 +1550,12 @@ informado pelo comando \texttt{chuva <mm>}. Nesses casos, a rede elétrica
 permaneceu presente e a bateria em 4,20\,V. A saída esperada segue a
 \autoref{tab:matriz}.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Casos de teste do modelo de alerta}
 \label{tab:casos-modelo}
 \small
-\begin{tabular}{p{1.0cm}p{2.6cm}p{2.0cm}p{8.4cm}}
+\begin{tabular}{p{1.0cm}p{3.5cm}p{1.5cm}p{8.4cm}}
 \hline
 \textbf{Caso} & \textbf{$S$} & \textbf{$P_{72}$ (mm)} & \textbf{Saída esperada} \\
 \hline
@@ -1551,12 +1595,12 @@ controlada, os casos X07 a X09 a reproduzem pelo comando
 \texttt{chuva parcial <mm>}. O caso X09 verifica que um mínimo garantido
 abaixo de $P_1$ é tratado como falta de dados de chuva.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Casos de teste de contingência e de integração com as APIs}
 \label{tab:casos-contingencia}
 \small
-\begin{tabular}{p{1.0cm}p{5.4cm}p{7.6cm}}
+\begin{tabular}{p{0.8cm}p{6.3cm}p{7.6cm}}
 \hline
 \textbf{Caso} & \textbf{Condição de entrada} & \textbf{Saída esperada} \\
 \hline
@@ -1585,12 +1629,12 @@ No caso E04, a bateria foi mantida abaixo de 4,20\,V com a rede presente
 até o fim do tempo $T_{\mathrm{carga}}$, reduzido a 585~segundos pelo modo
 de demonstração.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Casos de teste da supervisão de energia}
 \label{tab:casos-energia}
 \small
-\begin{tabular}{p{1.0cm}p{5.4cm}p{7.6cm}}
+\begin{tabular}{p{0.8cm}p{6.0cm}p{7.6cm}}
 \hline
 \textbf{Caso} & \textbf{Condição de entrada} & \textbf{Saída esperada} \\
 \hline
@@ -1625,12 +1669,12 @@ Como a umidade do solo não pode ser ajustada com precisão, a saída
 esperada de cada caso é definida pela faixa de $S$ efetivamente lida
 (\autoref{tab:limiares}), e não por um valor fixo.
 
-\begin{table}[htb]
+\begin{table}[H]
 \centering
 \caption{Casos de teste no protótipo físico}
 \label{tab:casos-fisico}
 \small
-\begin{tabular}{p{1.0cm}p{5.6cm}p{7.4cm}}
+\begin{tabular}{p{0.8cm}p{6.2cm}p{7.2cm}}
 \hline
 \textbf{Caso} & \textbf{Condição de entrada} & \textbf{Saída esperada} \\
 \hline

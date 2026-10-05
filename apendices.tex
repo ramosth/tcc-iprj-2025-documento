@@ -7,48 +7,45 @@
 \chapter{links dos arquivos}
 \label{apendice:geral}
 
+Este apêndice reúne os endereços do código-fonte, das simulações e dos
+arquivos-fonte dos diagramas apresentados no
+\autoref{cap:materiais-metodos}.
+
 \begin{itemize}
 
     \item \label{apendice:codigo-firmware} Código-fonte do
-    \textit{firmware} (ESP8266):
+    \textit{firmware} do protótipo físico (ESP8266 NodeMCU V3):
     \url{https://github.com/ramosth/tcc-iprj-2025-firmware}
 
-    \item \label{apendice:codigo-sistema} Código-fonte do sistema
-    \textit{backend} e \textit{frontend}:
-    \url{https://github.com/ramosth/tcc-iprj-2025-sistema}
-
-    \item \label{apendice:codigo-simulador-web} Simulação inicial do
-    sistema embarcado (versão web do Wokwi, com suporte apenas à
-    leitura do sensor):
-    \url{https://wokwi.com/projects/474974754335924225}
-
-    \item \label{apendice:codigo-simulador-wokwi} Simulação completa
-    do sistema embarcado (via extensão Wokwi para VS Code), com
-    leitura do sensor, consulta às APIs externas (BNDMET e
-    OpenWeatherMap) e envio dos dados à API local:
+    \item \label{apendice:codigo-simulador-wokwi} Código-fonte e
+    diagrama da simulação no Wokwi (ESP32), com o modelo de alerta, a
+    consulta às APIs BNDMET e OpenWeatherMap, a supervisão de energia e o
+    envio dos dados ao \textit{backend}:
     \url{https://github.com/ramosth/tcc-iprj-2025-simulador-wokwi}
 
-    \item \label{apendice:diagrama-casos-uso} Diagramas de casos de
-    uso (Partes 1 a 4 -- Sistema Embarcado, Acesso Público e
-    Autenticação, Monitoramento e Alertas, Gestão de Usuários):
-    \url{https://drive.google.com/drive/folders/1aNQMksipEQy6HfXWmwDxU32FmRdDJhbn?usp=drive_link}
+    \item \label{apendice:codigo-sistema} Código-fonte da plataforma de
+    \textit{software} (\textit{backend} e \textit{frontend}):
+    \url{https://github.com/ramosth/tcc-iprj-2025-sistema}
 
-    \item \label{apendice:diagrama-classes} Diagramas de classes
-    (Partes 1 a 4 -- Modelos de Dados, Autenticação e Usuários,
-    Serviços e Controladores, Sistema Embarcado):
-    \url{https://drive.google.com/drive/folders/1nF1d9998obAmu5V4ewTkCRDLbgGNlGqb?usp=drive_link}
+    \item \label{apendice:fluxogramas} Fluxogramas F1 a F4 (geral do
+    dispositivo, cálculo do nível de alerta, supervisão de energia e
+    envio de e-mail de alerta), \autoref{fig:f1-geral} a
+    \autoref{fig:f4-email}, em formato draw.io e PNG:
+    \url{https://drive.google.com/drive/folders/1cwklO3yfXHa3Iq4xE6EKmUtck0RmrRTC?usp=sharing}
 
-    \item \label{apendice:diagrama-sequencia} Diagramas de sequência
-    (Partes 1 a 7 -- Boot/Inicialização, Ciclo de Coleta e Envio,
-    Autenticação, Recuperação de Senha, Dashboard, Sensores/Relatórios,
-    Gestão de Usuários/Central de Alertas):
-    \url{https://drive.google.com/drive/folders/14QUf7ajd2kgJ16Rpt5cOIzdIxqXy7h4D?usp=drive_link}
+    \item \label{apendice:diagrama-casos-uso} Diagrama de casos de uso
+    (\autoref{fig:casos-uso}), em formato draw.io e PNG:
+    \url{https://drive.google.com/drive/folders/1p_knR-0u6KCavTmNMICIZwPfB-uTCyEG?usp=sharing}
 
-    \item \label{apendice:fluxogramas} Fluxogramas de lógica do
-    sistema (F1 a F9 -- loop principal, análise de risco integrado,
-    protocolo de ruptura, índice de confiabilidade, recebimento e
-    persistência de leitura, autenticação JWT, detecção de status do
-    sensor, simulação de nível via Serial, envio de alerta em massa):
-    \url{https://drive.google.com/drive/folders/1nOPPpEWdytbwXwL3oq-wt3r2ZcHGtqoG?usp=drive_link}
+    \item \label{apendice:diagrama-sequencia} Diagrama de sequência,
+    partes 1 (ciclo do dispositivo) e 2 (painel do administrador e envio
+    de e-mail), \autoref{fig:sequencia-1} e \autoref{fig:sequencia-2},
+    em formato draw.io e PNG:
+    \url{https://drive.google.com/drive/folders/1-Bm9eRm5zlPdugGVpWwMjJWhKX-h160E?usp=sharing}
+
+    \item \label{apendice:circuito} Diagrama de montagem (Fritzing) e
+    esquemático elétrico do protótipo físico,
+    \autoref{fig:componentes_ligados} e \autoref{fig:esquematico}:
+    \url{https://drive.google.com/drive/folders/1OrpDOLFtPC5qvXdQdU48wgTcaq24C8X1?usp=sharing}
 
 \end{itemize}

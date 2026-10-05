@@ -23,50 +23,47 @@
 \vspace{\onelineskip}
 
 \setlength{\parindent}{1.3cm}
-% TODO: Traduzir o resumo para o inglês. A tradução deve ser feita de forma a manter o sentido do texto original, mas adaptando a linguagem para o público-alvo da língua estrangeira escolhida. As palavras-chave devem ser traduzidas e apresentadas na mesma ordem do resumo em português.
-The failures of tailings dams in Mariana (2015) and Brumadinho (2019)
-exposed critical weaknesses in the monitoring and warning systems of the
-Brazilian mining area, resulting in hundreds of deaths and
-environmental damage of historic proportions. In this context, this
-work proposes the development of an automated monitoring and alert
-system for mining tailings dams, based on IoT technology, with the
-objective of continuously measuring soil moisture, integrating external
-meteorological data and calculating a real-time geotechnical risk index.
-The system comprises an embedded hardware prototype built on the
-ESP8266 NodeMCU microcontroller with a resistive hygrometer sensor,
-indicator LEDs and a buzzer, programmed in C++ using the Arduino IDE.
-The firmware integrates the BNDMET/DECEA and OpenWeatherMap
-meteorological APIs to retrieve historical precipitation data and
-rainfall forecasts, transmitting readings to the backend at adaptive
-intervals according to the calculated risk level. The integrated risk
-assessment model, developed by the author, calculates a risk factor
-through the weighted sum of seven variables expressing geotechnical
-conditions --- soil moisture and rate of change --- and meteorological
-conditions --- accumulated precipitation over multiple time windows,
-rainfall forecast and atmospheric pressure ---, with the rainfall
-thresholds calibrated based on \citeonline{rico2008mine} and on the
-criteria of the Alerta Rio System \cite{sistemaalertario2025}, and an
-amplification mechanism triggered when high soil saturation coincides
-with forecast rainfall. The software platform adopts a three-layer client-server
-architecture: embedded firmware, a backend developed in Node.js with
-TypeScript and a PostgreSQL database with the TimescaleDB extension for
-time-series data, and a React/Next.js frontend providing a real-time
-monitoring interface, reading history, user management and an alert
-center. The system classifies risk into three levels (green, yellow, red), 
-signalled physically by the LEDs and buzzer on the embedded
-device and displayed on the web platform. The administrator has access to
-an alert center that enables the manual dispatch of bulk e-mail
-notifications to registered users, accompanied by the corresponding
-analysis cycle report. The proposed solution demonstrates that it is
-possible to develop, using low-cost hardware and open-source technologies,
-a functional system for continuous geotechnical risk monitoring,
-which may include the measurement and use of other variables, 
-such as the water table level and soil pore pressure (piezometer) and the velocity, 
-direction, and depth of landslides (inclinometer),
-contributing to accident prevention in mining tailings dams.
+The failures of the tailings dams in Mariana, in 2015, and in
+Brumadinho, in 2019, showed the importance of warning the downstream
+population in time. This work developed a safety system for mining
+tailings dams, based on the Internet of Things, that combines soil
+saturation, obtained on site, with observed and forecast rainfall and
+issues alerts at three levels, green, yellow and red, both locally and
+remotely. The alert model applies a two-variable hydro-meteorological
+threshold described in the literature: the relative soil saturation,
+obtained by a hygrometer, represents the cause, and the rainfall
+accumulated over 72 hours, made up of 48 observed hours, from the
+Brazilian National Meteorological Database (BNDMET), and 24 forecast hours, from OpenWeatherMap, represents the trigger.
+When both data are available, the level rises only when both variables
+reach their thresholds, all taken from published studies. Contingency
+rules keep the alert working when the hygrometer or the rainfall data
+are missing; with incomplete rainfall data, the system uses the
+guaranteed minimum of the accumulated rainfall. The system was built as
+a physical prototype with the ESP8266 microcontroller, powered through
+the USB port, and as a Wokwi simulation with the ESP32, both with local
+alerts by LEDs and a buzzer. The remote alert is provided by a web
+platform, developed with Node.js and TypeScript, PostgreSQL and
+Next.js, with a landing page, resident registration, an administrator
+dashboard and the sending of alert e-mails about the need to evacuate.
+The energy redundancy was sized by calculation for 24 hours of
+supervision and 15 minutes of alarm, a requirement of alarm system
+standards, which led to three lithium-ion cells in parallel, and its
+operation was demonstrated only in the simulation. In the 31 test cases
+executed, covering the alert model, the contingencies, the energy
+supply and the physical prototype, the observed output matched the
+expected output, and the alert e-mail reached the five residents
+registered in the test. The theoretical battery autonomy in supervision
+is about 36 hours. The results are limited to a single measurement
+point, a sensor that does not measure volumetric water content,
+thresholds not calibrated for the site and a battery that was only
+calculated and simulated. It is concluded that it is possible to build,
+with low-cost components and open-source technologies, an alert system
+with every threshold grounded in the literature, which supports the
+early warning of the population without replacing the dam's emergency
+plan.
 
 \vspace{\onelineskip}
-\noindent Keywords: Alert systems; ESP8266; Geotechnical monitoring; Internet of Things; Tailings dams.
+\noindent Keywords: tailings dams; warning system; Brumadinho; environmental risk; Internet of Things.
 
 \end{SingleSpace}
 \end{otherlanguage*}

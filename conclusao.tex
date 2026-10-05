@@ -5,242 +5,94 @@
 \newline
 \newline
 
-Os rompimentos de Mariana (2015) e Brumadinho (2019) demonstraram que
-a falha no monitoramento contínuo de barragens de rejeitos não é um
-problema técnico abstrato: ela se traduz em mortes, em devastação
-ambiental e em perdas que não têm reparação. Em Mariana, o sistema da
-barragem do Fundão era genérico, baseado apenas em piezômetros, sem
-instrumentação adequada e sem simulações específicas de evacuação
-\cite{sequencia2024sismografico, geoscan2024sistema}. Em Brumadinho,
-a sirene foi engolida pela onda de lama nos primeiros instantes do
-colapso, e laudos técnicos anteriores já recomendavam a instalação de
-radar de monitoramento de deslocamentos --- tecnologia que poderia ter
-acionado o alarme a tempo \cite{taliberti2025tragedia, metropoles2019laudos}.
-Em ambos os casos, a tecnologia existia, o risco era conhecido, e a
-decisão de não implementar ou manter os sistemas precedeu a tragédia
-\cite{taliberti2025tragedia, metropoles2019laudos, sequencia2024sismografico}.
-O trabalho desenvolvido partiu diretamente dessa constatação e buscou
-demonstrar que, mesmo com recursos limitados, é possível construir uma
-solução funcional de monitoramento geotécnico integrado.
+O objetivo geral deste trabalho foi alcançado. Foi desenvolvido um
+sistema de monitoramento e alerta para barragens de rejeitos de
+mineração, baseado em IoT, que combina a saturação do solo, obtida no
+local, com a chuva observada e prevista, e emite alertas em três
+níveis, de forma local e remota, com alimentação redundante por bateria.
 
-O objetivo geral estabelecido no \autoref{cap:objetivos} --- desenvolver
-um sistema automatizado de monitoramento e alerta para barragens de
-rejeitos de mineração, baseado em tecnologia IoT, capaz de mensurar
-continuamente a umidade do solo, integrar dados meteorológicos obtidos
-por APIs externas, calcular um índice de risco geotécnico em tempo real
-e disponibilizar as informações em uma plataforma \textit{web} ---
-foi alcançado integralmente. Os seis objetivos específicos foram
-cumpridos e verificados na \autoref{tab:cobertura_objetivos}.
+Os seis objetivos específicos do \autoref{cap:objetivos} foram
+atendidos (\autoref{tab:cobertura_objetivos}). Nos 31 casos de teste
+executados, a saída observada foi igual à saída esperada
+(\autoref{tab:res-sintese}).
 
-O protótipo de \textit{hardware}, composto pelo microcontrolador
-ESP8266 NodeMCU e pelo sensor higrômetro resistivo FC-28, realiza
-leituras contínuas de umidade do solo e aciona sinalização visual por
-três LEDs e sonora por \textit{buzzer} passivo de modo proporcional ao
-nível de risco calculado. O custo total dos componentes é de
-R\$~70,30 --- valor expressivamente inferior ao de instrumentos
-geotécnicos profissionais, como piezômetros elétricos automatizados e
-inclinômetros de corda vibrante, cujos custos de aquisição e instalação
-podem superar dezenas de milhares de reais por ponto de monitoramento
-\cite{quispe2018instrumentacao}.
+O modelo de alerta aplica um limiar hidrometeorológico: o nível sobe
+quando a causa, o solo úmido, e o gatilho, a chuva, ocorrem em conjunto
+\cite{bogaard2018hydrological}. A saturação relativa $S$ é obtida pelo
+higrômetro, e a chuva $P_{72}$ soma 48~horas observadas na BNDMET e
+24~horas previstas pelo OpenWeatherMap \cite[p.~5]{mirus2018developing}.
 
-A integração meteorológica envolveu duas fontes externas com papéis
-distintos no modelo de risco: a API BNDMET/DECEA, que fornece dados
-históricos de precipitação da estação D6594 (Alberto Flores, localizada
-na região de Brumadinho) nas janelas de 24~horas, 7~dias e 30~dias; e
-a API OpenWeatherMap, que provê as condições atuais --- inclusive pressão
-atmosférica ao nível do solo --- e a previsão pluviométrica para as
-próximas 24~horas. A escolha da estação D6594 como referência
-pluviométrica não foi arbitrária: ela situa-se na região do maior
-acidente de barragem de rejeitos do Brasil em número de vítimas, o que
-confere ao sistema um ancoramento geográfico e histórico direto ao
-problema que o motivou.
+Cada limiar do modelo tem origem na literatura
+(\autoref{tab:limiares}). Os de saturação, $S_1 = 0{,}64$ e
+$S_2 = 0{,}86$, vêm de \citeonline[p.~9, Tabela~1]{mirus2018developing},
+e os de chuva, $P_1 = 60$\,mm e $P_2 = 100$\,mm em 72~horas, de
+\citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
 
-O modelo de avaliação de risco integrado, descrito na
-\autoref{sec:modelo-risco}, calcula integralmente no microcontrolador
-um fator de risco adimensional ($F_{risco}$) pela soma ponderada de
-sete variáveis que expressam condições geotécnicas e meteorológicas:
-nível do lençol freático ($V_{len}$, peso~0,40), taxa de variação da
-umidade ($V_{taxa}$, peso~0,10), precipitação nas últimas 24~horas
-($V_{ch.24h}$, peso~0,08), nos últimos 7~dias ($V_{ch.7d}$, peso~0,12)
-e nos últimos 30~dias ($V_{ch.30d}$, peso~0,10), previsão de intensidade
-pluviométrica ($V_{ch.fut}$, peso~0,15) e queda de pressão atmosférica
-($V_{press}$, peso~0,05). O maior peso atribuído à variável de lençol
-freático está alinhado à preponderância de causas de saturação do
-maciço nos acidentes documentados por \citeonline{robertson2019feijaoson2019}.
-A abordagem multidimensional, por sua vez, tem respaldo em
-\citeonline{rico2008mine}, que identificaram que 39\% dos rompimentos
-documentados resultaram da combinação de múltiplos fatores, não de uma
-causa isolada.
+O alerta local é feito pelos LEDs de cada nível e pelo
+\textit{buzzer}, acionado no VERMELHO. Como o nível é calculado no
+próprio dispositivo, esse alerta não depende da rede nem do
+\textit{backend}, e as regras de contingência o mantêm quando falta o
+higrômetro ou os dados de chuva (\autoref{tab:contingencia}).
 
-O modelo incorpora dois mecanismos de resposta a condições críticas. O
-primeiro é o mecanismo de amplificação: quando o fator do lençol
-freático ($F_{len}$) atinge ou supera 0,70 --- equivalente a umidade do
-solo $\geq 17{,}5\,\%$ --- concomitantemente a uma previsão de chuva
-moderada ou superior ($\geq 5\,\text{mm}/24\text{h}$), o fator de risco
-calculado é multiplicado por~1,20, elevando a sensibilidade do índice
-precisamente nos cenários em que o solo em estado avançado de saturação
-combinado a nova precipitação representa o maior perigo geotécnico. O segundo é o
-protocolo de ruptura: quando a umidade do solo atinge 30\%, o sistema
-força $F_{risco} = 1{,}0$, independentemente de qualquer outra variável,
-aciona o LED vermelho e o \textit{buzzer} de forma contínua e registra
-o evento com confiabilidade fixada em 100\%. Ambos os mecanismos foram
-validados em sessões de teste registradas no \autoref{cap:resultados}.
+O alerta remoto é feito pela plataforma \textit{web}. O morador se
+cadastra na página inicial, e o administrador acompanha o painel e
+envia o e-mail de alerta verde, amarelo ou vermelho, com a orientação
+sobre a necessidade de deslocamento (\autoref{qua:mensagens-alerta}).
+No teste, o e-mail chegou aos cinco moradores cadastrados
+(\autoref{fig:res-w17b}).
 
-O processamento do modelo integralmente no microcontrolador --- antes do
-envio ao \textit{backend} --- é uma decisão de arquitetura com
-consequência prática direta: a análise de risco continua ocorrendo mesmo
-diante de falhas de conectividade. Essa propriedade é crítica para
-sistemas destinados a ambientes industriais remotos, onde a
-indisponibilidade momentânea da rede não pode implicar lacuna na
-vigilância da estrutura.
+A redundância de energia foi dimensionada por cálculo. Para 24~horas
+de supervisão e 15~minutos de alarme \cite[item~5.3]{cbmmg2017it14},
+com margem de 20\% \cite{hammerberg2021calculation}, a bateria precisa
+de 7816\,mAh (\autoref{eq:cap-celula}). Por isso, foram adotadas três
+células NCR18650B em paralelo, com 9600\,mAh \cite{panasonic_ncr18650b}.
 
-O \textit{backend}, desenvolvido em Node.js com TypeScript e Prisma ORM,
-recebe cada leitura enviada pelo dispositivo embarcado, valida os dados
-e os persiste no banco PostgreSQL com a extensão TimescaleDB. Cada
-registro armazena 41 campos, cobrindo os sete componentes do modelo, o
-contexto meteorológico completo, os dados brutos do sensor e as
-informações de diagnóstico do \textit{firmware}. O módulo de
-autenticação JWT protege todos os \textit{endpoints} de gestão, com
-hierarquia de permissões entre usuários básicos, administradores e
-\textit{super\_admin}.
+Na simulação, com a falta de rede, o dispositivo passou à bateria e
+continuou a calcular o nível e a enviar as leituras
+(\autoref{fig:res-e02}). Os avisos de bateria baixa, bateria crítica e
+falha de recarga também foram demonstrados (\autoref{tab:res-energia}).
+A autonomia teórica em supervisão é de cerca de 36~horas
+(\autoref{tab:autonomia}).
 
-A interface \textit{web}, construída com React e Next.js~14, oferece seis
-telas funcionais acessíveis ao administrador: \textit{dashboard} com
-indicadores de operação em tempo real, tela de sensores com histórico
-paginado e exportação para CSV, central de alertas com visualização
-detalhada de cada evento, módulo de relatórios com estatísticas
-descritivas exportáveis em CSV ou HTML autossuficiente, gestão completa
-de usuários com ativação e desativação lógica, e configurações de
-conta. Todos os fluxos de sucesso e os cenários alternativos relevantes
-foram testados e documentados no \autoref{cap:resultados}.
+A Política Nacional de Segurança de Barragens prevê, no plano de
+emergência, rotas de fuga e pontos de encontro sinalizados e um sistema
+sonoro ou outra solução tecnológica para situações de alerta
+\cite{brasil2010pnsb,brasil2020lei14066}. O sistema desenvolvido segue
+essa lógica, com o alerta sonoro local e o e-mail que orienta o
+deslocamento ao ponto de encontro.
 
-Uma contribuição específica do sistema é o índice de confiabilidade
-auditável, que acompanha cada leitura persistida no banco e expõe
-quantitativamente o impacto de cada fonte de dados indisponível sobre
-a qualidade da análise de risco. Para qualquer leitura histórica, o
-administrador pode consultar quais APIs estavam indisponíveis e qual
-o desconto aplicado ao índice de confiabilidade em decorrência de cada
-ausência. Essa propriedade diferencia o sistema de soluções de baixo
-custo que emitem alertas sem qualificar a incerteza dos dados
-subjacentes --- e está alinhada às recomendações do ICOLD sobre
-transparência em sistemas de monitoramento \cite{icold2022tailings}.
+O sistema, porém, é complementar: ele não substitui a sirene, o plano de
+emergência da barragem nem a Defesa Civil, e as suas cores não
+correspondem aos níveis de emergência definidos pela
+\citeonline{anm2022resolucao95}.
 
-O sistema também evidencia uma dimensão regulatória. A Lei
-n.º~14.066/2020 tornou obrigatória a elaboração do Plano de Ação de
-Emergência para todas as barragens de rejeitos de mineração, e a
-Resolução ANM n.º~40/2020 determina que os empreendedores implementem
-sistemas de monitoramento compatíveis com o Dano Potencial Associado da
-estrutura \cite{brasil2020lei14066, anm2021resolucao56}. O sistema
-desenvolvido demonstra que é possível atender à lógica de monitoramento
-contínuo prevista por esse marco regulatório com uma plataforma de
-baixo custo, baseada em tecnologias abertas e documentadas.
+Os resultados se limitam, como discutido na \autoref{sec:limitacoes},
+a um único ponto de medição, com um sensor que não mede a umidade
+volumétrica, limiares de referência não calibrados para Brumadinho nem
+para rejeito de minério de ferro e uma bateria apenas calculada e
+simulada, em testes acelerados.
 
-As limitações identificadas na discussão dos resultados --- ponto único
-de medição em uma estrutura com comportamento espacialmente
-distribuído, calibração do sensor sem rastreabilidade metrológica,
-descontinuidades abruptas no fator discreto de previsão pluviométrica,
-instabilidade dos buffers históricos nas primeiras horas após
-reinicialização do dispositivo, ausência de validação estatística dos
-pesos do modelo sobre casos históricos de ruptura, e inexistência de
-notificação proativa ao operador quando o nível de alerta evolui de
-AMARELO para VERMELHO --- não comprometem a validade do trabalho para
-os fins acadêmicos a que se propõe. Elas delimitam com precisão o
-conjunto de condições sob as quais os resultados apresentados são
-válidos e identificam, de forma direta, os aprimoramentos necessários
-para uma evolução rumo à aplicação operacional.
-
-A convergência entre instrumentação geotécnica de baixo custo,
-conectividade IoT, banco de dados de séries temporais e interface
-\textit{web} de monitoramento em tempo real é tecnicamente viável e
-acessível. O protótipo documentado neste trabalho não resolve, sozinho,
-o problema da segurança de barragens de rejeitos no Brasil --- mas
-demonstra que a barreira não é tecnológica nem financeira. O intervalo
-entre o protótipo aqui apresentado e um sistema operacional pleno é
-concreto e mapeável, e cada aprimoramento a seguir representa um passo
-nessa direção.
-
-A partir dos resultados obtidos e das limitações identificadas, são
-propostos os seguintes aprimoramentos para trabalhos futuros:
+A partir dessas limitações, são propostos os seguintes trabalhos
+futuros:
 
 \begin{enumerate}
 
-  \item \textbf{Armazenamento local com reenvio diferido.}
-  Implementar persistência das leituras em memória \textit{flash}
-  interna do ESP8266 --- via LittleFS --- durante períodos sem
-  conectividade Wi-Fi, com reenvio automático ao \textit{backend}
-  quando a conexão for restabelecida. Essa melhoria eliminaria as
-  lacunas na série temporal causadas por interrupções temporárias de
-  rede e tornaria o sistema adequado a locais com conectividade
-  intermitente.
+  \item calibrar os limiares $S_1$, $S_2$, $P_1$ e $P_2$ para o local
+  monitorado e para o rejeito de minério de ferro;
 
-  \item \textbf{Rede distribuída de pontos de medição.}
-  Expandir a arquitetura para suportar múltiplos dispositivos
-  embarcados distribuídos ao longo do perfil da barragem, cada um
-  identificado por um código de ponto no \textit{payload} enviado ao
-  \textit{backend}. O modelo de risco passaria a calcular um índice
-  por ponto e um índice agregado para a estrutura como um todo,
-  reduzindo a limitação inerente ao ponto único de medição. Esse
-  modelo de rede distribuída já é empregado, por exemplo, pelo sistema
-  GeoRisco da TRANSPETRO, que centraliza as leituras de centenas de
-  instrumentos geotécnicos distribuídos por dezenas de pontos ao longo
-  de suas faixas de dutos \cite{rocha2004georisco}.
+  \item substituir o higrômetro FC-28 por um sensor de umidade
+  volumétrica, para obter $S$ na mesma escala em que $S_1$ e $S_2$
+  foram definidos \cite[p.~5]{mirus2018developing};
 
-  \item \textbf{Validação empírica dos pesos do modelo.}
-  Submeter o modelo de sete variáveis a processo de calibração
-  estatística --- regressão logística ou análise discriminante ---
-  sobre casos históricos de rupturas em barragens de rejeitos
-  brasileiras, com ênfase em estruturas de minério de ferro. A
-  validação permitiria ajustar os pesos e os limiares às
-  características específicas dos rejeitos nacionais, fortalecendo
-  a base científica do modelo.
+  \item montar a bateria, o carregador e a detecção da rede no
+  protótipo físico e ensaiar a autonomia real frente ao requisito de
+  24~horas de supervisão e 15~minutos de alarme
+  \cite[item~5.3]{cbmmg2017it14};
 
-  \item \textbf{Notificação automática ao operador.}
-  Implementar disparo automático de notificação --- por
-  \textit{push}, SMS ou e-mail --- ao administrador quando o nível
-  de alerta evoluir de AMARELO para VERMELHO, sem exigir que o
-  painel \textit{web} esteja aberto. Em cenários operacionais
-  reais, a presença contínua do responsável diante da interface não
-  pode ser garantida. Precedente semelhante já opera na indústria de
-  dutos: o programa GeoAlerta, do sistema GeoRisco da TRANSPETRO,
-  dispara automaticamente alertas por e-mail sempre que uma leitura
-  importada ultrapassa limiares críticos cadastrados no banco de dados
-  \cite{rocha2004georisco}.
+  \item instalar múltiplos pontos de medição, em posições e
+  profundidades diferentes da estrutura;
 
-  \item \textbf{Substituição do sensor por instrumento certificado.}
-  Avaliar a integração com sensores geotécnicos com certificação
-  metrológica --- tensiômetros, piezômetros de corda vibrante ou
-  sensores capacitivos industriais --- em substituição ao
-  higrômetro resistivo FC-28. A troca preservaria toda a arquitetura
-  de \textit{firmware} e \textit{backend}, alterando apenas a
-  camada de leitura analógica e os parâmetros de calibração.
-
-  \item \textbf{Implantação \textit{in loco} e avaliação de campo.}
-  Realizar a implantação do protótipo em uma barragem de rejeitos
-  real, em parceria com empresa do setor mineral ou órgão de
-  fiscalização, para validação das leituras em condições de
-  operação, calibração dos limiares para o tipo de rejeito
-  específico e avaliação da representatividade da estação D6594
-  para o ponto de monitoramento escolhido.
-
-  \item \textbf{Interpolação contínua do fator de previsão
-  pluviométrica.}
-  Substituir o fator discreto de cinco classes por interpolação
-  linear dentro de cada faixa, mantendo os valores extremos atuais
-  como âncoras. A mudança reduziria as descontinuidades abruptas no
-  índice de risco causadas por variações de previsão próximas aos
-  limiares de classe, sem alterar a estrutura conceitual do modelo.
-
-  \item \textbf{Integração com plataformas de gestão de emergência.}
-  Avaliar a integração da plataforma com sistemas institucionais de
-  alerta, como o CEMADEN e as Defesas Civis estaduais, por meio de
-  APIs padronizadas. Essa integração ampliaria o alcance das
-  notificações para além dos usuários cadastrados no sistema e
-  aproximaria o protótipo do ecossistema de resposta a desastres
-  previsto na Lei n.º~14.066/2020 \cite{brasil2020lei14066}.
-
-  \item \textbf{Alimentação autônoma por bateria ou painel solar.}
-  A implementação de monitoramento de corrente em tempo real e de
-  alerta de bateria, aplicável em cenários de alimentação autônoma por
-  bateria ou painel solar.
+  \item complementar os dias sem registro na estação da BNDMET com os
+  dados de uma segunda estação próxima.
 
 \end{enumerate}

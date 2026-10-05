@@ -1,213 +1,424 @@
 \chapter{DISCUSSÕES}
 \label{cap:discussoes}
 
-Este capítulo relaciona os resultados apresentados no
-\autoref{cap:resultados} aos objetivos propostos e discute as
-implicações e as limitações do sistema desenvolvido. A
-\autoref{tab:cobertura_objetivos} relaciona cada objetivo específico
-definido no \autoref{cap:objetivos} ao resultado observado no sistema
-implementado.
+Este capítulo relaciona os resultados do \autoref{cap:resultados} aos
+objetivos do \autoref{cap:objetivos}. Em seguida, discute o modelo de
+alerta, o comportamento do sistema nos casos de teste, a alimentação
+redundante e as limitações do trabalho.
+
+A \autoref{tab:cobertura_objetivos} indica, para cada objetivo
+específico, onde ele foi atendido e o caso de teste ou a figura que o
+comprova.
 
 \begin{table}[htb]
 \centering
-\caption{Cobertura dos objetivos específicos pelos resultados implementados}
+\caption{Cobertura dos objetivos específicos}
 \label{tab:cobertura_objetivos}
-\begin{tabular}{p{0.04\textwidth}p{0.43\textwidth}p{0.45\textwidth}}
+\small
+\begin{tabular}{p{0.04\textwidth}p{0.26\textwidth}p{0.28\textwidth}p{0.32\textwidth}}
 \hline
-\textbf{Obj.} & \textbf{Objetivo específico} & \textbf{Resultado observado} \\
+\textbf{Obj.} & \textbf{Objetivo específico} & \textbf{Onde foi atendido} & \textbf{Comprovação} \\
 \hline
-a & Protótipo ESP8266 com higrômetro, LEDs e \textit{buzzer} proporcional
-ao risco &
-Protótipo montado e em operação; LEDs acendem no nível correspondente;
-\textit{buzzer} soa com frequência e cadência crescentes conforme a
-gravidade do índice (80--84\%, 85--89\% e $\geq$90\%) \\
+a & Modelo de alerta com dois limiares, que combina $S$ e $P_{72}$ &
+\autoref{sec:modelo-risco}: \autoref{eq:saturacao} a \autoref{eq:nivel},
+\autoref{tab:limiares}, \autoref{tab:matriz} e \autoref{tab:contingencia} &
+Casos C01 a C09 (\autoref{tab:res-modelo}) e X01 a X09
+(\autoref{tab:res-contingencia}); APIs reais no caso X05
+(\autoref{fig:res-x05}) \\
 \hline
-b & Integração com BNDMET/DECEA e OpenWeatherMap para precipitação
-histórica e previsão &
-Ambas as APIs integradas e em operação; acumulados de 24h, 7d e 30d via
-BNDMET e previsão de 24h via OWM; proteção pré-NTP e \textit{retry}
-acelerado implementados \\
+b & Protótipo físico com ESP8266 e simulação com ESP32, com alerta local
+por LEDs e \textit{buzzer} &
+\autoref{sec:hardware} e \autoref{subsec:wokwi} &
+Caso C09 na simulação (\autoref{fig:res-c09}); casos F01 a F08 no
+protótipo físico (\autoref{tab:res-fisico}), com o \textit{buzzer} no
+caso F03 (\autoref{fig:res-f03-serial}) \\
 \hline
-c & Modelo de sete variáveis ponderadas com mecanismo de amplificação
-$\times 1{,}20$ &
-Modelo em operação; todos os sete componentes calculados e exibidos;
-amplificação registrada no monitor serial e no \textit{dashboard};
-protocolo de ruptura com \textit{cooldown} de três leituras validado \\
+c & Bateria dimensionada por cálculo e demonstrada na simulação &
+\autoref{subsec:energia} (\autoref{eq:cap-carga} a
+\autoref{eq:tempo-carga}) e \autoref{subsec:bateria-carregador} &
+Autonomia calculada (\autoref{tab:autonomia}); casos E01 a E04
+(\autoref{tab:res-energia}), com a falta de rede no caso E02
+(\autoref{fig:res-e02}) \\
 \hline
-d & \textit{Backend} Node.js com banco de séries temporais e API
-RESTful para recebimento, validação e persistência das leituras &
-\textit{Backend} em operação com PostgreSQL e TimescaleDB; dados
-recebidos, validados e persistidos; 41 campos por leitura;
-autenticação JWT funcional \\
+d & Plataforma \textit{web} com página inicial, cadastro de moradores,
+painel e e-mail de alerta &
+\autoref{sec:software} e \autoref{qua:mensagens-alerta} &
+Página inicial e cadastro (\autoref{fig:res-w01} e
+\autoref{fig:res-w02b}); envio a 5 de 5 moradores
+(\autoref{fig:res-w17b}) e e-mail recebido (\autoref{fig:res-w19}) \\
 \hline
-e & Interface \textit{web} com histórico, alertas, meteorologia e
-gestão de usuários &
-Seis telas implementadas e funcionais: \textit{dashboard}, Sensores,
-Alertas, Relatórios, Usuários e Configurações; todos os fluxos de
-sucesso e alternativos validados \\
+e & Fluxogramas e diagramas de casos de uso e de sequência &
+\autoref{subsec:diagramas} &
+\autoref{fig:f1-geral} a \autoref{fig:f4-email}, \autoref{fig:casos-uso},
+\autoref{fig:sequencia-1} e \autoref{fig:sequencia-2} \\
 \hline
-f & Sistema de envio de alertas por e-mail acionado manualmente pelo
-administrador, com formulário de composição, seleção de destinatários
-por perfil e registro de auditoria &
-Central de alertas operacional com formulário de composição, seleção
-de destinatários por perfil, envio em massa e registro de auditoria
-por disparo; e-mail HTML colorido por criticidade entregue aos
-destinatários \\
+f & Validação por cenários de saturação, chuva e energia &
+\autoref{sec:testes-validacao} (\autoref{tab:casos-modelo} a
+\autoref{tab:casos-fisico}) &
+31 casos executados, todos conformes (\autoref{tab:res-sintese}) \\
 \hline
 \end{tabular}
-\fonte{Elaborado pela autora.}
+\fonte{Elaborada pela autora.}
 \end{table}
 
-Como mostra a \autoref{tab:cobertura_objetivos}, todos os objetivos
-específicos foram atendidos, e os resultados alcançados confirmam a
-viabilidade técnica e econômica da solução proposta. O custo total do
-protótipo de \textit{hardware} --- R\$~70,30 --- é expressivamente
-inferior ao de instrumentos geotécnicos profissionais, como piezômetros
-elétricos automatizados e inclinômetros de corda vibrante, cujos valores
-de aquisição e instalação podem superar dezenas de milhares de reais por
-ponto de monitoramento \cite{quispe2018instrumentacao}. Tecnologias de
-baixo custo, quando bem integradas, são capazes de produzir fluxo
-contínuo de dados geotécnicos e meteorológicos --- funcionalidade
-ausente nos sistemas manuais que predominavam em Mariana e Brumadinho no
-momento dos acidentes \cite{taliberti2025tragedia}.
+Como mostra a \autoref{tab:cobertura_objetivos}, os seis objetivos
+específicos foram atendidos. Nos 31 casos executados, a saída observada
+foi igual à saída esperada (\autoref{tab:res-sintese}).
 
-A abordagem multidimensional do modelo de risco tem respaldo direto na
-literatura. \citeonline{rico2008mine} identificaram que 39\% dos
-rompimentos documentados resultaram da combinação de múltiplos fatores,
-e não de uma causa isolada, o que justifica integrar variáveis
-geotécnicas, pluviométricas históricas, prospectivas e atmosféricas em
-um único índice. O peso maior atribuído à variável de lençol freático,
-correspondente a 40\% do índice, foi definido pela autora por ser o
-indicador mais direto da estabilidade do maciço, escolha coerente com o
-nível d'água interno persistentemente elevado observado antes do colapso
-de Brumadinho \cite{robertson2019feijaoson2019}. A inclusão da queda de
-pressão atmosférica como indicador antecipatório representa uma
-contribuição específica do modelo, fundamentada na relação entre queda
-de pressão e aproximação de sistemas de mau tempo
-\cite{noaa2024pressure, wmo2014guide}. Por se tratar de um sinal
-indireto, recebeu o menor peso do modelo (5\%).
+Esses casos verificam a lógica de decisão do sistema, a supervisão de
+energia e o fluxo da plataforma. Eles não avaliam o comportamento de uma
+barragem real, como se discute na \autoref{sec:limitacoes}.
 
-O índice de confiabilidade auditável diferencia o sistema da maioria das
-soluções de baixo custo descritas na literatura, que emitem alertas sem
-qualificar a incerteza dos dados subjacentes. Para qualquer leitura
-histórica, o administrador pode consultar quais fontes estavam
-indisponíveis e qual o impacto quantitativo de cada indisponibilidade
---- propriedade alinhada às recomendações do ICOLD sobre transparência
-em sistemas de monitoramento \cite{icold2022tailings}. Além disso, a
-decisão de processar o cálculo de risco integralmente no
-microcontrolador garante que a análise continue ocorrendo localmente
-mesmo diante de falhas de conectividade, o que é crítico para sistemas
-destinados a ambientes industriais remotos.
+% =============================================================
+\section{Modelo de Alerta}
+\label{sec:disc-modelo}
+% =============================================================
 
-A escolha por classificar o risco automaticamente a cada ciclo e
-persistir o histórico completo em banco de dados auditável também
-encontra precedente fora do contexto de barragens: o sistema GeoRisco,
-desenvolvido pela TRANSPETRO em parceria com o CENPES para o
-monitoramento geotécnico de dutos em encostas instáveis, já adotava,
-desde 2004, um programa (GeoAlerta) que compara automaticamente cada
-leitura de piezômetro e inclinômetro contra limiares críticos
-cadastrados e dispara alerta por e-mail quando um limite é ultrapassado
-\cite{rocha2004georisco}. A mesma iniciativa combinou modelo
-tridimensional do terreno, instrumentação de encosta e estação
-meteorológica para correlacionar precipitação e movimentos de solo
-\cite{costa2004pipeline}, aproximando-se da lógica de integração entre
-dados pluviométricos e sensoriamento local adotada na
-Equação~\ref{eq:frisco} deste trabalho. Esses precedentes reforçam que
-a arquitetura de sensor, banco de dados e alerta automatizado, embora
-aqui aplicada a barragens de rejeitos, já é prática consolidada na
-engenharia geotécnica nacional para outros tipos de estrutura.
+O modelo parte de uma constatação da literatura: a instabilidade
+induzida por chuva depende de dois fatores, com escalas de tempo
+diferentes. A umidade antecedente do terreno atua como causa, e a chuva
+de curto prazo atua como gatilho \cite{bogaard2018hydrological}.
 
-Apesar desses resultados, sete limitações precisam ser registradas,
-distribuídas entre o \textit{hardware}, o \textit{firmware}, o modelo de
-risco e a operação da plataforma.
+Por isso, \citeonline{bogaard2018hydrological} propõem limiares
+hidrometeorológicos, que combinam o estado hidrológico do terreno com a
+chuva. Um limiar baseado apenas na chuva não distingue um terreno já
+úmido de um terreno seco que recebe a mesma chuva.
 
-A primeira é espacial: o modelo atribui 40\% do índice de risco à
-variável de lençol freático, estimada a partir de um único sensor em um
-único ponto do maciço. Barragens de rejeitos reais têm extensão de
-centenas de metros, e o nível de umidade varia de um ponto para outro da
-estrutura --- regiões próximas a drenos internos ou a camadas de solo
-com granulometria diferente podem estar em estados de saturação
-completamente distintos do ponto monitorado. Uma leitura isolada não
-captura esse comportamento distribuído, e é exatamente a variação ao
-longo de toda a estrutura que determina se ela está estável ou em risco.
-Um único ponto de medição, por mais representativo que seja na média,
-não oferece essa visão completa \cite{machado2007}. Sistemas de
-referência do setor de dutos, como o GeoRisco da TRANSPETRO, contornam
-essa limitação distribuindo centenas de instrumentos --- inclinômetros,
-piezômetros e extensômetros --- por dezenas de pontos ao longo da mesma
-estrutura monitorada \cite{rocha2004georisco}.
+\citeonline{mirus2018developing} levaram essa proposta a um limiar de
+alerta com três dados: a saturação do solo, a chuva observada nas 48
+horas anteriores e a chuva das 24 horas seguintes
+\cite[p.~5]{mirus2018developing}. São os mesmos dados deste sistema: o
+higrômetro representa a causa, e $P_{72}$, o gatilho.
 
-A segunda envolve o sensor e sua calibração. O higrômetro resistivo
-FC-28 é um componente voltado a aplicações educacionais: a eletrólise
-acelerada nos eletrodos em solo permanentemente úmido compromete sua
-longevidade em instalações de longa duração. Agrava essa condição o fato
-de a calibração ser feita manualmente via monitor serial, sem
-procedimento periódico de verificação contra instrumento de referência e
-sem registro da data da última calibração. Com o envelhecimento dos
-eletrodos, a curva de resposta se desloca progressivamente, e o sistema
-não possui mecanismo para detectar nem sinalizar esse desvio ao
-administrador. Em uma implantação real, o instrumento seria cadastrado
-no sistema com suas informações completas, incluindo os períodos de
-aferição, manutenção, calibração e substituição previstos pelo
-fabricante, e o sensor deveria ser substituído por instrumento com
-certificação metrológica. Nesse cenário, o sistema estaria posicionado
-como camada complementar à instrumentação geotécnica convencional
-prevista pela Lei~n.º~14.066/2020 e pela NBR~13028:2017
-\cite{brasil2020lei14066, abnt2017}.
+O nível resulta apenas da comparação de $S$ e de $P_{72}$ com os quatro
+limiares da \autoref{tab:limiares}, sem outros parâmetros. Cada um deles
+tem origem na literatura.
 
-A terceira é metodológica e incide sobre a equação do componente de
-previsão pluviométrica. O fator~$F_{int}$, que compõe~$V_{ch.fut}$, é um
-valor discreto em cinco classes (0,00 / 0,25 / 0,50 / 0,75 / 1,00), o
-que introduz descontinuidades abruptas no índice: uma previsão de
-4,9\,mm e outra de 0,1\,mm produzem o mesmo fator zero, enquanto o salto
-de 4,9\,mm para 5,0\,mm causa um incremento instantâneo de 0,038 no
-índice, independentemente das demais variáveis. Uma equação com
-interpolação linear dentro de cada faixa, mantendo os valores extremos
-atuais como âncoras, reduziria esse efeito sem alterar a estrutura
-conceitual do modelo.
+Os limiares de saturação, 0,64 e 0,86, são os extremos da faixa obtida
+por \citeonline[p.~9, Tabela~1]{mirus2018developing} para Seattle. Os de
+chuva, 60 e 100\,mm em 72 horas, são os de Campos do Jordão, os menores
+entre os três municípios estudados por
+\citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
 
-A quarta decorre do ciclo de vida do \textit{firmware}. Os \textit{buffers}
-históricos --- o circular de umidade, usado em~$V_{taxa}$, e o de pressão
-atmosférica, usado em~$V_{press}$ --- são inicializados com zeros a cada
-reinicialização do dispositivo. Reinicializações involuntárias, por
-estouro de \textit{heap} ou interrupção de energia, fazem com que os
-primeiros ciclos pós-\textit{boot} calculem taxas de variação e quedas de
-pressão comparando leituras reais contra zeros históricos, podendo gerar
-valores artificialmente elevados para esses dois componentes até que os
-\textit{buffers} completem um ciclo completo --- período que pode chegar a
-três horas no caso do histórico de pressão.
+Adotar o par mais baixo antecipa o alerta, o que favorece a segurança da
+população a jusante. A mesma lógica de causa e gatilho aparece no estudo
+brasileiro: os níveis de atenção e de alerta exigem que a chuva e a
+umidade crítica do solo sejam atingidas em conjunto
+\cite[p.~74, Tabela~3]{mendes2020proposicao}.
 
-A quinta diz respeito ao escopo de validação do modelo. Os pesos das
-sete variáveis foram arbitrados pela autora a partir da abordagem
-multidimensional de \citeonline{rico2008mine} e não passaram por processo
-de calibração estatística sobre casos históricos de ruptura em barragens
-de rejeitos brasileiras. Quanto aos limiares, o de 24 horas apoia-se em
-\citeonline{rico2008mine} e no Sistema Alerta Rio; o de 30 dias foi
-definido a partir do histórico da estação D6594; e os limiares de 25\%
-e 30\% de umidade, de 7 dias (150\,mm) e as faixas de intensidade da
-previsão foram adotados pela autora, sem ajuste às características
-específicas dos rejeitos de minério de ferro predominantes no contexto
-de referência. A representatividade da estação D6594 para um ponto
-específico de monitoramento, a localização ideal da sonda no perfil do
-maciço e a calibração dos limiares para diferentes tipos de rejeito
-demandariam validação geotécnica especializada antes de qualquer
-aplicação operacional.
+Os dois limiares formam três zonas, que correspondem ao sistema de alerta
+duplo de \citeonline[p.~14]{mirus2018developing}, criado para indicar
+quando os escorregamentos são improváveis, possíveis ou prováveis. Neste
+trabalho, essas zonas são os níveis VERDE, AMARELO e VERMELHO.
 
-A sexta afeta a operação cotidiana da plataforma. Quando o dispositivo
-perde conectividade, os ciclos de leitura são calculados localmente, mas
-não persistidos para envio posterior, o que gera lacunas na série
-temporal registrada no banco. Além disso, o sistema não emite
-notificação automática ao administrador quando o nível de alerta evolui
-de AMARELO para VERMELHO: o sino no \textit{header} exibe o
-\textit{badge} apenas para quem estiver com o painel aberto no momento
-da atualização periódica. Em um cenário operacional real, em que o
-responsável pelo monitoramento não permanece continuamente diante da
-interface, isso representa um risco de resposta tardia. Conectividade
-redundante --- Wi-Fi associada a módulo 4G --- e mecanismos de alerta
-proativo por \textit{push} ou SMS mitigariam essas duas fragilidades.
+Três cores, cada uma ligada a uma orientação
+(\autoref{qua:mensagens-alerta}), são mais fáceis de comunicar ao morador
+do que um valor numérico. Além disso, o nível de qualquer leitura pode
+ser conferido na \autoref{tab:matriz} a partir de apenas dois valores,
+$S$ e $P_{72}$, exibidos no painel.
 
-Por fim, a sétima envolve a ausência de monitoramento de consumo
-energético: o protótipo não incorpora sensor de corrente ou tensão, o
-que impede alertas de bateria baixa em cenários de alimentação autônoma
-(por exemplo, painel solar), aplicáveis fora do escopo de teste em
-bancada aqui validado.
+% =============================================================
+\section{Comportamento nos Casos de Teste}
+\label{sec:disc-casos}
+% =============================================================
+
+\paragraph*{Combinações de saturação e chuva}
+
+Nos casos C01 a C09, o nível seguiu a \autoref{tab:matriz} em todas as
+combinações (\autoref{tab:res-modelo}). Apenas o caso C09, com
+$S = 0{,}95$ e $P_{72} = 120$\,mm, chegou a VERMELHO, pois foi o único em
+que a causa e o gatilho estavam acima dos limiares de alerta.
+
+Os casos C03 e C07 mostram o papel de cada variável. No caso C03, a
+chuva de 120\,mm, acima de $P_2$, não elevou o nível, porque o solo
+estava seco ($S = 0{,}18$). No caso C07, o solo próximo da saturação
+($S = 0{,}93$) também não elevou o nível, porque a chuva foi de
+19,1\,mm, abaixo de $P_1$.
+
+Os casos C06 e C09 receberam a mesma chuva, de 120\,mm, e resultaram em
+AMARELO e VERMELHO. A diferença veio apenas de $S$: 0,79 no caso C06 e
+0,95 no caso C09. Já nos casos C05 e C08, com 80\,mm, o nível ficou em
+AMARELO mesmo com o solo próximo da saturação, pois a chuva não atingiu
+$P_2$.
+
+No protótipo físico, com o higrômetro real, os casos F01 a F04
+reproduziram o mesmo comportamento (\autoref{tab:res-fisico}). Em todos
+os casos, os valores de $S$ e de $P_{72}$ ficaram longe dos limiares, de
+modo que o comportamento exatamente sobre os limiares não foi explorado.
+
+\paragraph*{Falta do higrômetro}
+
+Nos casos X01 e X02, sem o higrômetro, o nível foi definido apenas pela
+chuva: AMARELO com 80\,mm e VERMELHO com 120\,mm. O caso F05 repetiu o
+resultado no protótipo físico, com a sonda desconectada. Assim, a falha
+do sensor local não silencia o alerta.
+
+O custo dessa regra é o falso alarme: sem a informação do solo, uma chuva
+acima de $P_2$ leva a VERMELHO mesmo que o solo esteja seco, situação que
+o caso C03 mostrou ser VERDE quando $S$ é conhecido.
+
+\paragraph*{Falta dos dados de chuva}
+
+Nos casos X03 e X04, sem dados de chuva, o nível dependeu apenas de $S$.
+Com $S = 0{,}96$, o sistema sinalizou AMARELO (caso especial); com
+$S = 0{,}72$, permaneceu em VERDE, com o aviso ``sem dados de chuva''.
+O caso F06 confirmou o caso especial no protótipo físico.
+
+O resultado mostra os dois lados da regra. Com o solo saturado, o
+sistema não permanece em VERDE, pois a causa está presente. Também não
+sobe para VERMELHO, pois o gatilho não pode ser confirmado
+\cite{bogaard2018hydrological}.
+
+\paragraph*{Dados de chuva incompletos}
+
+Nos casos X07 e X08, o mínimo garantido de $P_{72}$ bastou para
+classificar o nível: VERMELHO com 120\,mm e $S = 0{,}96$, e AMARELO com
+80\,mm e $S = 0{,}76$. Como a chuva não assume valores negativos, o
+nível real é igual ou maior que o obtido.
+
+No caso X09, o mínimo de 30\,mm ficou abaixo de $P_1$ e foi tratado como
+falta de dados de chuva: VERDE com $S = 0{,}76$ e AMARELO com
+$S = 0{,}96$. O caso F07 mostrou que essa situação ocorre na prática: a
+estação da BNDMET não registrou o total de 3 de outubro de 2026, e o
+mínimo foi de 1,3\,mm (\autoref{fig:res-f07}).
+
+\paragraph*{Falta simultânea de higrômetro e de chuva}
+
+No caso X06, sem os dois dados, o sistema sinalizou AMARELO por
+precaução, com os dois avisos. A regra evita que a falta total de
+informação apareça como condição normal, ao custo de sinalizar atenção
+sem evidência de risco.
+
+As regras de contingência seguem um mesmo critério. Com o higrômetro em
+falha, uma chuva baixa confirmada leva a VERDE, mas um mínimo baixo, com
+a chuva real desconhecida, leva a AMARELO. A mesma diferença separa a
+célula de $S \geq 0{,}86$ com pouca chuva da \autoref{tab:matriz}, que é
+VERDE, do caso especial, que é AMARELO: o dado confirmado e o dado
+desconhecido não recebem o mesmo tratamento.
+
+\paragraph*{Integração com as APIs}
+
+No caso X05, com as APIs reais, o sistema obteve
+$P_{48} = 4{,}0$\,mm, $P_{24} = 6{,}9$\,mm e $P_{72} = 10{,}9$\,mm, e o
+painel exibiu os mesmos valores (\autoref{fig:res-x05} e
+\autoref{fig:res-w24}). Com os casos X07 a X09 e F07, ele mostra que o
+sistema trata tanto os dados completos quanto os incompletos.
+
+% =============================================================
+\section{Alimentação Redundante}
+\label{sec:disc-energia}
+% =============================================================
+
+A chuva intensa, que fornece o gatilho do modelo, também é causa de falta
+de energia: ventos fortes e tempestades podem derrubar galhos e árvores
+sobre as redes elétricas \cite[p.~10]{aneel2024nt90}. Sem reserva, o
+dispositivo deixaria de calcular o nível e de alertar justamente quando o
+risco é maior.
+
+No caso E02, com a chave da rede desligada, o LED BACKUP acendeu e os
+ciclos seguintes continuaram a calcular o nível e a enviar as leituras
+(\autoref{fig:res-e02}). Como o nível é calculado no próprio dispositivo,
+o alerta local por LEDs e \textit{buzzer} não depende da rede elétrica
+nem do \textit{backend}.
+
+O requisito adotado foi de 24 horas de supervisão e 15 minutos de alarme
+\cite[item~5.3]{cbmmg2017it14}. Com a margem de 20\% para o envelhecimento
+\cite{hammerberg2021calculation}, a capacidade necessária na bateria é de
+7816\,mAh (\autoref{eq:cap-celula}).
+
+Uma única célula NCR18650B, de 3200\,mAh \cite{panasonic_ncr18650b},
+cobre cerca de 41\% desse valor. Com a corrente de 268,0\,mA na bateria
+em supervisão (\autoref{tab:autonomia}), ela duraria cerca de 12\,h
+($3200/268{,}0$), menos da metade das 24 horas exigidas.
+
+Duas células, com 6400\,mAh, também não atendem: ficariam abaixo dos
+6513\,mAh consumidos em 24 horas de supervisão e 15 minutos de alarme,
+mesmo sem a margem (\autoref{tab:autonomia}). Por isso, foram adotadas
+três células em paralelo, com 9600\,mAh.
+
+Com três células, o requisito consome 68\% da capacidade, e a autonomia
+teórica em supervisão, sem a margem, é de cerca de 36\,h
+(\autoref{tab:autonomia}).
+
+A bateria alcalina de 9\,V também não atende. Ligada à entrada da placa,
+ela precisaria fornecer 4870,2\,mAh (\autoref{eq:cap-carga}). A
+Energizer 522 fornece cerca de 600\,mAh na menor corrente do gráfico do
+fabricante, de 25\,mA \cite{energizer522}.
+
+Com os 167\,mA da placa em supervisão, uma bateria de 9\,V duraria menos
+de 3,6\,h ($600/167$), e seriam necessárias ao menos nove baterias para
+o requisito ($4870{,}2/600 \approx 8{,}1$). Como a capacidade diminui com
+o aumento da corrente \cite{energizer522}, esses valores são limites
+superiores.
+
+Os avisos de energia dão tempo para a manutenção. Pela curva do
+fabricante, a bateria baixa (3,3\,V) deixa cerca de 5\,h de operação, e a
+bateria crítica (3,0\,V), cerca de 1,4\,h (\autoref{tab:autonomia}).
+
+Nos casos E03 e E04, esses estados e a falha de recarga apareceram no
+monitor serial e no painel (\autoref{tab:res-energia}), e cada mudança
+gerou um e-mail automático aos administradores (\autoref{fig:res-w18}).
+
+A bateria mantém o dispositivo, mas não o roteador nem o provedor de
+acesso à internet. Em uma falta de energia regional, os LEDs e o
+\textit{buzzer} continuam a alertar, mas o envio ao painel pode ser
+interrompido.
+
+O \textit{firmware} não armazena as leituras não enviadas para envio
+posterior; por isso, essas falhas geram lacunas no histórico. Na
+simulação, a conexão do simulador não depende da chave da rede, e o caso
+E02 não representa essa situação.
+
+% =============================================================
+\section{Custo e Precedentes}
+\label{sec:disc-precedentes}
+% =============================================================
+
+O custo dos componentes do protótipo físico foi de R\$\,70,30
+(\autoref{tab:custos}). Instrumentos geotécnicos profissionais, como
+piezômetros elétricos automatizados e inclinômetros de corda vibrante,
+podem superar dezenas de milhares de reais por ponto de monitoramento
+\cite{quispe2018instrumentacao}.
+
+Com os itens da alimentação redundante, o custo total passa a
+R\$\,602,70 (\autoref{tab:custos}).
+
+Componentes de baixo custo, quando integrados, produzem um fluxo contínuo
+de dados do solo e da chuva. Essa funcionalidade não existia nos sistemas
+manuais que predominavam em Mariana e Brumadinho no momento dos acidentes
+\cite{taliberti2025tragedia}.
+
+A classificação automática do nível a cada ciclo, com o registro das
+leituras em banco de dados, tem precedente na engenharia geotécnica
+nacional. O sistema GeoRisco, da TRANSPETRO com o CENPES, monitora dutos
+em encostas instáveis desde 2004.
+
+Nesse sistema, o programa GeoAlerta compara cada leitura de piezômetro e
+de inclinômetro com limiares cadastrados e envia alerta por e-mail quando
+um limite é ultrapassado \cite{rocha2004georisco}. A mesma iniciativa
+combinou instrumentação de encosta e estação meteorológica para
+relacionar a chuva aos movimentos do solo \cite{costa2004pipeline}.
+
+Essa combinação de dados de chuva com o sensoriamento local é a mesma da
+\autoref{eq:nivel}. O precedente reforça que a arquitetura de sensor,
+banco de dados e alerta automático, aqui aplicada a barragens de
+rejeitos, já é usada em outras estruturas.
+
+% =============================================================
+\section{Limitações}
+\label{sec:limitacoes}
+% =============================================================
+
+Oito limitações precisam ser registradas. Elas envolvem a medição no
+local, os limiares, os dados de chuva, as regras de contingência, a
+energia e a forma de teste.
+
+\paragraph*{Ponto único de medição}
+
+A saturação é obtida por um único sensor, em um único ponto e em uma
+única profundidade. Barragens de rejeitos têm centenas de metros de
+extensão, e a umidade varia ao longo da estrutura: regiões próximas a
+drenos internos ou a materiais diferentes podem estar em estados de
+saturação distintos do ponto monitorado \cite{machado2007}.
+
+Em \citeonline[p.~74, Tabela~3]{mendes2020proposicao}, a umidade
+crítica é avaliada em um perfil de solo, de 0,3 a 2,0\,m de
+profundidade. Sistemas do setor de dutos, como o GeoRisco, distribuem
+centenas de instrumentos ao longo da mesma estrutura
+\cite{rocha2004georisco}.
+
+\paragraph*{Sensor sem medição de umidade volumétrica}
+
+O higrômetro FC-28 fornece uma leitura elétrica, e não a umidade
+volumétrica (\autoref{subsec:higrometro}). Por isso, $S$ é uma saturação
+relativa à calibração do sensor, e não a razão entre a umidade
+volumétrica e a porosidade usada por
+\citeonline[p.~5]{mirus2018developing}, escala em que os limiares $S_1$
+e $S_2$ foram obtidos.
+
+A equivalência entre as duas escalas não foi verificada. Além disso, a
+calibração e os casos do protótipo físico foram feitos com a sonda fora
+da água e imersa em água, e não em solo ou em rejeito
+(\autoref{sec:res-fisico}). A durabilidade da sonda em solo
+permanentemente úmido também não foi avaliada.
+
+\paragraph*{Limiares de referência, não calibrados}
+
+Os limiares de saturação vêm de Seattle, nos Estados Unidos
+\cite[p.~9, Tabela~1]{mirus2018developing}, e os de chuva, de Campos do
+Jordão, em São Paulo \cite[p.~74, Tabela~3]{mendes2020proposicao}. Os
+dois estudos tratam de deslizamentos em encostas naturais, e nenhum
+deles foi calibrado para Brumadinho nem para rejeito de minério de
+ferro.
+
+Os dois pares não foram obtidos em conjunto: em Seattle, o limiar de
+0,86 foi obtido com 27,1\,mm de chuva \cite[p.~9]{mirus2018developing}.
+Na origem, 0,64 se refere à saturação média de 9 dias, e 0,86, à de 1
+dia; o sistema compara esses valores com a leitura de cada ciclo.
+
+Em \citeonline{mendes2020proposicao}, os acumulados de 72 horas são de
+chuva observada. Aqui, $P_{72}$ inclui a previsão de 24 horas e carrega o
+erro da previsão meteorológica.
+
+\paragraph*{Bateria apenas especificada e simulada}
+
+A bateria, o carregador e a detecção da rede foram especificados, mas
+não montados no protótipo físico. A supervisão de energia foi
+implementada apenas na simulação, pois a única entrada analógica do
+ESP8266 já é usada pelo higrômetro (\autoref{subsec:bateria-carregador}).
+
+A autonomia é teórica: foi calculada a partir dos \textit{datasheets}, e
+não medida (\autoref{tab:autonomia}). A corrente de 80\,mA do ESP8266 é
+um valor médio declarado pelo fabricante \cite{espressif_esp8266ex}, e o
+simulador não reproduz o consumo.
+
+Os limiares de tensão foram lidos na curva de 0,2\,C do fabricante
+\cite{panasonic_ncr18650b}, maior que a corrente por célula do sistema, e
+o tempo $T_{\mathrm{carga}}$ supõe que o tempo de carga é inversamente
+proporcional à corrente (\autoref{eq:tempo-carga}). Esses valores
+precisam de ensaio com a bateria real.
+
+\paragraph*{Dados de chuva incompletos}
+
+Quando os dados de chuva estão incompletos, por falha de uma das APIs ou
+por dia sem registro na estação, o nível é calculado com o mínimo
+garantido de $P_{72}$. Se a chuva não registrada foi relevante, o nível
+pode ficar abaixo do real, por exemplo AMARELO quando seria VERMELHO.
+
+\paragraph*{Totais diários na parcela observada}
+
+$P_{48,\mathrm{obs}}$ é a soma dos totais diários de dois dias do
+calendário, e não de uma janela móvel de 48 horas
+(\autoref{subsec:bndmet}). No caso X05, a consulta de 4 de outubro
+retornou os totais de 2 e 3 de outubro (\autoref{fig:res-x05}).
+
+Assim, a chuva do dia corrente, até o instante da análise, não entra em
+$P_{48,\mathrm{obs}}$. Durante uma chuva em curso, $P_{72}$ pode ficar
+abaixo da janela de $t-48$\,h a $t+24$\,h definida por
+\citeonline[p.~5]{mirus2018developing}.
+
+\paragraph*{Regras de contingência sem calibração}
+
+As regras de contingência (\autoref{tab:contingencia}) são regras de
+projeto, adotadas por precaução: o uso da chuva sem o higrômetro, o
+AMARELO com $S \geq 0{,}86$ sem dados de chuva, o AMARELO sem os dois
+dados e o uso do mínimo garantido.
+
+Elas se apoiam em \citeonline{mendes2020proposicao} e em
+\citeonline{bogaard2018hydrological}, mas não foram calibradas. A
+frequência de falsos alarmes e de alertas perdidos que elas produzem não
+foi avaliada.
+
+\paragraph*{Simulação acelerada}
+
+Os testes da simulação foram executados no modo de demonstração, em que
+os intervalos de 60 e 10~minutos passam a 30 e 5~segundos e
+$T_{\mathrm{carga}}$, de 19,5\,h, passa a 585~segundos
+(\autoref{cap:resultados}). Esse modo verifica a lógica, mas não
+reproduz os tempos reais.
+
+Não foram reproduzidos, por exemplo, a evolução da chuva e da umidade do
+solo ao longo de horas, a descarga da bateria ao longo do tempo e o
+comportamento do Wi-Fi e das APIs em ciclos de 60 minutos. Na maior
+parte dos casos, $P_{72}$ foi informado por comando, e não acumulado ao
+longo do tempo.

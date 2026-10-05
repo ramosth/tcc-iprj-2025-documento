@@ -5,15 +5,6 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{v-1.9.7 }
 
-\bibitem[{ABNT} 2017]{abnt2017}
-\abntrefinfo{{ABNT}}{{ABNT}}{2017}
-{{ABNT}. \emph{NBR 13028: Mineração - Elaboração e apresentação de
-  projeto de barragens para disposição de rejeitos, contenção de sedimentos
-  e reservação de água - Requisitos}.
-Rio de Janeiro, 2017. Dispon{\'\i}vel em:
-  \url{https://blogdopedlowski.com/wp-content/uploads/2019/03/nbr13028-2018.pdf}.
-  Acesso em: 19 maio 2025.}
-
 \bibitem[{Adafruit Industries} 2024]{adafruit_powerboost1000c}
 \abntrefinfo{{Adafruit Industries}}{{Adafruit Industries}}{2024}
 {{Adafruit Industries}. \emph{Adafruit {PowerBoost} {1000C}: guia do produto}.
@@ -29,6 +20,22 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/8122/AMS11173.3SOT223.pdf}.
   Acesso em: 1 out. 2026.}
+
+\bibitem[{AGÊNCIA MINAS} 2022]{agenciaminas2022brumadinho}
+\abntrefinfo{{AGÊNCIA MINAS}}{{AGÊNCIA MINAS}}{2022}
+{{AGÊNCIA MINAS}. \emph{Em um ano, {Acordo de Reparação} tem avanços
+  importantes para {Brumadinho} e região}. 2022. Governo de Minas Gerais.
+Dispon{\'\i}vel em:
+  \url{https://www.agenciaminas.mg.gov.br/news/pdf/112724.pdf}. Acesso em: 4
+  out. 2026.}
+
+\bibitem[{AGÊNCIA MINAS} 2024]{agenciaminas2024mariana}
+\abntrefinfo{{AGÊNCIA MINAS}}{{AGÊNCIA MINAS}}{2024}
+{{AGÊNCIA MINAS}. \emph{Tragédia de {Mariana} completa nove anos com novo
+  acordo de reparação}. 2024. Governo de Minas Gerais.
+Dispon{\'\i}vel em:
+  \url{https://www.agenciaminas.mg.gov.br/news/pdf/124136.pdf}. Acesso em: 4
+  out. 2026.}
 
 \bibitem[{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA} 2024]{aneel2024nt90}
 \abntrefinfo{{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA}}{{AGÊNCIA NACIONAL DE
@@ -51,15 +58,6 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/noticias/2019/agencia-nacional-de-mineracao-conclui-o-relatorio-tecnico-sobre-barragem-de-brumadinho}.
   Acesso em: 31 maio 2025.}
-
-\bibitem[{AGÊNCIA NACIONAL DE MINERAÇÃO} 2021]{anm2021resolucao56}
-\abntrefinfo{{AGÊNCIA NACIONAL DE MINERAÇÃO}}{{AGÊNCIA NACIONAL DE
-  MINERAÇÃO}}{2021}
-{{AGÊNCIA NACIONAL DE MINERAÇÃO}. \emph{Resolução ANM nº 56, de 28 de
-  janeiro de 2021}. Brasília: ANM, 2021.
-Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/barragens/legislacao}. Acesso em:
-  31 maio 2025.}
 
 \bibitem[{AGÊNCIA NACIONAL DE ÁGUAS} 2016]{ana2016manualpae}
 \abntrefinfo{{AGÊNCIA NACIONAL DE ÁGUAS}}{{AGÊNCIA NACIONAL DE
@@ -84,37 +82,15 @@ Brasília, DF, 2025. Dispon{\'\i}vel em:
 {{Ai-Thinker}. \emph{{ESP-12E} {WiFi} Module (\textit{datasheet})}. 2015.
 Dispon{\'\i}vel em: \url{http://www.ai-thinker.com}. Acesso em: 1 out. 2026.}
 
-\bibitem[Alvim 2023]{BBC2023}
-\abntrefinfo{Alvim}{ALVIM}{2023}
-{ALVIM, M. \emph{'A indústria virou pó': como agro e mineração já superam
-  manufatura no Brasil}. 2023.
-Dispon{\'\i}vel em: \url{https://www.bbc.com/portuguese/articles/cxr0vlvqdgqo}.
-  Acesso em: 1 jul. 2024.}
-
-\bibitem[{ANM} 2022]{anm2022}
-\abntrefinfo{{ANM}}{{ANM}}{2022}
-{{ANM}. \emph{Anuário Mineral Brasileiro 2022: prévia}.
-Brasília, 2022. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/anuario-mineral/anuario-mineral-brasileiro/PreviaAMB2022.pdf}.
-  Acesso em: 15 jun. 2024.}
-
-\bibitem[{ANM} 2023]{anm2023informe3}
-\abntrefinfo{{ANM}}{{ANM}}{2023a}
-{{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - A}: 3º
-  trimestre de 2023.
-[S.l.], 2023. 1--16~p. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/economia-mineral/publicacoes/informe-mineral/publicacoes-nacionais/informe\_03tri2023.pdf}.
-  Acesso em: 14 jun. 2024.}
-
-\bibitem[{ANM} 2023]{anm2023boletim}
-\abntrefinfo{{ANM}}{{ANM}}{2023b}
-{{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - B}.
-Brasília, 2023. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/anm/pt-br/assuntos/barragens/boletim-de-barragens-de-mineracao/report\_trimestral\_set\_2023}.
-  Acesso em: 19 maio 2025.}
+\bibitem[{Amazon Brasil}]{amazon_powerboost1000c}
+\abntrefinfo{{Amazon Brasil}}{{Amazon Brasil}}{}
+{{Amazon Brasil}. \emph{Adafruit carregador {PowerBoost} 1000 -- recarregável
+  5{V} {LiPo} {USB} {Boost} @ 1{A} -- 1000{C} [{ADA2465}]}.
+Dispon{\'\i}vel em: \url{https://www.amazon.com.br/dp/B01BMRBTH2}. Acesso em: 4
+  out. 2026. Preço de R\$ 205,57, com taxas de importação incluídas.}
 
 \bibitem[{ANM} 2023]{anm2023informe4}
-\abntrefinfo{{ANM}}{{ANM}}{2023c}
+\abntrefinfo{{ANM}}{{ANM}}{2023}
 {{ANM}. \emph{Boletim de Barragens de Mineração – Informe Mineral - C}: 4º
   trimestre de 2023.
 [S.l.], 2023. 1--18~p. Dispon{\'\i}vel em:
@@ -146,25 +122,6 @@ Dispon{\'\i}vel em:
   \url{https://minerva.ufrj.br/F/?func=direct&doc\_number=000667613&local\_base=UFR01}.
   Acesso em: 19 maio 2025.}
 
-\bibitem[Arnez 1999]{arnez1999avaliacao}
-\abntrefinfo{Arnez}{ARNEZ}{1999}
-{ARNEZ, F. I.~V.
-\emph{Avaliação das principais causas de acidentes em barragens de
-  contenção de rejeitos devido a fatores geológicos e geotécnicos}.
-Disserta\c{c}\~{a}o (Dissertação (Mestrado em Engenharia Mineral)) --- Escola
-  Politécnica, Universidade de São Paulo, São Paulo, 1999.
-Dispon{\'\i}vel em:
-  \url{https://www.teses.usp.br/teses/disponiveis/3/3134/tde-09082024-092752/publico/FernandoIvanVasquezArnezDissert.pdf}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[Barreto et al. 2001]{barreto2001}
-\abntrefinfo{Barreto et al.}{BARRETO et al.}{2001}
-{BARRETO, M.~L. et al. \emph{Mineração e desenvolvimento sustentável:
-  desafios para o Brasil}. 1. ed. São Paulo: Editora Maria Laura Barreto,
-  2001. 215~p. Dispon{\'\i}vel em:
-  \url{https://livroaberto.ibict.br/bitstream/123456789/922/1/mineracao\_desenvolvimento\_sustentavel.pdf}.
-  Acesso em: 27 abr. 2025.}
-
 \bibitem[Barros 2017]{barros2017legislacao}
 \abntrefinfo{Barros}{BARROS}{2017}
 {BARROS, J.~N.
@@ -176,18 +133,36 @@ Dispon{\'\i}vel em:
   \url{https://educapes.capes.gov.br/bitstream/capes/175231/1/Legislacao\_Juliana.pdf}.
   Acesso em: 24 maio 2025.}
 
+\bibitem[{BATTERY UNIVERSITY} 2021]{bu302_serieparalelo}
+\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021a}
+{{BATTERY UNIVERSITY}. \emph{{BU-302}: series and parallel battery
+  configurations}. 2021. Cadex Electronics.
+Dispon{\'\i}vel em:
+  \url{https://batteryuniversity.com/article/bu-302-series-and-parallel-battery-configurations}.
+  Acesso em: 5 out. 2026. Atualizado em 25 out. 2021.}
+
+\bibitem[{BATTERY UNIVERSITY} 2021]{bu402_crate}
+\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021b}
+{{BATTERY UNIVERSITY}. \emph{{BU-402}: what is {C-rate}?} 2021. Cadex
+  Electronics.
+Dispon{\'\i}vel em:
+  \url{https://batteryuniversity.com/article/bu-402-what-is-c-rate}. Acesso em:
+  5 out. 2026. Atualizado em 25 out. 2021.}
+
+\bibitem[{BATTERY UNIVERSITY} 2021]{bu409_charging}
+\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021c}
+{{BATTERY UNIVERSITY}. \emph{{BU-409}: charging lithium-ion}. 2021. Cadex
+  Electronics.
+Dispon{\'\i}vel em:
+  \url{https://batteryuniversity.com/article/bu-409-charging-lithium-ion}.
+  Acesso em: 5 out. 2026. Atualizado em 25 out. 2021.}
+
 \bibitem[{BBC News Brasil} 2025]{bbc2025texas}
 \abntrefinfo{{BBC News Brasil}}{{BBC News Brasil}}{2025}
 {{BBC News Brasil}. \emph{Por que as enchentes no Texas que mataram mais de 100
   foram tão letais}. 2025.
 Dispon{\'\i}vel em: \url{https://www.bbc.com/portuguese/articles/c873lwnyl75o}.
   Acesso em: 26 mar. 2026.}
-
-\bibitem[BENTLEY 2025]{bentley2025solucoes}
-\abntrefinfo{BENTLEY}{BENTLEY}{2025}
-{BENTLEY. \emph{Soluções de monitoramento de barragens em tempo real}. 2025.
-Dispon{\'\i}vel em: \url{https://br.bentley.com/solutions/dam-monitoring/}.
-  Acesso em: 31 maio 2025.}
 
 \bibitem[Bogaard e Greco 2018]{bogaard2018hydrological}
 \abntrefinfo{Bogaard e Greco}{BOGAARD; GRECO}{2018}
@@ -197,21 +172,6 @@ Dispon{\'\i}vel em: \url{https://br.bentley.com/solutions/dam-monitoring/}.
 \emph{Natural Hazards and Earth System Sciences}, v.~18, n.~1, p. 31--39, 2018.
 Dispon{\'\i}vel em: \url{https://nhess.copernicus.org/articles/18/31/2018/}.
   Acesso em: 2 out. 2026.}
-
-\bibitem[{BRASIL} 1934]{brasil1934b}
-\abntrefinfo{{BRASIL}}{{BRASIL}}{1934}
-{{BRASIL}. \emph{Decreto Federal nº 24.642, de 10 de julho de 1934}: Decreta o
-  código de minas.
-Rio de Janeiro, 1934. Dispon{\'\i}vel em:
-  \url{https://www.planalto.gov.br/ccivil\_03/decreto/1930-1949/d24642.htm}.}
-
-\bibitem[{BRASIL} 1967]{brasil1967}
-\abntrefinfo{{BRASIL}}{{BRASIL}}{1967}
-{{BRASIL}. \emph{Decreto-lei nº 227, de 28 de fevereiro de 1967}: Código de
-  mineração.
-Brasília, DF, 1967. Dispon{\'\i}vel em:
-  \url{https://www.planalto.gov.br/ccivil\_03/decreto-lei/del0227.htm}. Acesso
-  em: 27 abr. 2025.}
 
 \bibitem[BRASIL 1986]{conama1986resolucao001}
 \abntrefinfo{BRASIL}{BRASIL}{1986}
@@ -275,9 +235,18 @@ Dispon{\'\i}vel em:
   \url{https://www.planalto.gov.br/ccivil\_03/\_ato2019-2022/2020/lei/l14066.htm}.
   Acesso em: 31 maio 2025.}
 
+\bibitem[{BRASIL. Agência Nacional de Mineração} 2022]{anm2022faqres95}
+\abntrefinfo{{BRASIL. Agência Nacional de Mineração}}{{BRASIL. Agência
+  Nacional de Mineração}}{2022a}
+{{BRASIL. Agência Nacional de Mineração}. \emph{Resolução {ANM} n. 95, de
+  7 de fevereiro de 2022: perguntas e respostas}. Brasília: [s.n.], 2022.
+Dispon{\'\i}vel em:
+  \url{https://www.gov.br/anm/pt-br/assuntos/barragens/resolucao-95-2022.pdf}.
+  Acesso em: 4 out. 2026.}
+
 \bibitem[{BRASIL. Agência Nacional de Mineração} 2022]{anm2022resolucao95}
 \abntrefinfo{{BRASIL. Agência Nacional de Mineração}}{{BRASIL. Agência
-  Nacional de Mineração}}{2022}
+  Nacional de Mineração}}{2022b}
 {{BRASIL. Agência Nacional de Mineração}. \emph{Resolução nº 95, de 7 de
   fevereiro de 2022}. 2022. Diário Oficial da União: seção 1, Brasília,
   DF, 9 fev. 2022.
@@ -285,13 +254,14 @@ Dispon{\'\i}vel em:
   \url{https://www.gov.br/anm/pt-br/assuntos/barragens/legislacao/resolucao-no-95-2022.pdf}.
   Acesso em: 24 maio 2025.}
 
-\bibitem[Brasil 2022]{brasil2022indenizacoes}
-\abntrefinfo{Brasil}{BRASIL}{2022}
-{BRASIL, C. I.~d. \emph{Indenizações por tragédia em Mariana atingiram R\$
-  8,71 bilhões em 2021}. Rio de Janeiro: [s.n.], 2022. Agência Brasil.
-Dispon{\'\i}vel em:
-  \url{https://agenciabrasil.ebc.com.br/geral/noticia/2022-01/indenizacoes-por-tragedia-em-mariana-atingiram-r-871-bilhoes-em-2021}.
-  Acesso em: 31 maio 2025.}
+\bibitem[{BRASIL. Ministério da Integração Nacional} 2002]{mi2002manual}
+\abntrefinfo{{BRASIL. Ministério da Integração Nacional}}{{BRASIL.
+  Ministério da Integração Nacional}}{2002}
+{{BRASIL. Ministério da Integração Nacional}. \emph{Manual de segurança e
+  inspeção de barragens}.
+Brasília, 2002. Dispon{\'\i}vel em:
+  \url{https://www.ana.gov.br/arquivos/cadastros/barragens/inspecao/ManualdeSegurancaeInspecaodeBarragens.pdf}.
+  Acesso em: 4 out. 2026.}
 
 \bibitem[{BRASIL. Presidência da República} 2024]{brasil2024timeline}
 \abntrefinfo{{BRASIL. Presidência da República}}{{BRASIL. Presidência da
@@ -308,18 +278,6 @@ Dispon{\'\i}vel em:
   circuito de proteção)}.
 Dispon{\'\i}vel em: \url{https://static.rapidonline.com/pdf/12-5776\_v1.pdf}.
   Acesso em: 1 out. 2026.}
-
-\bibitem[Carneiro 2018]{carneiro2018}
-\abntrefinfo{Carneiro}{CARNEIRO}{2018}
-{CARNEIRO, G. S.~G.
-\emph{Estudo das causas, impactos e medidas corretivas do rompimento de uma
-  barragem de rejeitos, usando o caso da barragem de Mariana – MG}.
-24~p. Disserta\c{c}\~{a}o (Trabalho de Conclusão de Curso (Graduação em
-  Engenharia Civil)) --- Universidade Federal de Uberlândia, Uberlândia,
-  2018.
-Dispon{\'\i}vel em:
-  \url{https://repositorio.ufu.br/bitstream/123456789/22203/3/EstudoCausasImpacto.pdf}.
-  Acesso em: 7 jun. 2025.}
 
 \bibitem[Carvalho et al. 2012]{carvalho2012dependencia}
 \abntrefinfo{Carvalho et al.}{CARVALHO et al.}{2012}
@@ -348,40 +306,6 @@ Disserta\c{c}\~{a}o (Dissertação (Mestrado em Engenharia Ambiental)) ---
 Dispon{\'\i}vel em:
   \url{https://www.teses.usp.br/teses/disponiveis/3/3134/tde-30092008-153409/publico/Dissertacao\_Revisada\_2008.pdf}.
   Acesso em: 21 jun. 2025.}
-
-\bibitem[Cerqueira et al. 2016]{cerqueira2016estudo}
-\abntrefinfo{Cerqueira et al.}{CERQUEIRA et al.}{2016}
-{CERQUEIRA, H. et al. Estudo de acurácia da automatização de piezômetros
-  tipo casagrande em barragens. In:  \emph{Anais do XVIII Congresso Brasileiro
-  de Mecânica dos Solos e Engenharia Geotécnica}. Belo Horizonte: [s.n.],
-  2016. Dispon{\'\i}vel em:
-  \url{https://www.researchgate.net/publication/309217233\_Estudo\_de\_acuracia\_da\_automatizacao\_de\_piezometros\_tipo\_Casagrande\_em\_barragens}.
-  Acesso em: 22 jun. 2025. COBRAMSEG 2016.}
-
-\bibitem[{Chammas Engenharia} 2016]{chammas2016monitoramento}
-\abntrefinfo{{Chammas Engenharia}}{{Chammas Engenharia}}{2016}
-{{Chammas Engenharia}. \emph{Monitoramento Geotécnico Automatizado}. 2016.
-Dispon{\'\i}vel em:
-  \url{http://www.chammasengenharia.com.br/monitoramento-geotecnico-automatizado/}.
-  Acesso em: 22 jun. 2025.}
-
-\bibitem[{CNN Brasil} 2025]{cnnbrasil2025texas}
-\abntrefinfo{{CNN Brasil}}{{CNN Brasil}}{2025}
-{{CNN Brasil}. \emph{Por que as enchentes no Texas foram tão fortes e mortais?
-  Entenda}. 2025.
-Dispon{\'\i}vel em:
-  \url{https://www.cnnbrasil.com.br/internacional/por-que-as-enchentes-no-texas-foram-tao-fortes-e-mortais-entenda/}.
-  Acesso em: 26 mar. 2026.}
-
-\bibitem[{Comitê da Bacia Hidrográfica do Rio São Francisco}
-  2020]{cbhsf2020}
-\abntrefinfo{{Comitê da Bacia Hidrográfica do Rio São Francisco}}{{Comitê
-  da Bacia Hidrográfica do Rio São Francisco}}{2020}
-{{Comitê da Bacia Hidrográfica do Rio São Francisco}. \emph{Brasil tem nova
-  lei de segurança de barragem}. 2020.
-Dispon{\'\i}vel em:
-  \url{https://cbhsaofrancisco.org.br/noticias/novidades/brasil-tem-nova-lei-de-seguranca-de-barragem/}.
-  Acesso em: 22 maio 2025.}
 
 \bibitem[Conceição 2018]{conceicao2018}
 \abntrefinfo{Conceição}{CONCEIçãO}{2018}
@@ -416,13 +340,19 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://www.youtube.com/watch?v=Eh41IJiYqoU}. Acesso
   em: 19 maio 2025. Publicado pelo canal CTS UFSJ - CAP.}
 
-\bibitem[Darzi 2024]{darzi2024transformacao}
-\abntrefinfo{Darzi}{DARZI}{2024}
-{DARZI, R. \emph{Transformação digital na mineração: a nova era da
-  eficiência e sustentabilidade}. São Paulo: [s.n.], 2024. SciCrop.
-Dispon{\'\i}vel em:
-  \url{https://scicrop.com/2024/07/03/transformacao-digital-na-mineracao-a-nova-era-da-eficiencia-e-sustentabilidade/}.
-  Acesso em: 24 maio 2025.}
+\bibitem[{DE STASI} 2015]{ti_snva731}
+\abntrefinfo{{DE STASI}}{{DE STASI}}{2015}
+{{DE STASI}, F. \emph{Working with boost converters}.
+Dallas, 2015. Dispon{\'\i}vel em: \url{https://www.ti.com/lit/pdf/snva731}.
+  Acesso em: 5 out. 2026.}
+
+\bibitem[{Departamento de Controle do Espaço Aéreo} 2026]{decea_bndmet}
+\abntrefinfo{{Departamento de Controle do Espaço Aéreo}}{{Departamento de
+  Controle do Espaço Aéreo}}{2026}
+{{Departamento de Controle do Espaço Aéreo}. \emph{{API} {BNDMET}: Banco
+  Nacional de Dados Meteorológicos -- documentação da {API}}. 2026.
+  \url{https://api-bndmet.decea.gov.br/docs}.
+Acesso restrito, mediante chave fornecida pelo DECEA. Acesso em: 23 jun. 2025.}
 
 \bibitem[{DFRobot} 2017]{dfrobot_sen0114}
 \abntrefinfo{{DFRobot}}{{DFRobot}}{2017}
@@ -430,16 +360,6 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://www.datasheethub.com/wp-content/uploads/2022/08/SEN0114\_Web.pdf}.
   Acesso em: 1 out. 2026.}
-
-\bibitem[Domingues 2022]{domingues2022}
-\abntrefinfo{Domingues}{DOMINGUES}{2022}
-{DOMINGUES, G.~F. História da mineração no território brasileiro: uma
-  análise dos tratados políticos que legislam a atividade mineradora
-  (1934-1967).
-\emph{Revista Ensaios de História}, v.~23, n.~1, 2022.
-Dispon{\'\i}vel em:
-  \url{https://periodicos.franca.unesp.br/index.php/ensaiosdehistoria/article/view/3881/3261}.
-  Acesso em: 27 abr. 2025.}
 
 \bibitem[Duarte 2008]{duarte2008}
 \abntrefinfo{Duarte}{DUARTE}{2008}
@@ -512,21 +432,13 @@ Dispon{\'\i}vel em:
   \url{https://www.em.com.br/app/noticia/gerais/2016/01/17/interna\_gerais,725948/obras-da-barragem-do-fundao-comecaram-de-forma-irregular.shtml}.
   Acesso em: 26 maio 2025.}
 
-\bibitem[{ESTADO DE MINAS} 2024]{estadominas2024alerta}
-\abntrefinfo{{ESTADO DE MINAS}}{{ESTADO DE MINAS}}{2024}
-{{ESTADO DE MINAS}. \emph{Um alerta das vítimas da tragédia de Mariana para
-  os gaúchos}. Belo Horizonte: [s.n.], 2024. Estado de Minas.
-Dispon{\'\i}vel em:
-  \url{https://www.em.com.br/gerais/2024/06/6873908-um-alerta-das-vitimas-da-tragedia-de-mariana-para-os-gauchos.html}.
-  Acesso em: 27 maio 2025.}
-
-\bibitem[{FEAM} 2024]{feam2024}
-\abntrefinfo{{FEAM}}{{FEAM}}{2024}
-{{FEAM}. \emph{Minas avança na descaracterização das barragens alteadas a
-  montante}. Belo Horizonte, 2024.
-Dispon{\'\i}vel em:
-  \url{https://feam.br/w/minas-avanca-na-descaracterizacao-das-barragens-alteadas-a-montante}.
-  Acesso em: 22 maio 2025. Atualizado em: 12 nov. 2024.}
+\bibitem[Farias 2002]{farias2002mineracao}
+\abntrefinfo{Farias}{FARIAS}{2002}
+{FARIAS, C. E.~G. \emph{Mineração e meio ambiente no {Brasil}}.
+Brasília, 2002. Relatório preparado para o CGEE, Contrato 2002/001604.
+  Dispon{\'\i}vel em:
+  \url{https://repositorio.mctic.gov.br/bitstream/mctic/5224/1/2002\_mineracao\_e\_meio\_ambiente\_no\_brasil\_pnud\_contrato\_2002\_001604.pdf}.
+  Acesso em: 4 out. 2026.}
 
 \bibitem[Fernandes e Araujo 2016]{fernandes2016}
 \abntrefinfo{Fernandes e Araujo}{FERNANDES; ARAUJO}{2016}
@@ -557,23 +469,14 @@ Dispon{\'\i}vel em:
   \url{https://www.repositorio.ufop.br/items/cfa0a62e-0ca8-4130-8bd4-1837caccda3d}.
   Acesso em: 22 jun. 2025.}
 
-\bibitem[Fonseca 2024]{fonseca2024resultados}
-\abntrefinfo{Fonseca}{FONSECA}{2024}
-{FONSECA, E. Os resultados da mineração no ano de 2023 conforme dados do
-  ibram.
-\emph{Synergia Editora}, 1 fev. 2024.
+\bibitem[Fourie et al. 2001]{fourie2001static}
+\abntrefinfo{Fourie et al.}{FOURIE et al.}{2001}
+{FOURIE, A.~B.; BLIGHT, G.~E.; PAPAGEORGIOU, G. Static liquefaction as a
+  possible explanation for the {Merriespruit} tailings dam failure.
+\emph{Canadian Geotechnical Journal}, v.~38, n.~4, p. 707--719, 2001.
 Dispon{\'\i}vel em:
-  \url{https://synergiaeditora.com.br/os-resultados-da-mineracao-no-ano-de-2023-conforme-dados-do-ibram/}.
-  Acesso em: 2 jul. 2024.}
-
-\bibitem[Fonseca 2012]{fonseca2012}
-\abntrefinfo{Fonseca}{FONSECA}{2012}
-{FONSECA, P. C.~D. Do progresso ao desenvolvimento no brasil. In:  BASTOS, P.
-  P.~Z.; FONSECA, P. C.~D. (Ed.). \emph{A era Vargas: Desenvolvimento, economia
-  e sociedade}. São Paulo: Editora Unesp, 2012. p. 51--68.
-Dispon{\'\i}vel em:
-  \url{https://www.scielo.br/j/ecos/a/5NrXd8XXCZhtFshHQnzDNqp/}. Acesso em: 27
-  abr. 2025.}
+  \url{https://xyzhtc.issmge.org/uploads/contributions/1994-Merriespruit-Disaster-Paper-Fourieetal.01.pdf}.
+  Acesso em: 4 out. 2026.}
 
 \bibitem[Freire et al. 2020]{freire2020}
 \abntrefinfo{Freire et al.}{FREIRE et al.}{2020}
@@ -601,15 +504,6 @@ Dispon{\'\i}vel em:
   \url{https://g1.globo.com/mg/minas-gerais/noticia/2019/02/06/dissertacao-de-2010-na-ufop-apontava-possibilidade-de-liquefacao-em-barragem-de-brumadinho.ghtml}.
   Acesso em: 23 set. 2026.}
 
-\bibitem[FRONTIERS 2022]{frontiers2022visualization}
-\abntrefinfo{FRONTIERS}{FRONTIERS}{2022}
-{FRONTIERS. 3d visualization monitoring and early warning system of a tailings
-  dam.
-\emph{Frontiers in Earth Science}, 2022.
-Dispon{\'\i}vel em:
-  \url{https://www.frontiersin.org/journals/earth-science/articles/10.3389/feart.2022.800924/full}.
-  Acesso em: 11 jun. 2025.}
-
 \bibitem[{Geokon Incorporated} 2025]{geokon2025instrumentation}
 \abntrefinfo{{Geokon Incorporated}}{{Geokon Incorporated}}{2025}
 {{Geokon Incorporated}. \emph{Earth Dam Instrumentation}. 2025.
@@ -622,6 +516,14 @@ Dispon{\'\i}vel em:
   \url{https://www.geoscan.com.br/sistema-de-monitoramento-de-barragem/}.
   Acesso em: 31 maio 2025.}
 
+\bibitem[Goff 2019]{goff2019tailings}
+\abntrefinfo{Goff}{GOFF}{2019}
+{GOFF, C. \emph{Tailings dam failures: can we minimise the risks?} 2019. Water
+  Power Magazine.
+Dispon{\'\i}vel em:
+  \url{https://www.waterpowermagazine.com/analysis/tailings-dam-failures-can-we-minimise-the-risks-7217097/}.
+  Acesso em: 4 out. 2026.}
+
 \bibitem[{GOIÁS. Corpo de Bombeiros Militar} 2022]{cbmgo2022nt19}
 \abntrefinfo{{GOIÁS. Corpo de Bombeiros Militar}}{{GOIÁS. Corpo de Bombeiros
   Militar}}{2022}
@@ -632,13 +534,18 @@ Goiânia, 2022. Aprovada pela Portaria n. 426, de 24 ago. 2022. Dispon{\'\i}vel
   \url{https://www.bombeiros.go.gov.br/wp-content/uploads/2021/03/NT-19\_2022\_-\_Sistema\_de\_deteccao\_e\_alarme\_de\_incendio.pdf}.
   Acesso em: 2 out. 2026.}
 
-\bibitem[{GREENPEACE BRASIL} 2016]{greenpeace2016valor}
-\abntrefinfo{{GREENPEACE BRASIL}}{{GREENPEACE BRASIL}}{2016}
-{{GREENPEACE BRASIL}. \emph{Qual é o valor de um desastre ambiental no
-  Brasil?} 2016. Greenpeace Brasil.
-Dispon{\'\i}vel em:
-  \url{https://www.greenpeace.org/brasil/blog/qual-e-o-valor-de-um-desastre-ambiental-no-brasil/}.
-  Acesso em: 31 maio 2025.}
+\bibitem[Graham et al. 1994]{graham1994concrete}
+\abntrefinfo{Graham et al.}{GRAHAM et al.}{1994}
+{GRAHAM, R.~L.; KNUTH, D.~E.; PATASHNIK, O. \emph{Concrete mathematics: a
+  foundation for computer science}. 2. ed. Reading: Addison-Wesley, 1994.}
+
+\bibitem[Grebby et al. 2021]{grebby2021advanced}
+\abntrefinfo{Grebby et al.}{GREBBY et al.}{2021}
+{GREBBY, S. et al. Advanced analysis of satellite data reveals ground
+  deformation precursors to the {Brumadinho} tailings dam collapse.
+\emph{Communications Earth \& Environment}, v.~2, p.~2, 2021.
+Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-020-00079-2}.
+  Acesso em: 4 out. 2026.}
 
 \bibitem[Guedes 2011]{guedes2011uml}
 \abntrefinfo{Guedes}{GUEDES}{2011}
@@ -669,24 +576,11 @@ Dispon{\'\i}vel em:
   \url{https://www.ecmag.com/magazine/articles/article-detail/integrated-systems-calculation-crunching-fire-alarm-math-you-should-know}.
   Acesso em: 2 out. 2026.}
 
-\bibitem[Hartman e Mutmansky 2019]{jr2019}
-\abntrefinfo{Hartman e Mutmansky}{HARTMAN; MUTMANSKY}{2019}
-{HARTMAN, H.~L.; MUTMANSKY, J.~M. \emph{Introductory Mining Engineering}. 2.
-  ed. [S.l.]: John Wiley \& Sons, 2019.}
-
-\bibitem[{Hora do Povo} 2025]{horadopovo2025texas}
-\abntrefinfo{{Hora do Povo}}{{Hora do Povo}}{2025}
-{{Hora do Povo}. \emph{Sem alerta prévio, inundações no Texas levam 59 à
-  morte}. 2025.
-Dispon{\'\i}vel em:
-  \url{https://horadopovo.com.br/com-sistema-de-alerta-inexistente-no-texas-inundacoes-levam-32-a-morte/}.
-  Acesso em: 26 mar. 2026.}
-
-\bibitem[{HR WALLINGFORD} 2021]{hrwallingford2021damsat}
-\abntrefinfo{{HR WALLINGFORD}}{{HR WALLINGFORD}}{2021}
-{{HR WALLINGFORD}. \emph{DAMSAT | HR Wallingford}. 2021.
-Dispon{\'\i}vel em: \url{https://www.hrwallingford.com/projects/damsat}. Acesso
-  em: 11 jun. 2025.}
+\bibitem[Hauke 2022]{ti_slva372}
+\abntrefinfo{Hauke}{HAUKE}{2022}
+{HAUKE, B. \emph{Basic calculation of a boost converter's power stage}.
+Dallas, 2022. Publicado em nov. 2009; revisado em nov. 2022. Dispon{\'\i}vel
+  em: \url{https://www.ti.com/lit/pdf/slva372}. Acesso em: 5 out. 2026.}
 
 \bibitem[{IBRAM} 2016]{ibram2016}
 \abntrefinfo{{IBRAM}}{{IBRAM}}{2016}
@@ -710,6 +604,42 @@ Brasília, 2024. Dispon{\'\i}vel em:
   \url{https://ibram.org.br/wp-content/uploads/2025/02/DADOS\_Setor-Mineral\_2024\_5FEV2025.pdf}.
   Acesso em: 27 abr. 2025.}
 
+\bibitem[{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}
+  2020]{ibge2020contasregionais}
+\abntrefinfo{{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}}{{INSTITUTO
+  BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}}{2020}
+{{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}. \emph{Contas regionais do
+  {Brasil} 2010--2018: tabelas especiais}. Rio de Janeiro: [s.n.], 2020.
+Dispon{\'\i}vel em:
+  \url{https://ftp.ibge.gov.br/Contas\_Regionais/2018/xls/Especiais\_2010\_2018\_xls.zip}.
+  Acesso em: 4 out. 2026. Tabelas 2, 6 e 7. Ano de referência 2018.
+  Divulgação em 13 nov. 2020.}
+
+\bibitem[{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}
+  2025]{ibge_cempre6450}
+\abntrefinfo{{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}}{{INSTITUTO
+  BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}}{2025}
+{{INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA}. \emph{Cadastro Central de
+  Empresas: Tabela 6450 -- unidades locais, pessoal ocupado total, pessoal
+  ocupado assalariado e salários, por seção, divisão, grupo e classe da
+  {CNAE} 2.0}. Rio de Janeiro: [s.n.], 2025. Sistema IBGE de Recuperação
+  Automática (SIDRA).
+Dispon{\'\i}vel em: \url{https://sidra.ibge.gov.br/tabela/6450}. Acesso em: 4
+  out. 2026. Série 2006--2021; atualizada em 10 mar. 2025.}
+
+\bibitem[{INSTITUTO BRASILEIRO DO MEIO AMBIENTE E DOS RECURSOS NATURAIS
+  RENOVÁVEIS} 2015]{ibama2015laudo}
+\abntrefinfo{{INSTITUTO BRASILEIRO DO MEIO AMBIENTE E DOS RECURSOS NATURAIS
+  RENOVÁVEIS}}{{INSTITUTO BRASILEIRO DO MEIO AMBIENTE E DOS RECURSOS NATURAIS
+  RENOVÁVEIS}}{2015}
+{{INSTITUTO BRASILEIRO DO MEIO AMBIENTE E DOS RECURSOS NATURAIS RENOVÁVEIS}.
+  \emph{Laudo técnico preliminar: impactos ambientais decorrentes do desastre
+  envolvendo o rompimento da barragem de {Fundão}, em {Mariana}, {Minas
+  Gerais}}.
+Brasília, 2015. Novembro de 2015. Dispon{\'\i}vel em:
+  \url{https://www.ibama.gov.br/phocadownload/noticias/noticias2015/laudo\_tecnico\_preliminar\_Ibama.pdf}.
+  Acesso em: 4 out. 2026.}
+
 \bibitem[{INSTITUTO CAMILA E LUIZ TALIBERTI} 2025]{taliberti2025tragedia}
 \abntrefinfo{{INSTITUTO CAMILA E LUIZ TALIBERTI}}{{INSTITUTO CAMILA E LUIZ
   TALIBERTI}}{2025}
@@ -728,38 +658,13 @@ Dispon{\'\i}vel em:
   \url{https://portalantigo.ipea.gov.br/agencia/images/stories/PDFs/boletim\_regional/170531\_bru\_16.pdf}.
   Acesso em: 1 jul. 2024.}
 
-\bibitem[{Instituto Nacional de Meteorologia} 2025]{inmet2025estacao}
-\abntrefinfo{{Instituto Nacional de Meteorologia}}{{Instituto Nacional de
-  Meteorologia}}{2025a}
-{{Instituto Nacional de Meteorologia}. \emph{Dados Meteorológicos da Estação
-  Automática A001}. 2025.
-Dispon{\'\i}vel em: \url{https://tempo.inmet.gov.br/Graficos/A001}. Acesso em:
-  22 jun. 2025. Gráficos e dados em tempo real.}
-
-\bibitem[{Instituto Nacional de Meteorologia} 2025]{inmet2025precipitacao}
-\abntrefinfo{{Instituto Nacional de Meteorologia}}{{Instituto Nacional de
-  Meteorologia}}{2025b}
-{{Instituto Nacional de Meteorologia}. \emph{Precipitação Acumulada: Sistema
-  de Monitoramento Meteorológico}. 2025.
-Dispon{\'\i}vel em: \url{https://tempo.inmet.gov.br/PrecAcumulada}. Acesso em:
-  22 jun. 2025. Dados meteorológicos em tempo real.}
-
-\bibitem[{Instituto Nacional de Meteorologia} 2025]{inmet2025sobre}
-\abntrefinfo{{Instituto Nacional de Meteorologia}}{{Instituto Nacional de
-  Meteorologia}}{2025c}
-{{Instituto Nacional de Meteorologia}. \emph{Sobre o INMET}. 2025.
-Dispon{\'\i}vel em: \url{https://portal.inmet.gov.br/sobre}. Acesso em: 22 jun.
-  2025. Ministério da Agricultura e Pecuária.}
-
-\bibitem[{INTERNATIONAL COMMISSION ON LARGE DAMS (ICOLD)}
-  2022]{icold2022tailings}
-\abntrefinfo{{INTERNATIONAL COMMISSION ON LARGE DAMS (ICOLD)}}{{INTERNATIONAL
-  COMMISSION ON LARGE DAMS (ICOLD)}}{2022}
-{{INTERNATIONAL COMMISSION ON LARGE DAMS (ICOLD)}. \emph{Tailings Dam Safety
-  Bulletin}.
-Paris, 2022. Dispon{\'\i}vel em:
-  \url{https://unece.org/sites/default/files/2023-04/S4-1Andy\%20Small\_ENG.pdf}.
-  Acesso em: 24 maio 2025.}
+\bibitem[{INTERNATIONAL COUNCIL ON MINING AND METALS}]{icmm2025gistm}
+\abntrefinfo{{INTERNATIONAL COUNCIL ON MINING AND METALS}}{{INTERNATIONAL
+  COUNCIL ON MINING AND METALS}}{}
+{{INTERNATIONAL COUNCIL ON MINING AND METALS}. \emph{Global Industry Standard
+  on Tailings Management ({GISTM})}. ICMM.
+Dispon{\'\i}vel em: \url{https://www.icmm.com/our-principles/gistm}. Acesso em:
+  4 out. 2026.}
 
 \bibitem[{INTERNATIONAL COUNCIL ON MINING AND METALS} et al.
   2020]{icmm2020global}
@@ -772,39 +677,6 @@ London, 2020. Dispon{\'\i}vel em:
   \url{https://globaltailingsreview.org/wp-content/uploads/2020/08/global-industry-standard-on-tailings-management.pdf}.
   Acesso em: 24 maio 2025.}
 
-\bibitem[{INTERNATIONAL WATER POWER} 2024]{internationalwater2024digital}
-\abntrefinfo{{INTERNATIONAL WATER POWER}}{{INTERNATIONAL WATER POWER}}{2024}
-{{INTERNATIONAL WATER POWER}. \emph{Digital twins for tailings dams}. 2024.
-Dispon{\'\i}vel em:
-  \url{https://www.waterpowermagazine.com/analysis/digital-twins-for-tailings-dams/}.
-  Acesso em: 11 jun. 2025.}
-
-\bibitem[{IPEA} 2023]{ipea2023}
-\abntrefinfo{{IPEA}}{{IPEA}}{2023}
-{{IPEA}. \emph{Ipea e MME lançam estudo sobre a extensão da cadeia produtiva
-  da mineração no PIB brasileiro}. 2023.
-Dispon{\'\i}vel em:
-  \url{https://www.ipea.gov.br/portal/categorias/45-todas-as-noticias/noticias/14835-ipea-e-mme-lancam-estudo-sobre-a-extensao-da-cadeia-produtiva-da-mineracao-no-pib-brasileiro}.
-  Acesso em: 12 jul. 2024.}
-
-\bibitem[JING e GAO 2022]{jing2022monitoring}
-\abntrefinfo{JING e GAO}{JING; GAO}{2022}
-{JING, Z.; GAO, X. Monitoring and early warning of a metal mine tailings pond
-  based on a deep learning bidirectional recurrent long and short memory
-  network.
-\emph{PLoS One}, United States, v.~17, n.~10, p. e0273073, out. 2022.
-Dispon{\'\i}vel em: \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC9562152/}.
-  Acesso em: 11 jun. 2025.}
-
-\bibitem[Júnior et al. 2018]{desouzajunior2018}
-\abntrefinfo{Júnior et al.}{JúNIOR et al.}{2018}
-{JúNIOR, T. F.~d. S.; MOREIRA, E.~B.; HEINECK, K.~S. Barragens de contenção
-  de rejeitos de mineração no brasil.
-\emph{HOLOS}, v.~5, p. 2--39, 2018.
-Dispon{\'\i}vel em:
-  \url{https://www2.ifrn.edu.br/ojs/index.php/HOLOS/article/view/7423}. Acesso
-  em: 19 maio 2025.}
-
 \bibitem[Kane e Beck 2000]{kane2000instrumentation}
 \abntrefinfo{Kane e Beck}{KANE; BECK}{2000}
 {KANE, W.~F.; BECK, T.~J. Instrumentation practice for slope monitoring. In:
@@ -813,14 +685,6 @@ Dispon{\'\i}vel em:
   Dispon{\'\i}vel em:
   \url{http://www.civil.northwestern.edu/people/dowding/tdr/publications/ipfsm.pdf}.
   Acesso em: 22 jun. 2025.}
-
-\bibitem[{KLOHN CRIPPEN BERGER} 2021]{klohn2021surveillance}
-\abntrefinfo{{KLOHN CRIPPEN BERGER}}{{KLOHN CRIPPEN BERGER}}{2021}
-{{KLOHN CRIPPEN BERGER}. \emph{Tailings Dam Surveillance Technology - KCB's
-  Experience}. 2021.
-Dispon{\'\i}vel em:
-  \url{https://klohn.com/blog/tailings-dam-surveillance-technology-kcbs-experience/}.
-  Acesso em: 11 jun. 2025.}
 
 \bibitem[Lara 2016]{lara2016metodologia}
 \abntrefinfo{Lara}{LARA}{2016}
@@ -832,14 +696,6 @@ Disserta\c{c}\~{a}o (Dissertação (Mestrado em Engenharia Ambiental)) ---
 Dispon{\'\i}vel em:
   \url{https://www.researchgate.net/publication/304011831\_Metodologia\_probabilistica\_de\_previsao\_de\_brecha\_de\_ruptura\_de\_barragensProbabilistic\_approach\_to\_dam\_breach\_modeling}.
   Acesso em: 23 set. 2026.}
-
-\bibitem[Leão e Rabelo 2023]{leao2023}
-\abntrefinfo{Leão e Rabelo}{LEãO; RABELO}{2023}
-{LEãO, R.; RABELO, R. \emph{A Extensão da Cadeia Produtiva da Economia
-  Mineral no PIB Brasileiro}: Sumário executivo.
-Rio de Janeiro, 2023. Dispon{\'\i}vel em:
-  \url{https://repositorio.ipea.gov.br/bitstream/11058/12702/1/TD\_2950\_web.pdf}.
-  Acesso em: 27 abr. 2025.}
 
 \bibitem[{LONDON MINING NETWORK} 2021]{londonmining2021explainer}
 \abntrefinfo{{LONDON MINING NETWORK}}{{LONDON MINING NETWORK}}{2021}
@@ -858,21 +714,6 @@ Disserta\c{c}\~{a}o (Mestrado) --- Universidade de São Paulo, São Paulo,
 Dispon{\'\i}vel em:
   \url{http://www.teses.usp.br/teses/disponiveis/3/3145/tde-14122006-123702/}.
   Acesso em: 7 maio 2025.}
-
-\bibitem[LTEC 2024]{ltec2024piezometros}
-\abntrefinfo{LTEC}{LTEC}{2024}
-{LTEC. \emph{Instrumentação em Barragens – Piezômetros - NBR 17189}. 2024.
-Dispon{\'\i}vel em:
-  \url{https://ltec.eng.br/instrumentacao-em-barragens-piezometros-nbr-17189/}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[LTEC 2025]{ltec2025inclinometros}
-\abntrefinfo{LTEC}{LTEC}{2025}
-{LTEC. \emph{Instrumentação em obras: Inclinômetros - NBR 17189 / ASTM
-  D6230}. 2025.
-Dispon{\'\i}vel em:
-  \url{https://ltec.eng.br/instrumentacao-em-obras-inclinometros-nbr-17189-astm-d6230/}.
-  Acesso em: 31 maio 2025.}
 
 \bibitem[Machado 2007]{machado2007}
 \abntrefinfo{Machado}{MACHADO}{2007}
@@ -899,6 +740,14 @@ Dispon{\'\i}vel em: \url{https://www.revistas.usp.br/rdg/article/view/165390}.
 Dispon{\'\i}vel em:
   \url{https://www.mercadolivre.com.br/nodemcu-v3-esp8266-esp12e-usbc-wifi-ch340/up/MLBU3800098454}.
   Acesso em: 20 mar. 2026.}
+
+\bibitem[{Mercado Livre} 2026]{mercadolivre_leds}
+\abntrefinfo{{Mercado Livre}}{{Mercado Livre}}{2026}
+{{Mercado Livre}. \emph{50 {LEDs} Difuso {5mm} Cores Azul Amarelo Verde
+  Vermelho Branco}. 2026.
+Dispon{\'\i}vel em:
+  \url{https://www.mercadolivre.com.br/50-leds-difuso-5mm-cores-azul-amarelo-verde-vermelho-branco-25-vm-ama-vd-az-bco/p/MLB65390987}.
+  Acessado em: 5 de outubro de 2026.}
 
 \bibitem[METRÓPOLES 2019]{metropoles2019laudos}
 \abntrefinfo{METRÓPOLES}{METRÓPOLES}{2019}
@@ -945,99 +794,27 @@ Dispon{\'\i}vel em:
   \url{https://www.mg.gov.br/pro-brumadinho/pagina/historico-do-rompimento-das-barragens-da-vale-na-mina-corrego-do-feijao}.
   Acesso em: 31 maio 2025.}
 
-\bibitem[{MINE DESIGN SOLUTIONS} 2021]{minedesign2021tailings}
-\abntrefinfo{{MINE DESIGN SOLUTIONS}}{{MINE DESIGN SOLUTIONS}}{2021}
-{{MINE DESIGN SOLUTIONS}. \emph{Tailings Dam Monitoring}. 2021.
-Dispon{\'\i}vel em:
-  \url{https://mdt.ca/piezometer-monitoring/tailings-dam-monitoring/}. Acesso
-  em: 11 jun. 2025.}
-
-\bibitem[{MINING ASSOCIATION OF CANADA} 2021]{mac2021guide}
-\abntrefinfo{{MINING ASSOCIATION OF CANADA}}{{MINING ASSOCIATION OF
-  CANADA}}{2021}
-{{MINING ASSOCIATION OF CANADA}. \emph{A guide to the management of tailings
-  facilities}.
-Version 3.2. Ottawa, 2021. Dispon{\'\i}vel em:
-  \url{https://mining.ca/our-focus/tailings-management/tailings-guide/}. Acesso
-  em: 24 maio 2025.}
-
-\bibitem[{MINISTÉRIO DE MINAS E ENERGIA (Brasil)} 2025]{mme2025linha}
-\abntrefinfo{{MINISTÉRIO DE MINAS E ENERGIA (Brasil)}}{{MINISTÉRIO DE MINAS E
-  ENERGIA (Brasil)}}{2025}
-{{MINISTÉRIO DE MINAS E ENERGIA (Brasil)}. \emph{Linha do tempo da
-  regulamentação minerária brasileira}. Brasília, DF: MME, 2025.
-Dispon{\'\i}vel em:
-  \url{https://antigo.mme.gov.br/documents/36108/439734/Linha\_do\_tempo.pdf}.
-  Acesso em: 24 maio 2025.}
-
-\bibitem[{Ministério dos Transportes} 2018]{ministeriotransportes2018}
-\abntrefinfo{{Ministério dos Transportes}}{{Ministério dos
-  Transportes}}{2018}
-{{Ministério dos Transportes}. \emph{ISO 31000 de 2018 – Gestão de Riscos}.
-Brasília, DF, 2018. Dispon{\'\i}vel em:
-  \url{https://www.gov.br/transportes/pt-br/centrais-de-conteudo/iso-31000-de-2018-gestao-de-riscos-pdf}.
-  Acesso em: 24 maio 2025.}
+\bibitem[Mirus et al. 2018]{mirus2018integrating}
+\abntrefinfo{Mirus et al.}{MIRUS et al.}{2018a}
+{MIRUS, B.~B. et al. Integrating real-time subsurface hydrologic monitoring
+  with empirical rainfall thresholds to improve landslide early warning.
+\emph{Landslides}, v.~15, n.~10, p. 1909--1919, 2018.
+Dispon{\'\i}vel em: \url{https://pubs.usgs.gov/publication/70196934}. Acesso
+  em: 2 out. 2026.}
 
 \bibitem[Mirus et al. 2018]{mirus2018developing}
-\abntrefinfo{Mirus et al.}{MIRUS et al.}{2018}
+\abntrefinfo{Mirus et al.}{MIRUS et al.}{2018b}
 {MIRUS, B.~B.; MORPHEW, M.~D.; SMITH, J.~B. Developing hydro-meteorological
   thresholds for shallow landslide initiation and early warning.
 \emph{Water}, v.~10, n.~9, p.~1274, 2018.
 Dispon{\'\i}vel em: \url{https://www.mdpi.com/2073-4441/10/9/1274}. Acesso em:
   2 out. 2026.}
 
-\bibitem[Modelli 2024]{modelli2024brumadinho}
-\abntrefinfo{Modelli}{MODELLI}{2024}
-{MODELLI, L. \emph{Brumadinho: 5 anos da tragédia, 5 anos de injustiça
-  socioambiental}. 2024. Greenpeace Brasil.
-Dispon{\'\i}vel em:
-  \url{https://www.greenpeace.org/brasil/blog/brumadinho-5-anos-da-tragedia-5-anos-de-injustica-socioambiental/}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[Moecke 2019]{moecke2019}
-\abntrefinfo{Moecke}{MOECKE}{2019}
-{MOECKE, G.~C.
-\emph{Análise da classificação quanto ao dano potencial associado de 15
-  barragens brasileiras}.
-112~p. Disserta\c{c}\~{a}o (Dissertação (Mestrado em Engenharia Civil)) ---
-  Universidade Federal do Ceará, Fortaleza, 2019.
-Dispon{\'\i}vel em:
-  \url{https://repositorio.ufc.br/bitstream/riufc/49955/3/2019\_dis\_gcmoecke.pdf}.
-  Acesso em: 22 maio 2025.}
-
-\bibitem[{National Oceanic and Atmospheric Administration}
-  2024]{noaa2024pressure}
-\abntrefinfo{{National Oceanic and Atmospheric Administration}}{{National
-  Oceanic and Atmospheric Administration}}{2024}
-{{National Oceanic and Atmospheric Administration}. \emph{Air Pressure}. 2024.
-  JetStream --- An Online School for Weather.
-Dispon{\'\i}vel em:
-  \url{https://www.noaa.gov/jetstream/atmosphere/air-pressure}. Acesso em: 2
-  set. 2026.}
-
-\bibitem[{NATURE COMMUNICATIONS} 2020]{naturecomm2020advanced}
-\abntrefinfo{{NATURE COMMUNICATIONS}}{{NATURE COMMUNICATIONS}}{2020}
-{{NATURE COMMUNICATIONS}. Advanced analysis of satellite data reveals ground
-  deformation precursors to the brumadinho tailings dam collapse.
-\emph{Communications Earth \& Environment}, 2020.
-Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-020-00079-2}.
-  Acesso em: 11 jun. 2025.}
-
-\bibitem[{NATURE COMMUNICATIONS} 2022]{naturecomm2022monitoring}
-\abntrefinfo{{NATURE COMMUNICATIONS}}{{NATURE COMMUNICATIONS}}{2022}
-{{NATURE COMMUNICATIONS}. Advanced monitoring of tailings dam performance using
-  seismic noise and stress models.
-\emph{Communications Earth \& Environment}, 2022.
-Dispon{\'\i}vel em: \url{https://www.nature.com/articles/s43247-022-00629-w}.
-  Acesso em: 11 jun. 2025.}
-
-\bibitem[{O Globo} 2025]{globo2025texas}
-\abntrefinfo{{O Globo}}{{O Globo}}{2025}
-{{O Globo}. \emph{Enchentes no Texas: falta de alerta antes de tragédia
-  alimenta críticas em meio a buscas por sobreviventes}. 2025.
-Dispon{\'\i}vel em:
-  \url{https://oglobo.globo.com/mundo/noticia/2025/07/07/enchentes-no-texas-falta-de-alerta-antes-de-tragedia-movem-criticas-em-meio-a-buscas-por-sobreviventes.ghtml}.
-  Acesso em: 26 mar. 2026.}
+\bibitem[{OpenWeather} 2026]{openweathermap_forecast5}
+\abntrefinfo{{OpenWeather}}{{OpenWeather}}{2026}
+{{OpenWeather}. \emph{5 day weather forecast: API documentation}. 2026.
+  \url{https://openweathermap.org/forecast5}.
+Acesso em: 3 out. 2026.}
 
 \bibitem[{Panasonic} 2012]{panasonic_ncr18650b}
 \abntrefinfo{{Panasonic}}{{Panasonic}}{2012}
@@ -1047,13 +824,14 @@ Dispon{\'\i}vel em:
   \url{https://e2e.ti.com/cfs-file/\_\_key/communityserver-discussions-components-files/196/Panasonic-NCR18650B-datasheet.pdf}.
   Acesso em: 1 out. 2026.}
 
-\bibitem[{PROJETO MANUELZÃO} 2015]{projetomanuelzao2015}
-\abntrefinfo{{PROJETO MANUELZÃO}}{{PROJETO MANUELZÃO}}{2015}
-{{PROJETO MANUELZÃO}. \emph{Barragem que se rompeu em Mariana tinha 20 vezes o
-  volume registrado pela Feam}. 2015. Universidade Federal de Minas Gerais.
+\bibitem[{Piranot} 2026]{piranot2026ptax}
+\abntrefinfo{{Piranot}}{{Piranot}}{2026}
+{{Piranot}. \emph{Dólar {PTAX} fecha em {R\$} 5,2238 nesta sexta-feira; veja a
+  cotação oficial}. 2026.
 Dispon{\'\i}vel em:
-  \url{https://manuelzao.ufmg.br/barragem-que-se-rompeu-em-mariana-tinha-20-vezes-o-volume-registrado-pela-feam/}.
-  Acesso em: 26 maio 2025.}
+  \url{https://www.piranot.com.br/2026/10/02/noticias/economia/dolar-ptax-fecha-em-r-52238-nesta-sexta-feira-veja-a-cotacao-oficial/}.
+  Acesso em: 4 out. 2026. Publicado em 2 out. 2026, com base no boletim do
+  Banco Central do Brasil.}
 
 \bibitem[{Quick-Teck} 2015]{quickteck_tmb12a03}
 \abntrefinfo{{Quick-Teck}}{{Quick-Teck}}{2015}
@@ -1068,21 +846,6 @@ Dispon{\'\i}vel em:
   barragens: a automatização é realmente uma necessidade? In:  \emph{Anais
   do XIX Congresso Brasileiro de Mecânica dos Solos e Engenharia Geotécnica}.
   Salvador: [s.n.], 2018. COBRAMSEG 2018.}
-
-\bibitem[RADAZ 2024]{radaz2024revolucionando}
-\abntrefinfo{RADAZ}{RADAZ}{2024}
-{RADAZ. \emph{Revolucionando as operações de mineração com tecnologia de
-  radar embarcada em drones}. 2024.
-Dispon{\'\i}vel em:
-  \url{https://radaz.com.br/na-midia/blog/103-revolucionando-as-operacoes-de-mineracao-com-tecnologia-de-radar-embarcada-em-drones}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[RAMJACK 2022]{ramjack2022tailings}
-\abntrefinfo{RAMJACK}{RAMJACK}{2022}
-{RAMJACK. \emph{Tailings Dam Monitoring}. 2022.
-Dispon{\'\i}vel em:
-  \url{https://ramjacktech.com/our-expertise/monitor/tailings-dam-monitoring/}.
-  Acesso em: 11 jun. 2025.}
 
 \bibitem[Reiswig 2023]{reiswig2023nfpa72}
 \abntrefinfo{Reiswig}{REISWIG}{2023}
@@ -1113,6 +876,13 @@ Brumadinho, Minas Gerais, Brasil, 2019. Dispon{\'\i}vel em:
   routes – georisco. In:  \emph{Proceedings of IPC 2004}. Calgary, Canada:
   ASME, 2004. p. 1--12.}
 
+\bibitem[Rogers 1999]{ti_slva061}
+\abntrefinfo{Rogers}{ROGERS}{1999}
+{ROGERS, E. \emph{Understanding boost power stages in switchmode power
+  supplies}.
+Dallas, 1999. Dispon{\'\i}vel em: \url{https://www.ti.com/lit/pdf/slva061}.
+  Acesso em: 5 out. 2026.}
+
 \bibitem[{RST INSTRUMENTS} 2022]{rstinstruments2022tailings}
 \abntrefinfo{{RST INSTRUMENTS}}{{RST INSTRUMENTS}}{2022}
 {{RST INSTRUMENTS}. \emph{Tailings dam monitoring: In-ground and above-ground
@@ -1121,29 +891,12 @@ Dispon{\'\i}vel em:
   \url{https://rstinstruments.com/blog/tailings-dam-monitoring-in-ground-and-above-ground-technologies/}.
   Acesso em: 11 jun. 2025.}
 
-\bibitem[Santos et al. 2012]{santos2012utilizacao}
-\abntrefinfo{Santos et al.}{SANTOS et al.}{2012}
-{SANTOS, C.~B. et al. A utilização de dataloggers no projeto rimas no
-  aquífero urucuia no oeste da bahia. In:  \emph{Anais do XVII Congresso
-  Brasileiro de Água Subterrânea e XVIII Encontro Nacional de Perfuradores de
-  Poços}. Bonito: [s.n.], 2012. Dispon{\'\i}vel em:
-  \url{https://rigeo.sgb.gov.br/bitstream/doc/1131/1/Evento\_PAP011695.pdf}.
-  Acesso em: 22 jun. 2025. Mato Grosso do Sul.}
-
 \bibitem[{SEQUÊNCIA ENGENHARIA} 2024]{sequencia2024sismografico}
-\abntrefinfo{{SEQUÊNCIA ENGENHARIA}}{{SEQUÊNCIA ENGENHARIA}}{2024a}
+\abntrefinfo{{SEQUÊNCIA ENGENHARIA}}{{SEQUÊNCIA ENGENHARIA}}{2024}
 {{SEQUÊNCIA ENGENHARIA}. \emph{Monitoramento Sismográfico de Barragens}.
   2024.
 Dispon{\'\i}vel em:
   \url{https://sequencia.eng.br/servicos/monitoramento-de-vibracoes/monitoramento-sismografico-de-barragens/}.
-  Acesso em: 31 maio 2025.}
-
-\bibitem[{SEQUÊNCIA ENGENHARIA} 2024]{sequencia2024tempo}
-\abntrefinfo{{SEQUÊNCIA ENGENHARIA}}{{SEQUÊNCIA ENGENHARIA}}{2024b}
-{{SEQUÊNCIA ENGENHARIA}. \emph{Monitoramento Sismográfico de Barragens em
-  Tempo Real}. 2024.
-Dispon{\'\i}vel em:
-  \url{https://sequencia.eng.br/monitoramento-sismografico-de-barragens-em-tempo-real/}.
   Acesso em: 31 maio 2025.}
 
 \bibitem[SILIXA 2024]{silixa2024dampulse}
@@ -1165,28 +918,12 @@ Dispon{\'\i}vel em:
   \url{https://www.monografias.ufop.br/bitstream/35400000/1818/11/MONOGRAFIA\_SistemaMonitoramentoOnline.pdf}.
   Acesso em: 21 jun. 2025.}
 
-\bibitem[{Sistema Alerta Rio} 2025]{sistemaalertario2025}
-\abntrefinfo{{Sistema Alerta Rio}}{{Sistema Alerta Rio}}{2025}
-{{Sistema Alerta Rio}. \emph{Termos meteorológicos}. Rio de Janeiro:
-  Fundação Instituto de Geotécnica do Município do Rio de Janeiro, 2025.
+\bibitem[{Smart Componentes} 2026]{smartcomponentes_buzzer}
+\abntrefinfo{{Smart Componentes}}{{Smart Componentes}}{2026}
+{{Smart Componentes}. \emph{Buzzer {12mm} {5V}}. 2026.
 Dispon{\'\i}vel em:
-  \url{https://www.sistema-alerta-rio.com.br/previsao-do-tempo/termosmet/}.
-  Acesso em: 2 jul. 2025.}
-
-\bibitem[{Sistema ESO} 2021]{sistemaeso2021avaliacao}
-\abntrefinfo{{Sistema ESO}}{{Sistema ESO}}{2021a}
-{{Sistema ESO}. \emph{Avaliação de riscos no PGR}. 2021. Sistema ESO Blog.
-Dispon{\'\i}vel em:
-  \url{https://sistemaeso.com.br/blog/seguranca-no-trabalho/avaliacao-de-riscos-no-pgr}.
-  Acesso em: 22 maio 2025.}
-
-\bibitem[{Sistema ESO} 2021]{sistemaeso2021matriz}
-\abntrefinfo{{Sistema ESO}}{{Sistema ESO}}{2021b}
-{{Sistema ESO}. \emph{O que é matriz de risco e qual usar no PGR}. 2021.
-  Sistema ESO Blog.
-Dispon{\'\i}vel em:
-  \url{https://sistemaeso.com.br/blog/seguranca-no-trabalho/o-que-e-matriz-de-risco-e-qual-usar-no-pgr}.
-  Acesso em: 22 maio 2025.}
+  \url{https://www.smartcomponentes.com/produto/buzzer-12mm-5v.html}. Acessado
+  em: 5 de outubro de 2026.}
 
 \bibitem[Soares 2010]{soares2010}
 \abntrefinfo{Soares}{SOARES}{2010}
@@ -1203,13 +940,13 @@ Dispon{\'\i}vel em:
   \url{https://www.facom.ufu.br/~william/Disciplinas\%202018-2/BSI-GSI030-EngenhariaSoftware/Livro/engenhariaSoftwareSommerville.pdf}.
   Acesso em: 2 jul. 2025.}
 
-\bibitem[STOCKS 2019]{stocks2019tailings}
-\abntrefinfo{STOCKS}{STOCKS}{2019}
-{STOCKS, C. \emph{Tailings dam failures – can we minimise the risks?} 2019.
-  Water Power Magazine.
+\bibitem[{TAKLITE}]{taklite_ncr18650b_pcb}
+\abntrefinfo{{TAKLITE}}{{TAKLITE}}{}
+{{TAKLITE}. \emph{{NCR18650B} lithium-ion 3.7v 3400{mAh} battery ({PCB})}.
 Dispon{\'\i}vel em:
-  \url{https://www.waterpowermagazine.com/analysis/tailings-dam-failures-can-we-minimise-the-risks-7217097/?cf-view}.
-  Acesso em: 12 jun. 2025.}
+  \url{https://www.taklite.com/products/taklite-lithium-ion-3-7v-2600mah-high-performance-battery}.
+  Acesso em: 4 out. 2026. Célula Panasonic {NCR18650B} com circuito de
+  proteção e topo em botão. Preço unitário de US\$ 19,95.}
 
 \bibitem[{Teck Resources Limited} 2019]{teck2019}
 \abntrefinfo{{Teck Resources Limited}}{{Teck Resources Limited}}{2019}
@@ -1243,22 +980,31 @@ Dispon{\'\i}vel em:
   \url{https://saber.unioeste.br/index.php/csaemrevista/article/view/19480}.
   Acesso em: 14 jun. 2024.}
 
-\bibitem[{UNIVERSIDADE FEDERAL DO PARANÁ} 2021]{ufpr2021simepar}
-\abntrefinfo{{UNIVERSIDADE FEDERAL DO PARANÁ}}{{UNIVERSIDADE FEDERAL DO
-  PARANÁ}}{2021}
-{{UNIVERSIDADE FEDERAL DO PARANÁ}. \emph{Simepar faz monitoramento inteligente
-  das águas com tecnologia IoT}. 2021.
+\bibitem[{UNIÃO EUROPEIA} 2006]{ue2006diretiva}
+\abntrefinfo{{UNIÃO EUROPEIA}}{{UNIÃO EUROPEIA}}{2006}
+{{UNIÃO EUROPEIA}. \emph{Directiva 2006/21/{CE} do Parlamento Europeu e do
+  Conselho, de 15 de março de 2006, relativa à gestão dos resíduos de
+  indústrias extractivas e que altera a Directiva 2004/35/{CE}}. 2006. Jornal
+  Oficial da União Europeia, L 102, p. 15--34, 11 abr. 2006.
 Dispon{\'\i}vel em:
-  \url{https://ufpr.br/simepar-faz-monitoramento-inteligente-das-aguas-com-tecnologia-iot/}.
-  Acesso em: 31 maio 2025.}
+  \url{https://eur-lex.europa.eu/legal-content/PT/TXT/?uri=CELEX:32006L0021}.
+  Acesso em: 4 out. 2026.}
 
 \bibitem[{Usinainfo}]{usinainfo_led_azul}
-\abntrefinfo{{Usinainfo}}{{Usinainfo}}{}
+\abntrefinfo{{Usinainfo}}{{Usinainfo}}{a}
 {{Usinainfo}. \emph{{LED} azul 5mm difuso -- modelo {LAD5M} -- kit com 5
   unidades}.
 Dispon{\'\i}vel em:
   \url{https://www.usinainfo.com.br/leds-difuso/led-azul-5mm-difuso-kit-com-5-unidades-4404.html}.
   Acesso em: 3 out. 2026.}
+
+\bibitem[{Usinainfo}]{usinainfo_suporte_18650}
+\abntrefinfo{{Usinainfo}}{{Usinainfo}}{b}
+{{Usinainfo}. \emph{Suporte para 1 bateria 18650 lítio}.
+Dispon{\'\i}vel em:
+  \url{https://www.usinainfo.com.br/suporte-para-pilhas/suporte-para-bateria-18650-li-ion-1-slot-4978.html}.
+  Acesso em: 4 out. 2026. Preço unitário de R\$ 4,73 (cartão) ou R\$ 4,49
+  (PIX).}
 
 \bibitem[{Usinainfo} 2025]{usinainfo_led_amarelo}
 \abntrefinfo{{Usinainfo}}{{Usinainfo}}{2025a}
@@ -1282,21 +1028,6 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/sobre-barragens-e-rejeitos}.
   Acesso em: 19 maio 2025.}
 
-\bibitem[{Vale S.A.} 2026]{vale2026glossario}
-\abntrefinfo{{Vale S.A.}}{{Vale S.A.}}{2026}
-{{Vale S.A.} \emph{Glossário/{FAQ}}. 2026.
-Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/glossario-e-faq}. Acesso em:
-  30 ago. 2026.}
-
-\bibitem[Victorino et al. 2003]{victorino2003piezometro}
-\abntrefinfo{Victorino et al.}{VICTORINO et al.}{2003}
-{VICTORINO, D.~R.; GEHLING, W. Y.~Y.; RAMIRES, M. C.~P. Piezômetro e medidor
-  de nível d'água em pistas experimentais da ufrgs. In:  \emph{Anais do XVIII
-  Congresso Regional de Iniciação Científica e Tecnológica}. Porto Alegre:
-  UFRGS, 2003. Dispon{\'\i}vel em:
-  \url{https://www.gpsgeologia.com.br/paginas/alvaro/piezometros/artigo\_ufrgs\_piezometros.pdf}.
-  Acesso em: 22 jun. 2025.}
-
 \bibitem[Vilaça 2021]{vilaca2021}
 \abntrefinfo{Vilaça}{VILAçA}{2021}
 {VILAçA, L.~A.
@@ -1307,23 +1038,6 @@ Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/glossario-e-faq}. Acesso em:
 Dispon{\'\i}vel em:
   \url{https://www.eng-ambiental.bh.cefetmg.br/wp-content/uploads/sites/187/2021/09/201522080376\_Lais-Alves.pdf}.
   Acesso em: 24 maio 2025.}
-
-\bibitem[Villas-Bôas 1995]{villasboas1995}
-\abntrefinfo{Villas-Bôas}{VILLAS-BôAS}{1995}
-{VILLAS-BôAS, A.~L. \emph{Mineração e Desenvolvimento Econômico}: A
-  questão nacional nas estratégias de desenvolvimento do setor mineral
-  (1930-1964). Rio de Janeiro: CETEM/MCTI, 1995. Dispon{\'\i}vel em:
-  \url{http://mineralis.cetem.gov.br/handle/cetem/278}. Acesso em: 27 abr.
-  2025.}
-
-\bibitem[Warzynski et al. 2023]{warzynski2023barragem}
-\abntrefinfo{Warzynski et al.}{WARZYNSKI et al.}{2023}
-{WARZYNSKI, V.~P. et al. Barragem de rejeitos.
-\emph{Revista Ibero-Americana de Humanidades, Ciências e Educação}, [S. l.],
-  v.~9, n.~10, p. 440--450, 2023.
-Dispon{\'\i}vel em:
-  \url{https://periodicorease.pro.br/rease/article/view/11650}. Acesso em: 19
-  maio 2025.}
 
 \bibitem[{WCH} 2013]{wch_ch340}
 \abntrefinfo{{WCH}}{{WCH}}{2013}
@@ -1364,14 +1078,6 @@ Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-potentiometer}.
 {{Wokwi}. \emph{wokwi-slide-switch reference}.
 Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-slide-switch}.
   Acesso em: 1 out. 2026.}
-
-\bibitem[{World Meteorological Organization} 2014]{wmo2014guide}
-\abntrefinfo{{World Meteorological Organization}}{{World Meteorological
-  Organization}}{2014}
-{{World Meteorological Organization}. \emph{Guide to Meteorological Instruments
-  and Methods of Observation}.
-Geneva, 2014. Cap. 3: Measurement of Atmospheric Pressure; Tabela de Código
-  0200 (\textit{pressure tendency}).}
 
 \bibitem[{World Mining Data} 2024]{wpr2024mineral}
 \abntrefinfo{{World Mining Data}}{{World Mining Data}}{2024}

@@ -11,18 +11,48 @@
 
 \vspace{1.4cm}
 
-Os setores da agropecuária e da mineração têm sido pilares fundamentais na história econômica do Brasil, contribuindo para o desenvolvimento tanto no âmbito regional quanto nacional. Em 2021, com as commodities em alta em meio à pandemia, a soma de agro e mineração superou a de manufatura no PIB brasileiro pela primeira vez em décadas e a tendência se manteve em 2022 com os efeitos da guerra da Ucrânia \cite{BBC2023}.
+A mineração é uma das atividades estratégicas da economia brasileira.
+Em 2024, o setor faturou R\$~270,8 bilhões, respondeu por 47\% do saldo
+da balança comercial e mantinha mais de 221 mil empregos diretos, com
+Minas Gerais e Pará como principais estados produtores
+\cite{ibram2024}. Isoladamente, a mineração respondia por cerca de
+1,2\% do PIB nacional \cite{apc2024}.
 
-Sendo assim, com a crescente demanda por recursos minerais essenciais, como argila, calcário e ferro, a mineração não apenas fornece matérias-primas para diversas indústrias, mas também gera empregos e contribui para a economia do Brasil. Com isso, o setor de mineração volta ao foco como uma das atividades econômicas importantes do Brasil, contribuindo significativamente para o PIB nacional e para a geração de empregos \cite{ibram2020tecnologias}.
+A atividade minerária inclui a gestão dos resíduos \cite{brasil2018},
+e a lavra é a fase de maior geração de efluentes sólidos, líquidos e
+gasosos. Os principais resíduos sólidos são o estéril, depositado em
+pilhas, e o rejeito do beneficiamento, disposto por empilhamento a
+seco, como pasta espessada ou em barragens, que exigem monitoramento
+contínuo \cite{carvalho2018, freire2020}. A má gestão dos rejeitos pode
+levar a desastres \cite{ipea2017boletim}.
 
-No entanto, a atividade mineradora também traz consigo desafios e riscos significativos, especialmente no que diz respeito ao gerenciamento de resíduos e de rejeitos resultantes dos processos de beneficiamento do minério, devido aos seus impactos ambientais e sociais \cite{ipea2017boletim}.
+As barragens de rejeitos são construídas por alteamentos sucessivos,
+pelos métodos a montante, a jusante e de linha de centro, ou em etapa
+única \cite{araujo2006, ibram2016, vale2024}. O método a montante tem
+vulnerabilidades estruturais e foi proibido no Chile e no Peru
+\cite{thome2018} e, no Brasil, pela Lei n.º~14.066/2020
+\cite{brasil2020lei14066}. Em 2025, a etapa única predominava entre
+as barragens de mineração do país (53,9\%) \cite{anmsistema2020}.
 
-A gestão de rejeitos de mineração é uma questão crítica que requer abordagens inovadoras e tecnologias avançadas para garantir a segurança e a sustentabilidade ambiental das operações \cite{ibram2020tecnologias}. Pois a má gestão dos rejeitos pode levar a uma série de consequências adversas, incluindo mudanças ambientais, desvalorização de imóveis e até mesmo desastres como os que ocorreram em Mariana e Brumadinho \cite{ipea2017boletim}, que serviram como um chamado de alerta para a necessidade urgente de melhorar os sistemas de segurança e prevenção em barragens de rejeitos.
+Os rompimentos das barragens do Fundão, em Mariana (2015), e B-I, em
+Brumadinho (2019), ambas alteadas a montante, causaram 19 e 272 mortes,
+respectivamente \cite{estadominas2016irregular, brasil2024timeline,
+guitarrara2026rompimento}. Em Brumadinho, a sirene de alerta foi
+engolida pela lama nos primeiros instantes do colapso e não soou
+\cite{taliberti2025tragedia, metropoles2019laudos}.
 
-Nesse contexto, a engenharia da computação oferece uma variedade de soluções inovadoras que podem ser aplicadas para aumentar a segurança e reduzir os riscos associados às barragens de rejeitos. A prevenção de desastres em barragens de rejeitos requer a implementação de tecnologias modernas e sistemas de monitoramento sofisticados para identificar e mitigar os riscos potenciais \cite{icmm2020global}.
+Motivado por esses acidentes, este trabalho desenvolveu um sistema de
+segurança para barragens de rejeitos, baseado em Internet das Coisas
+(IoT). O sistema combina a saturação do solo, obtida por um higrômetro,
+com a chuva observada, do Banco Nacional de Dados Meteorológicos (BNDMET) \cite{decea_bndmet}, e a prevista, do
+OpenWeatherMap \cite{openweathermap_forecast5}, e emite alertas locais
+e remotos em três níveis, com alimentação redundante por bateria.
 
-Como exemplo de aplicação, este trabalho utilizou um higrômetro de resistência para solo, implementado na plataforma \textit{open-source} Arduino, como instrumentação geotécnica de baixo custo para o monitoramento contínuo da umidade do solo, integrado a dados meteorológicos do Centro Nacional de Monitoramento e Alertas de Desastres Naturais (CEMADEN) e do Instituto Nacional de Meteorologia (INMET) para correlacionar a umidade detectada com parâmetros climatológicos como precipitação acumulada e previsão pluviométrica, contribuindo para a segurança das operações de mineração por meio da emissão automatizada de alertas graduais de risco, com potencial de ajudar a prevenir desastres semelhantes aos de Mariana e Brumadinho.
-
-O Capítulo 1 apresenta a revisão bibliográfica sobre a atividade de mineração, os tipos de barragens de rejeitos, a legislação vigente e os acidentes de Mariana e Brumadinho. O Capítulo 2 traz a fundamentação teórica sobre instrumentação geotécnica e automação de sistemas de monitoramento. O Capítulo 3 apresenta o objetivo geral e os objetivos específicos do trabalho. O Capítulo 4 descreve os materiais e métodos utilizados no desenvolvimento do sistema. O Capítulo 5 apresenta os resultados obtidos e o Capítulo 6 traz a discussão desses resultados, contemplando a cobertura dos objetivos específicos e a discussão dos resultados. Por fim, são apresentadas as conclusões, seguidas das referências utilizadas no trabalho.
+O \autoref{cap1Revisao} apresenta a revisão bibliográfica sobre a
+mineração, as barragens de rejeitos, os acidentes e os sistemas de alerta, incluindo a instrumentação
+de barragens e a sua automação; o \autoref{cap:objetivos}, os objetivos; o
+\autoref{cap:materiais-metodos}, o material e os métodos; o
+\autoref{cap:resultados}, os resultados; e o \autoref{cap:discussoes},
+as discussões. Por fim, são apresentadas as conclusões.
 
 \vspace{10mm} %5mm vertical space
