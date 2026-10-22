@@ -35,54 +35,56 @@
 \begin{SingleSpace}
 
 \noindent
-\begin{flushleft}
 \entradaAutor{}. \textit{\imprimirtitulo}. \the\year. \pageref{LastPage} f. Trabalho de Conclusão de Curso (Graduação em Engenharia de Computação) - Instituto Politécnico, Universidade do Estado do Rio de Janeiro, Nova Friburgo, \the\year.
-\end{flushleft}
 \vspace{\onelineskip}
 
 \setlength{\parindent}{1.3cm}
 
 Os rompimentos das barragens de rejeitos de Mariana, em 2015, e de
 Brumadinho, em 2019, mostraram a importância de avisar a tempo a
-população a jusante. Este trabalho desenvolveu um sistema de segurança
-para barragens de rejeitos de mineração, baseado em Internet das Coisas,
-que combina a saturação do solo, obtida no local, com a chuva observada
-e prevista e emite alertas em três níveis, verde, amarelo e vermelho,
-de forma local e remota. O modelo de alerta aplica um limiar
-hidrometeorológico de duas variáveis, descrito na literatura: a
-saturação relativa do solo, obtida por um higrômetro, representa a
+população que mora e/ou circula próxima a barragens de rejeitos. Este
+trabalho desenvolveu um sistema de segurança para barragens de rejeitos
+de mineração, baseado em Internet das Coisas, que combina a saturação do
+solo, obtida no local, com a chuva observada e prevista e emite alertas
+em três níveis, verde, amarelo e vermelho, de forma local e remota. O
+modelo de alerta aplica um limiar hidrometeorológico de duas variáveis:
+a saturação relativa do solo, obtida por um higrômetro, representa a
 causa, e a chuva acumulada em 72 horas, formada por 48 horas
-observadas, do Banco Nacional de Dados Meteorológicos
-(BNDMET), e 24 horas previstas, do OpenWeatherMap, representa o
-gatilho. Com os dois dados disponíveis, o nível sobe somente quando as
-duas variáveis atingem os respectivos limiares, todos extraídos de
-estudos publicados. Regras de contingência mantêm o alerta quando falta
-o higrômetro ou os dados de chuva; com dados de chuva incompletos, o
-sistema usa o mínimo garantido da chuva acumulada. O sistema foi
-construído em um protótipo físico com o microcontrolador ESP8266,
-alimentado pela porta USB, e em uma simulação no Wokwi com o ESP32,
-ambos com alerta local por LEDs e \textit{buzzer}. O alerta remoto é
-feito por uma plataforma \textit{web}, desenvolvida em Node.js com
-TypeScript, PostgreSQL e Next.js, com página inicial, cadastro de
-moradores, painel do administrador e envio de e-mail de alerta sobre a
-necessidade de deslocamento. A redundância de energia foi dimensionada
-por cálculo para 24 horas de supervisão e 15 minutos de alarme,
-requisito de normas de sistemas de alarme, o que levou a três células
-de íon-lítio em paralelo, e o seu funcionamento foi demonstrado apenas
-na simulação. Nos 31 casos de teste executados, que cobriram o modelo
-de alerta, as contingências, a energia e o protótipo físico, a saída
-observada foi igual à esperada, e o e-mail de alerta foi enviado aos cinco
-moradores cadastrados no teste. A autonomia teórica da bateria em
-supervisão é de cerca de 36 horas. Os resultados limitam-se a um único
-ponto de medição, a um sensor que não mede a umidade volumétrica, a
-limiares não calibrados para o local e a uma bateria apenas calculada e
-simulada. Conclui-se que é possível construir, com componentes de baixo
-custo e tecnologias de código aberto, um sistema de alerta com cada
-limiar fundamentado na literatura, que apoia o aviso antecipado à
-população, sem substituir o plano de emergência da barragem.
+observadas, do Banco Nacional de Dados Meteorológicos (BNDMET), e 24
+horas previstas, do OpenWeatherMap, representa o gatilho. Com os dois
+dados disponíveis, o nível sobe somente quando as duas variáveis atingem
+os respectivos limiares. Quando falta a leitura do higrômetro ou os
+dados de chuva, regras de contingência mantêm o alerta em funcionamento.
+Quando os dados de chuva chegam incompletos, o sistema usa a soma das
+parcelas efetivamente obtidas, que é o mínimo garantido da chuva
+acumulada. Um protótipo virtual foi construído e simulado no Wokwi com
+um microcontrolador ESP32, e o sistema também foi construído em um
+protótipo físico com o ESP8266, alimentado pela porta USB, ambos com
+alerta local por LEDs e \textit{buzzer}. O alerta remoto é feito por uma
+plataforma \textit{web}, desenvolvida em Node.js com TypeScript,
+PostgreSQL e Next.js, com página inicial, cadastro de moradores, painel
+do administrador e envio de e-mail de alerta sobre a necessidade de
+deslocamento. A redundância de energia foi dimensionada por cálculo para
+atender ao requisito de 24 horas de supervisão e 15 minutos de alarme,
+de normas de sistemas de alarme, o que levou a um pacote de fábrica de
+células de íon-lítio em paralelo (9500\,mAh mínimos e 3,7\,V), com um
+único módulo que carrega a bateria e alimenta o sistema ao mesmo tempo,
+e autonomia teórica de cerca de 36 horas em supervisão; o seu funcionamento foi demonstrado apenas na
+simulação. Nos 31 casos de teste executados, que cobriram o modelo de
+alerta, as contingências, a energia e o protótipo físico, a saída
+observada foi igual à esperada, e o e-mail de alerta foi enviado aos
+cinco moradores cadastrados no teste. Os resultados limitam-se a um
+único local de medição, cujos limiares não foram ajustados para esse
+local, ao uso de um sensor que fornece apenas uma leitura relativa da
+umidade do solo e a uma fonte externa redundante de suprimento de energia elétrica
+dimensionada por cálculo, mas não montada no protótipo físico.
+Conclui-se que é possível construir, com componentes de baixo custo e
+tecnologias de código aberto, um sistema de alerta que possibilita auxiliar a
+execução do plano de emergência na evacuação antecipada da população em
+áreas de risco de barragens de rejeitos.
 
 \vspace{\onelineskip}
-\noindent Palavras-chave: barragens de rejeitos; sistema de alerta; Brumadinho; risco ambiental; Internet das Coisas.
+\noindent Palavras-chave: barragens de rejeitos; Brumadinho; Internet das Coisas; risco ambiental; sistema de alerta.
 
 \end{SingleSpace}
 \end{resumo}

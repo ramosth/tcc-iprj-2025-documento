@@ -17,54 +17,56 @@
 \begin{SingleSpace}
 
 \noindent
-\begin{flushleft}
 \entradaAutor{}. \textit{\englishTitle{}}. \the\year. \pageref{LastPage} f. Undergraduate Thesis (Bachelor's Degree in Computer Engineering) - Instituto Politécnico, Universidade do Estado do Rio de Janeiro, Nova Friburgo, \the\year.
-\end{flushleft}
 \vspace{\onelineskip}
 
 \setlength{\parindent}{1.3cm}
 The failures of the tailings dams in Mariana, in 2015, and in
-Brumadinho, in 2019, showed the importance of warning the downstream
-population in time. This work developed a safety system for mining
-tailings dams, based on the Internet of Things, that combines soil
-saturation, obtained on site, with observed and forecast rainfall and
-issues alerts at three levels, green, yellow and red, both locally and
-remotely. The alert model applies a two-variable hydro-meteorological
-threshold described in the literature: the relative soil saturation,
-obtained by a hygrometer, represents the cause, and the rainfall
-accumulated over 72 hours, made up of 48 observed hours, from the
-Brazilian National Meteorological Database (BNDMET), and 24 forecast hours, from OpenWeatherMap, represents the trigger.
-When both data are available, the level rises only when both variables
-reach their thresholds, all taken from published studies. Contingency
-rules keep the alert working when the hygrometer or the rainfall data
-are missing; with incomplete rainfall data, the system uses the
-guaranteed minimum of the accumulated rainfall. The system was built as
-a physical prototype with the ESP8266 microcontroller, powered through
-the USB port, and as a Wokwi simulation with the ESP32, both with local
-alerts by LEDs and a buzzer. The remote alert is provided by a web
-platform, developed with Node.js and TypeScript, PostgreSQL and
-Next.js, with a landing page, resident registration, an administrator
-dashboard and the sending of alert e-mails about the need to evacuate.
-The energy redundancy was sized by calculation for 24 hours of
-supervision and 15 minutes of alarm, a requirement of alarm system
-standards, which led to three lithium-ion cells in parallel, and its
+Brumadinho, in 2019, showed the importance of warning, in time, the
+population that lives and/or circulates near tailings dams. This work
+developed a safety system for mining tailings dams, based on the
+Internet of Things, that combines soil saturation, obtained on site,
+with observed and forecast rainfall and issues alerts at three levels,
+green, yellow and red, both locally and remotely. The alert model
+applies a two-variable hydro-meteorological threshold: the relative
+soil saturation, obtained by a hygrometer, represents the cause, and
+the rainfall accumulated over 72 hours, made up of 48 observed hours,
+from the Brazilian National Meteorological Database (BNDMET), and 24
+forecast hours, from OpenWeatherMap, represents the trigger. When both
+data are available, the level rises only when both variables reach
+their thresholds. When the hygrometer reading or the rainfall data are
+missing, contingency rules keep the alert working. When the rainfall
+data are incomplete, the system uses the sum of the portions actually
+obtained, which is the guaranteed minimum of the accumulated rainfall.
+A virtual prototype was built and simulated in Wokwi with an ESP32
+microcontroller, and the system was also built as a physical prototype
+with the ESP8266, powered through the USB port, both with local alerts
+by LEDs and a buzzer. The remote alert is provided by a web platform,
+developed with Node.js and TypeScript, PostgreSQL and Next.js, with a
+landing page, resident registration, an administrator dashboard and the
+sending of alert e-mails about the need to evacuate. The energy
+redundancy was sized by calculation to meet the requirement of 24 hours
+of supervision and 15 minutes of alarm of alarm system standards, which
+led to a factory-assembled pack of lithium-ion cells in parallel
+(9500\,mAh minimum and 3.7\,V), with a single module that charges the
+battery and powers the system at the same time, and a theoretical
+autonomy of about 36 hours in supervision; its
 operation was demonstrated only in the simulation. In the 31 test cases
 executed, covering the alert model, the contingencies, the energy
 supply and the physical prototype, the observed output matched the
 expected output, and the alert e-mail was sent to the five residents
-registered in the test. The theoretical battery autonomy in supervision
-is about 36 hours. The results are limited to a single measurement
-point, a sensor that does not measure volumetric water content,
-thresholds not calibrated for the site and a battery that was only
-calculated and simulated. It is concluded that it is possible to build,
-with low-cost components and open-source technologies, an alert system
-with every threshold grounded in the literature, which supports the
-early warning of the population without replacing the dam's emergency
-plan.
+registered in the test. The results are limited to a single measurement
+site, whose thresholds were not adjusted for that site, to the use of a
+sensor that provides only a relative reading of soil moisture and to a
+redundant external power supply sized by calculation but not assembled in the
+physical prototype. It is concluded that it is possible to build, with
+low-cost components and open-source technologies, an alert system that
+can support the execution of the emergency plan in the early evacuation of
+the population in risk areas of tailings dams.
 
 \vspace{\onelineskip}
-\noindent Keywords: tailings dams; warning system; Brumadinho; environmental risk; Internet of Things.
+\noindent Keywords: Brumadinho; environmental risk; Internet of Things; tailings dams; warning system.
 
 \end{SingleSpace}
 \end{otherlanguage*}
-\end{resumo}
+\end{resumo}

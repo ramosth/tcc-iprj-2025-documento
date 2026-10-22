@@ -1,51 +1,4368 @@
 \apendices
 
 % =============================================================
-% APÊNDICE
+% APÊNDICES
 % =============================================================
 
-\chapter{links dos arquivos}
+\lstdefinelanguage{JavaScript}{
+  keywords={async,await,break,case,catch,class,const,continue,default,delete,do,else,export,extends,false,finally,for,from,function,if,import,in,instanceof,let,new,null,return,switch,this,throw,true,try,typeof,undefined,var,while,interface,type},
+  sensitive=true, comment=[l]{//}, morecomment=[s]{/*}{*/},
+  morestring=[b]', morestring=[b]", morestring=[b]`
+}
+\lstdefinelanguage{Prisma}{
+  keywords={model,enum,datasource,generator,true,false},
+  comment=[l]{//}, morestring=[b]"
+}
+\lstset{
+  basicstyle=\ttfamily\scriptsize, breaklines=true, breakatwhitespace=false,
+  columns=fullflexible, keepspaces=true, showstringspaces=false,
+  numbers=left, numberstyle=\tiny, numbersep=5pt, frame=single,
+  xleftmargin=2.6em, framexleftmargin=2.6em,
+  keywordstyle=\bfseries, commentstyle=\itshape, upquote=true,
+  extendedchars=true, inputencoding=utf8,
+  literate={á}{{\'a}}1 {à}{{\`a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {é}{{\'e}}1 {ê}{{\^e}}1
+    {í}{{\'i}}1 {ó}{{\'o}}1 {õ}{{\~o}}1 {ô}{{\^o}}1 {ú}{{\'u}}1 {ç}{{\c c}}1
+    {Á}{{\'A}}1 {Â}{{\^A}}1 {Ã}{{\~A}}1 {É}{{\'E}}1 {Ê}{{\^E}}1 {Í}{{\'I}}1
+    {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ç}{{\c C}}1
+}
+
+\chapter{Endereços dos repositórios}
 \label{apendice:geral}
 
-Este apêndice reúne os endereços do código-fonte, das simulações e dos
-arquivos-fonte dos diagramas apresentados no
-\autoref{cap:materiais-metodos}.
+Os códigos-fonte reproduzidos nos \autoref{apendice:firmware-fisico} a
+\autoref{apendice:frontend} estão disponíveis nos repositórios a seguir.
+Os fluxogramas e os diagramas estão no \autoref{cap:materiais-metodos}.
 
 \begin{itemize}
-
-    \item \label{apendice:codigo-firmware} Código-fonte do
-    \textit{firmware} do protótipo físico (ESP8266 NodeMCU V3):
+    \item \textit{Firmware} do protótipo físico (ESP8266 NodeMCU V3),
+    \autoref{apendice:firmware-fisico}:
     \url{https://github.com/ramosth/tcc-iprj-2025-firmware}
-
-    \item \label{apendice:codigo-simulador-wokwi} Código-fonte e
-    diagrama da simulação no Wokwi (ESP32), com o modelo de alerta, a
-    consulta às APIs BNDMET e OpenWeatherMap, a supervisão de energia e o
-    envio dos dados ao \textit{backend}:
+    \item \textit{Firmware} e diagrama da simulação no Wokwi (ESP32),
+    \autoref{apendice:firmware-wokwi}:
     \url{https://github.com/ramosth/tcc-iprj-2025-simulador-wokwi}
-
-    \item \label{apendice:codigo-sistema} Código-fonte da plataforma de
-    \textit{software} (\textit{backend} e \textit{frontend}):
+    \item Plataforma de \textit{software} (\textit{backend}, banco de
+    dados e \textit{frontend}), \autoref{apendice:backend} e
+    \autoref{apendice:frontend}:
     \url{https://github.com/ramosth/tcc-iprj-2025-sistema}
-
-    \item \label{apendice:fluxogramas} Fluxogramas F1 a F4 (geral do
-    dispositivo, cálculo do nível de alerta, supervisão de energia e
-    envio de e-mail de alerta), \autoref{fig:f1-geral} a
-    \autoref{fig:f4-email}, em formato draw.io e PNG:
-    \url{https://drive.google.com/drive/folders/1cwklO3yfXHa3Iq4xE6EKmUtck0RmrRTC?usp=sharing}
-
-    \item \label{apendice:diagrama-casos-uso} Diagrama de casos de uso
-    (\autoref{fig:casos-uso}), em formato draw.io e PNG:
-    \url{https://drive.google.com/drive/folders/1p_knR-0u6KCavTmNMICIZwPfB-uTCyEG?usp=sharing}
-
-    \item \label{apendice:diagrama-sequencia} Diagrama de sequência,
-    partes 1 (ciclo do dispositivo) e 2 (painel do administrador e envio
-    de e-mail), \autoref{fig:sequencia-1} e \autoref{fig:sequencia-2},
-    em formato draw.io e PNG:
-    \url{https://drive.google.com/drive/folders/1-Bm9eRm5zlPdugGVpWwMjJWhKX-h160E?usp=sharing}
-
-    \item \label{apendice:circuito} Diagrama de montagem (Fritzing) e
-    esquemático elétrico do protótipo físico,
-    \autoref{fig:componentes_ligados} e \autoref{fig:esquematico}:
-    \url{https://drive.google.com/drive/folders/1OrpDOLFtPC5qvXdQdU48wgTcaq24C8X1?usp=sharing}
-
 \end{itemize}
+
+\chapter{Código-fonte do \textit{firmware} do protótipo físico}
+\label{apendice:firmware-fisico}
+
+\section*{\texttt{tcc\_versao\_21.ino}}
+\addcontentsline{toc}{section}{tcc\_versao\_21.ino}
+\begin{lstlisting}[language=C++]
+/*
+ * ========================================
+ *  SISTEMA DE ALERTA PARA BARRAGEM DE REJEITOS - PROTÓTIPO FÍSICO (ESP8266) - versão 21
+ *  TCC UERJ-IPRJ | Thamires Ramos dos Santos
+ *
+ *  Modelo de alerta (limiar hidrometeorológico de duas variáveis) - igual à simulação:
+ *    Eq. 1  S   = (L - L_seco) / (L_sat - L_seco)            saturação relativa (0 a 1)
+ *    Eq. 2  P72 = P48,obs + P24,prev                          chuva da janela de 72 h
+ *    Eq. 3  VERMELHO se S >= S2 e P72 >= P2
+ *           AMARELO  se S >= S1 e P72 >= P1 (e não vermelho)
+ *           VERDE    nos demais casos
+ *  Contingências:
+ *    higrômetro com falha -> só chuva: P72 >= P1 AMARELO; P72 >= P2 VERMELHO
+ *    chuva incompleta     -> parcela não obtida OU dia sem registro (null) no BNDMET:
+ *                            mínimo garantido = soma do obtido; se >= P1, regra com o mínimo;
+ *                            se < P1, como "sem dados de chuva"
+ *    sem dados de chuva   -> só solo:  S >= S2 AMARELO; senão VERDE ("sem dados de chuva")
+ *    sem os dois          -> AMARELO por precaução
+ *
+ *  Diferenças em relação à simulação (sketch_v3, ESP32):
+ *    - Higrômetro real (FC-28 + LM393) no pino A0, ADC de 10 bits (0 a 1023).
+ *    - Sem supervisão de energia: alimentação externa de 5 V pela porta USB-C.
+ *      O JSON não leva os campos rede, vbat e estadoBateria (o backend grava null).
+ *    - Modo demonstração (FATOR_DEMO): divide os intervalos de 60 min / 10 min, como no
+ *      sketch_v3. Com FATOR_DEMO = 1, o firmware opera nos tempos reais.
+ *      O comando "chuva <mm>" continua rodando um ciclo na hora.
+ *
+ *  Hardware (montagem do Fritzing, versão 3):
+ *    Higrômetro A0 | LED azul D1 (nível VERDE) | LED amarelo D2 | LED vermelho D3
+ *    Buzzer ativo TMB-12A03 D4 (nível alto = som)
+ *
+ *  Comandos serial: status | calibrar [seco|sat|reset] | chuva <mm>|parcial <mm>|off|na | help
+ *  Chaves e endereços: secrets.h (não publicar). Modelo: secrets.h.example.
+ *  Placa na Arduino IDE: "NodeMCU 1.0 (ESP-12E Module)", porta COM3, 115200 baud.
+ * ========================================
+ */
+
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <WiFiClientSecureBearSSL.h>
+#include <ArduinoJson.h>
+#include <EEPROM.h>
+#include <time.h>
+#include "secrets.h" // WIFI_SSID, WIFI_PASS, API_BASE_URL, BNDMET_API_KEY, OWM_API_KEY
+
+// ========================================
+//  PINOS (montagem física)
+// ========================================
+const uint8_t PIN_HIGROMETRO = A0;   // Fonte: espressif_esp8266ex (Seção 4.9, único ADC, pino TOUT = A0)
+// Números GPIO (e não D1..D4): os apelidos D1..D4 só existem quando a placa escolhida na
+// IDE é "NodeMCU 1.0 (ESP-12E Module)". Com GPIO o código compila em qualquer placa ESP8266.
+// Mapa da NodeMCU: D1 = GPIO5 | D2 = GPIO4 | D3 = GPIO0 | D4 = GPIO2 (os fios continuam nos mesmos pinos).
+const uint8_t PIN_LED_VERDE = 5;     // D1 - Fonte: montagem (Fritzing v3) - LED AZUL indica o nível VERDE
+const uint8_t PIN_LED_AMARELO = 4;   // D2 - Fonte: montagem (Fritzing v3)
+const uint8_t PIN_LED_VERMELHO = 0;  // D3 - Fonte: montagem (Fritzing v3)
+const uint8_t PIN_BUZZER = 2;        // D4 - Fonte: quickteck_tmb12a03 (buzzer ativo: nível alto = som)
+
+// ========================================
+//  CONSTANTES DO MODELO (Eq. 1-3) - idênticas ao sketch_v3
+// ========================================
+const int ADC_MAX = 1023;      // Fonte: espressif_esp8266ex (ADC SAR de 10 bits: 0 a 1023)
+const float S1 = 0.64f;        // Fonte: mirus2018developing (Tabela 1, Seattle: limiar inferior de saturação)
+const float S2 = 0.86f;        // Fonte: mirus2018developing (Tabela 1, Seattle: limiar superior de saturação)
+const float P1_MM = 60.0f;     // Fonte: mendes2020proposicao (72 h, nível de atenção, Campos do Jordão)
+const float P2_MM = 100.0f;    // Fonte: mendes2020proposicao (72 h, nível de alerta, Campos do Jordão)
+const int DIAS_P48 = 2;        // Fonte: mirus2018developing (janela de t-48 h; 2 totais diários I006)
+const int BLOCOS_P24 = 8;      // Fonte: mirus2018developing (janela até t+24 h) + openweathermap_forecast5 (8 x 3 h)
+
+// Calibração padrão (substituída pelo comando "calibrar" e gravada na EEPROM).
+// No higrômetro resistivo, solo seco = leitura alta; a Eq. 1 trata a escala invertida.
+const int L_SECO_PADRAO = 1023; // Fonte: calibração da autora (SENSOR_SECO)
+const int L_SAT_PADRAO = 240;   // Fonte: calibração da autora (SENSOR_UMIDO)
+const int EEPROM_TAM = 512;     // Fonte: software (área de EEPROM emulada)
+const int END_SECO = 0;         // Fonte: software
+const int END_SAT = 4;          // Fonte: software
+
+// ========================================
+//  INTERVALOS DE LEITURA E ENVIO
+// ========================================
+// MODO DEMONSTRAÇÃO - divide os intervalos de leitura por FATOR_DEMO (igual ao sketch_v3).
+//   FATOR_DEMO = 1   -> tempos reais (padrão publicado): 60 min (sem chuva) / 10 min (com chuva ou alerta)
+//   FATOR_DEMO = 120 -> 30 s / 5 s   (testes e prints)
+//   FATOR_DEMO = 12  -> 5 min / 50 s
+// É recurso de TESTE; não é parâmetro do modelo. Volte para 1 na operação.
+const uint32_t FATOR_DEMO = 120; // Fonte: decisão de projeto (modo de teste; nos testes do TCC foi usado 120)
+
+const uint32_t INTERVALO_NORMAL_MS = 60UL * 60UL * 1000UL / FATOR_DEMO; // Fonte: freitas2021analise (60 min sem chuva)
+const uint32_t INTERVALO_EVENTO_MS = 10UL * 60UL * 1000UL / FATOR_DEMO; // Fonte: freitas2021analise (10 min com chuva)
+
+// ========================================
+//  PARÂMETROS DE SOFTWARE (não são parâmetros do modelo; ficam só no código)
+// ========================================
+const uint32_t BAUD = 115200;           // Fonte: software
+const uint32_t TIMEOUT_HTTP_MS = 15000; // Fonte: software (tempo máximo de espera por resposta HTTP)
+const uint32_t TIMEOUT_WIFI_MS = 15000; // Fonte: software (tempo máximo para conectar ao Wi-Fi)
+const long FUSO_S = -3L * 3600L;        // Fonte: software (horário de Brasília, UTC-3, para as datas do BNDMET)
+const long DIA_S = 86400L;              // Fonte: software (segundos em um dia)
+// Aviso de espera entre ciclos: a cada 1 min nos tempos reais; desligado se o ciclo é curto.
+const uint32_t AVISO_ESPERA_MS = 60000UL; // Fonte: software (mostra a cada 1 min quanto falta para o próximo ciclo)
+
+const char *BNDMET_URL = "https://api-bndmet.decea.mil.br/v1/estacoes/D6594/fenomenos/I006"; // Fonte: decea_bndmet (estação D6594, I006)
+const char *OWM_URL = "https://pro.openweathermap.org/data/2.5/forecast?lat=-20.1433&lon=-44.1997&units=metric&cnt="; // Fonte: openweathermap_forecast5 (Brumadinho-MG)
+const char *API_LEITURAS = "/leituras"; // Fonte: rota do backend (POST /leituras)
+
+// ========================================
+//  TIPOS E ESTADO
+// ========================================
+enum Nivel { VERDE, AMARELO, VERMELHO };
+
+struct Leitura {
+  int adc = 0;
+  float S = 0;
+  bool sensorOk = false;
+  float p48 = 0, p24 = 0, p72 = 0;
+  bool p48Ok = false, p24Ok = false;
+  int p48DiasNulos = 0; // dias sem registro (null ou ausentes): P48 incompleto
+  bool p72Injetado = false;
+  Nivel nivel = VERDE;
+};
+
+Leitura leitura;
+int lSeco = L_SECO_PADRAO;
+int lSat = L_SAT_PADRAO;
+
+// Modo de teste do comando "chuva": 0 = APIs reais; 1 = P72 injetado; 2 = sem dados de chuva;
+// 3 = dados incompletos injetados ("chuva parcial <mm>": P48 = mm com 1 dia sem registro, P24 = 0)
+int modoChuva = 0;
+float p72Teste = 0;
+
+uint32_t ultimoCicloMs = 0;
+bool cicloForcado = true; // primeiro ciclo logo após o setup
+String linhaSerial = "";
+
+const char *textoNivel(Nivel n) {
+  return n == VERMELHO ? "VERMELHO" : (n == AMARELO ? "AMARELO" : "VERDE");
+}
+
+// ========================================
+//  CALIBRAÇÃO (L_seco e L_sat na EEPROM)
+// ========================================
+bool calibracaoValida(int seco, int sat) {
+  return seco >= 0 && seco <= ADC_MAX && sat >= 0 && sat <= ADC_MAX && seco != sat;
+}
+
+void carregarCalibracao() {
+  EEPROM.begin(EEPROM_TAM);
+  int seco, sat;
+  EEPROM.get(END_SECO, seco);
+  EEPROM.get(END_SAT, sat);
+  if (calibracaoValida(seco, sat)) { lSeco = seco; lSat = sat; }
+  Serial.printf("[CALIB] L_seco=%d | L_sat=%d\n", lSeco, lSat);
+}
+
+void salvarCalibracao() {
+  EEPROM.put(END_SECO, lSeco);
+  EEPROM.put(END_SAT, lSat);
+  EEPROM.commit();
+}
+
+// ========================================
+//  EQUAÇÃO 1 - SATURAÇÃO RELATIVA DO SOLO
+// ========================================
+// Leitura no extremo da escala (0 ou 1023) = circuito aberto ou em curto -> falha.
+// O núcleo Arduino do ESP8266 pode devolver 1024 no fim da escala; limita a 1023 (10 bits).
+int lerAdc() {
+  return constrain(analogRead(PIN_HIGROMETRO), 0, ADC_MAX);
+}
+
+bool leituraValida(int adc) {
+  return adc > 0 && adc < ADC_MAX;
+}
+
+float calcularSaturacao(int adc) {
+  if (lSat == lSeco) return 0.0f;
+  float s = (float)(adc - lSeco) / (float)(lSat - lSeco);
+  return constrain(s, 0.0f, 1.0f);
+}
+
+void lerSaturacao() {
+  leitura.adc = lerAdc();
+  leitura.sensorOk = leituraValida(leitura.adc) && (lSat != lSeco);
+  leitura.S = leitura.sensorOk ? calcularSaturacao(leitura.adc) : 0.0f;
+}
+
+// ========================================
+//  CONECTIVIDADE
+// ========================================
+bool garantirWiFi() {
+  if (WiFi.status() == WL_CONNECTED) return true;
+  Serial.print("[WiFi] Conectando");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  uint32_t t0 = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < TIMEOUT_WIFI_MS) {
+    delay(250); // Fonte: software (espera entre tentativas)
+    Serial.print(".");
+  }
+  bool ok = WiFi.status() == WL_CONNECTED;
+  Serial.println(ok ? " OK" : " FALHOU");
+  if (ok) Serial.println("[WiFi] IP: " + WiFi.localIP().toString());
+  return ok;
+}
+
+bool relogioSincronizado() {
+  return time(nullptr) > 1600000000L; // Fonte: software (data posterior a 2020 = NTP sincronizado)
+}
+
+void sincronizarRelogio() {
+  configTime(FUSO_S, 0, "pool.ntp.org", "time.nist.gov");
+  uint32_t t0 = millis();
+  while (!relogioSincronizado() && millis() - t0 < TIMEOUT_WIFI_MS) delay(250); // Fonte: software (espera NTP)
+  Serial.println(relogioSincronizado() ? "[NTP] Relogio sincronizado" : "[NTP] Sem sincronizacao");
+}
+
+String formatarData(time_t t) {
+  struct tm *tm = localtime(&t);
+  char buf[11];
+  strftime(buf, sizeof(buf), "%Y-%m-%d", tm);
+  return String(buf);
+}
+
+// GET HTTPS; devolve o corpo ou "" em caso de erro.
+// Mostra no monitor serial a URL consultada (urlExibida, com a chave do OWM mascarada)
+// e o motivo da falha, como no sketch_v3 (simulação).
+String httpsGet(const char *tag, const String &url, const String &urlExibida, const char *chaveBndmet) {
+  Serial.println(String(tag) + " GET " + urlExibida);
+  BearSSL::WiFiClientSecure cliente;
+  cliente.setInsecure(); // sem verificação de certificado
+  HTTPClient http;
+  http.setTimeout(TIMEOUT_HTTP_MS);
+  if (!http.begin(cliente, url)) {
+    Serial.println(String(tag) + " FALHA - URL invalida.");
+    return "";
+  }
+  http.addHeader("Accept", "*/*");
+  if (chaveBndmet && strlen(chaveBndmet) > 0) http.addHeader("x-api-key", chaveBndmet);
+  int codigo = http.GET();
+  String corpo = "";
+  if (codigo == HTTP_CODE_OK) {
+    corpo = http.getString();
+  } else if (codigo > 0) {
+    Serial.println(String(tag) + " FALHA - HTTP " + String(codigo) + ": " + http.getString().substring(0, 120));
+    if (codigo == 401 || codigo == 403) Serial.println(String(tag) + " Dica: chave recusada. Confira a chave no secrets.h.");
+  } else {
+    Serial.println(String(tag) + " FALHA - " + http.errorToString(codigo) + " (codigo " + String(codigo) + ")");
+  }
+  http.end();
+  return corpo;
+}
+
+// ========================================
+//  EQUAÇÃO 2 - P48 (BNDMET) + P24 (OpenWeatherMap)
+// ========================================
+String textoDia(const String &data, bool existe, bool nulo, float mm) {
+  String t = data + ": ";
+  if (!existe) return t + "sem registro (ausente)";
+  if (nulo) return t + "null (ausente)";
+  return t + String(mm, 1) + " mm";
+}
+
+// P48: soma dos totais diários (I006) dos 2 últimos dias completos (anteontem e ontem).
+// Com HTTP 200, a API respondeu. Dia com null (ou ausente da lista) é dado AUSENTE: fica
+// fora da soma e é contado em diasNulos; P48 passa a ser um mínimo (incompleto).
+// P48 só fica indisponível quando a consulta falha (HTTP/conexão/JSON).
+bool buscarP48(float &p48, int &diasNulos) {
+  if (!relogioSincronizado()) {
+    Serial.println("[BNDMET I006] PULADO - horario ainda nao sincronizado.");
+    return false;
+  }
+  time_t agora = time(nullptr);
+  String dAnteontem = formatarData(agora - DIAS_P48 * DIA_S);
+  String dOntem = formatarData(agora - DIA_S);
+  String url = String(BNDMET_URL) + "?dataInicio=" + dAnteontem + "&dataFinal=" + dOntem;
+  String corpo = httpsGet("[BNDMET I006]", url, url, BNDMET_API_KEY);
+  if (corpo.isEmpty()) return false;
+
+  JsonDocument doc;
+  DeserializationError erro = deserializeJson(doc, corpo);
+  if (erro) { Serial.println("[BNDMET I006] FALHA - JSON invalido: " + String(erro.c_str())); return false; }
+  JsonArray dados = doc["data"]["data"].as<JsonArray>(); // pares [timestamp_ms, valor_ou_null]
+  if (dados.isNull()) { Serial.println("[BNDMET I006] FALHA - campo data.data ausente"); return false; }
+
+  bool existeA = false, nuloA = false, existeO = false, nuloO = false;
+  float mmA = 0, mmO = 0;
+  for (JsonArray par : dados) {
+    if (par.size() < 2) continue;
+    String dia = formatarData((time_t)(par[0].as<long long>() / 1000LL));
+    bool nulo = par[1].isNull();
+    float mm = nulo ? 0.0f : par[1].as<float>(); // null: não entra na soma (ausente)
+    if (dia == dAnteontem) { existeA = true; nuloA = nulo; mmA = mm; }
+    if (dia == dOntem) { existeO = true; nuloO = nulo; mmO = mm; }
+  }
+  diasNulos = (!existeA || nuloA) + (!existeO || nuloO);
+  p48 = (existeA && !nuloA ? mmA : 0.0f) + (existeO && !nuloO ? mmO : 0.0f); // só dias com valor
+
+  Serial.println("[BNDMET I006] anteontem " + textoDia(dAnteontem, existeA, nuloA, mmA) +
+                 " | ontem " + textoDia(dOntem, existeO, nuloO, mmO));
+  if (diasNulos == 0) Serial.println("[BNDMET I006] OK - P48 = " + String(p48, 1) + " mm");
+  else Serial.println("[BNDMET I006] INCOMPLETO - P48 >= " + String(p48, 1) + " mm (" + String(diasNulos) +
+                      " dia(s) sem registro na estacao)");
+  return true;
+}
+
+// P24: soma de rain.3h (mm) nos 8 próximos blocos de 3 h. Bloco sem "rain" = 0 mm.
+// O filtro guarda só o campo usado, para caber na memória do ESP8266.
+bool buscarP24(float &p24) {
+  const char *tag = "[OWM 24h]";
+  String base = String(OWM_URL) + BLOCOS_P24 + "&appid=";
+  String corpo = httpsGet(tag, base + OWM_API_KEY, base + "***", nullptr); // chave mascarada no serial
+  if (corpo.isEmpty()) return false;
+
+  JsonDocument filtro;
+  filtro["list"][0]["rain"]["3h"] = true;
+  JsonDocument doc;
+  DeserializationError erro = deserializeJson(doc, corpo, DeserializationOption::Filter(filtro));
+  if (erro) { Serial.println(String(tag) + " FALHA - JSON invalido: " + String(erro.c_str())); return false; }
+  JsonArray lista = doc["list"].as<JsonArray>();
+  if (lista.isNull() || (int)lista.size() < BLOCOS_P24) {
+    Serial.println(String(tag) + " FALHA - menos de " + String(BLOCOS_P24) + " blocos de 3 h na resposta.");
+    return false;
+  }
+
+  float soma = 0;
+  int n = 0;
+  String linha = String(tag) + " mm por bloco de 3 h:";
+  for (JsonObject bloco : lista) {
+    float mm = bloco["rain"]["3h"] | 0.0f;
+    soma += mm;
+    linha += String(n == 0 ? " " : " | ") + String(mm, 1);
+    if (++n >= BLOCOS_P24) break;
+  }
+  Serial.println(linha);
+  p24 = soma;
+  Serial.println(String(tag) + " OK - P24 = " + String(p24, 1) + " mm");
+  return true;
+}
+
+void obterChuva() {
+  leitura.p72Injetado = false;
+  leitura.p48DiasNulos = 0;
+  if (modoChuva == 1) { // teste: P72 injetado pelo comando "chuva <mm>"
+    leitura.p48Ok = leitura.p24Ok = true;
+    leitura.p48 = leitura.p24 = 0;
+    leitura.p72 = p72Teste;
+    leitura.p72Injetado = true;
+    return;
+  }
+  if (modoChuva == 2) { // teste: simula APIs fora do ar
+    leitura.p48Ok = leitura.p24Ok = false;
+    return;
+  }
+  if (modoChuva == 3) { // teste: dados incompletos (dia null no BNDMET); mínimo garantido = mm informado
+    leitura.p48Ok = leitura.p24Ok = true;
+    leitura.p48 = p72Teste;
+    leitura.p24 = 0;
+    leitura.p48DiasNulos = 1;
+    leitura.p72 = p72Teste;
+    leitura.p72Injetado = true;
+    return;
+  }
+  bool rede = garantirWiFi();
+  if (rede && !relogioSincronizado()) sincronizarRelogio();
+  leitura.p48Ok = rede && buscarP48(leitura.p48, leitura.p48DiasNulos);
+  leitura.p24Ok = rede && buscarP24(leitura.p24);
+  if (leitura.p48Ok && leitura.p24Ok) leitura.p72 = leitura.p48 + leitura.p24; // Eq. 2
+}
+
+// Chuva completa: as duas parcelas obtidas e nenhum dia sem registro no BNDMET.
+bool chuvaCompleta() {
+  return leitura.p48Ok && leitura.p24Ok && leitura.p48DiasNulos == 0;
+}
+
+// Chuva incompleta: algo foi obtido, mas falta uma parcela ou um dia do BNDMET.
+bool chuvaIncompleta() {
+  return (leitura.p48Ok || leitura.p24Ok) && !chuvaCompleta();
+}
+
+// P72 mínimo garantido: soma do que foi obtido (a chuva ausente não é negativa).
+float p72Minimo() {
+  return (leitura.p48Ok ? leitura.p48 : 0.0f) + (leitura.p24Ok ? leitura.p24 : 0.0f);
+}
+
+// Chuva usada na regra: P72 completo, ou o mínimo garantido se ele já atinge P1.
+// Devolve false quando a regra deve tratar como "sem dados de chuva".
+bool chuvaParaRegra(float &p) {
+  if (chuvaCompleta()) { p = leitura.p72; return true; }
+  if (chuvaIncompleta() && p72Minimo() >= P1_MM) { p = p72Minimo(); return true; }
+  return false;
+}
+
+// ========================================
+//  EQUAÇÃO 3 + CONTINGÊNCIAS - NÍVEL DE ALERTA (idêntico ao sketch_v3)
+// ========================================
+Nivel nivelPorChuva(float p72) {
+  if (p72 >= P2_MM) return VERMELHO;
+  if (p72 >= P1_MM) return AMARELO;
+  return VERDE;
+}
+
+Nivel avaliarNivel(const Leitura &l) {
+  float p = 0;
+  bool chuva = chuvaParaRegra(p);
+  if (l.sensorOk && chuva) { // Eq. 3: limiar bilinear (S e P72 ao mesmo tempo)
+    if (l.S >= S2 && p >= P2_MM) return VERMELHO;
+    if (l.S >= S1 && p >= P1_MM) return AMARELO;
+    return VERDE;
+  }
+  if (!l.sensorOk && chuva) return nivelPorChuva(p);              // higrômetro com falha: só chuva
+  if (l.sensorOk && !chuva) return (l.S >= S2) ? AMARELO : VERDE; // caso especial
+  return AMARELO; // sem higrômetro E sem chuva: AMARELO por precaução
+}
+
+// ========================================
+//  ALERTA LOCAL (LEDs de nível e buzzer)
+// ========================================
+void acionarAlertaLocal(Nivel n) {
+  digitalWrite(PIN_LED_VERDE, n == VERDE ? HIGH : LOW);
+  digitalWrite(PIN_LED_AMARELO, n == AMARELO ? HIGH : LOW);
+  digitalWrite(PIN_LED_VERMELHO, n == VERMELHO ? HIGH : LOW);
+  digitalWrite(PIN_BUZZER, n == VERMELHO ? HIGH : LOW); // buzzer só no VERMELHO
+}
+
+// ========================================
+//  ENVIO JSON AO BACKEND (mesmo formato da simulação, sem os campos de energia)
+// ========================================
+String montarJson() {
+  JsonDocument doc;
+  doc["evento"] = "ciclo";
+  doc["nivel"] = textoNivel(leitura.nivel);
+  if (leitura.sensorOk) doc["S"] = serialized(String(leitura.S, 2)); else doc["S"] = nullptr;
+  if (leitura.p48Ok && !leitura.p72Injetado) doc["P48"] = leitura.p48; else doc["P48"] = nullptr;
+  if (leitura.p24Ok && !leitura.p72Injetado) doc["P24"] = leitura.p24; else doc["P24"] = nullptr;
+  if (chuvaCompleta()) doc["P72"] = leitura.p72; else doc["P72"] = nullptr;
+  if (chuvaIncompleta()) doc["p72Minimo"] = p72Minimo(); // limite inferior de P72
+  doc["p48DiasNulos"] = leitura.p48DiasNulos; // dias sem registro no BNDMET (P48 incompleto)
+  doc["sensorIndisponivel"] = !leitura.sensorOk;
+  doc["p48Indisponivel"] = !leitura.p48Ok;
+  doc["p24Indisponivel"] = !leitura.p24Ok;
+  doc["chuvaIncompleta"] = chuvaIncompleta();
+  doc["semDadosChuva"] = !leitura.p48Ok && !leitura.p24Ok;
+  doc["p72Injetado"] = leitura.p72Injetado; // true = cenário de teste (comando "chuva")
+  doc["simulacao"] = false;                 // protótipo físico
+  String saida;
+  serializeJson(doc, saida);
+  return saida;
+}
+
+// Imprime um texto longo em linhas de até 'largura' caracteres (só para leitura no monitor serial).
+void imprimirQuebrado(const String &prefixo, const String &texto, int largura) {
+  for (int i = 0; i < (int)texto.length(); i += largura) {
+    Serial.println((i == 0 ? prefixo : String("       ")) + texto.substring(i, i + largura));
+  }
+}
+
+void enviarLeitura() {
+  String json = montarJson();
+  imprimirQuebrado("[JSON] ", json, 90); // o JSON enviado ao backend continua inteiro
+  if (!garantirWiFi()) return;
+  WiFiClient cliente;
+  HTTPClient http;
+  http.setTimeout(TIMEOUT_HTTP_MS);
+  if (!http.begin(cliente, String(API_BASE_URL) + API_LEITURAS)) {
+    Serial.println("[BACKEND] URL invalida");
+    return;
+  }
+  http.addHeader("Content-Type", "application/json");
+  int codigo = http.POST(json);
+  Serial.printf("[BACKEND] POST %s -> %d\n", API_LEITURAS, codigo);
+  http.end();
+}
+
+// ========================================
+//  CICLO DE LEITURA (60 min / 10 min)
+// ========================================
+uint32_t intervaloAtual() {
+  bool chuva = (leitura.p48Ok && leitura.p48 > 0) || (leitura.p24Ok && leitura.p24 > 0) ||
+               (leitura.p72Injetado && leitura.p72 > 0);
+  return (chuva || leitura.nivel != VERDE) ? INTERVALO_EVENTO_MS : INTERVALO_NORMAL_MS;
+}
+
+void imprimirLeitura() {
+  Serial.println("----------------------------------------");
+  if (leitura.sensorOk) Serial.printf("[SOLO]  ADC=%d | S=%.2f (S1=%.2f, S2=%.2f)\n", leitura.adc, leitura.S, S1, S2);
+  else Serial.printf("[SOLO]  ADC=%d | HIGROMETRO INDISPONIVEL\n", leitura.adc);
+  if (leitura.p72Injetado && chuvaCompleta()) Serial.printf("[CHUVA] P72=%.1f mm (INJETADO - TESTE)\n", leitura.p72);
+  else if (chuvaCompleta()) Serial.printf("[CHUVA] P48=%.1f + P24=%.1f = P72=%.1f mm (P1=%.0f, P2=%.0f)\n",
+                                          leitura.p48, leitura.p24, leitura.p72, P1_MM, P2_MM);
+  else if (chuvaIncompleta()) {
+    Serial.printf("[CHUVA] DADOS DE CHUVA INCOMPLETOS - P72 >= %.1f mm (minimo garantido)\n", p72Minimo());
+    String p48t = !leitura.p48Ok ? String("indisponivel")
+                : (leitura.p48DiasNulos > 0 ? String(leitura.p48, 1) + " mm, " + String(leitura.p48DiasNulos) + " dia(s) sem registro"
+                                            : String(leitura.p48, 1) + " mm");
+    String p24t = leitura.p24Ok ? String(leitura.p24, 1) + " mm" : String("indisponivel");
+    Serial.println("[CHUVA] P48: " + p48t + " | P24: " + p24t);
+    if (p72Minimo() < P1_MM) Serial.println("[CHUVA] Minimo abaixo de P1: tratado como sem dados de chuva");
+    if (leitura.p72Injetado) Serial.println("[CHUVA] (INJETADO - TESTE: dia sem registro simulado)");
+  } else Serial.println("[CHUVA] SEM DADOS DE CHUVA (P48 e P24 indisponiveis)");
+  Serial.printf("[NIVEL] %s | buzzer %s\n", textoNivel(leitura.nivel), leitura.nivel == VERMELHO ? "LIGADO" : "desligado");
+  Serial.printf("[CICLO] proximo em %lu s (modo demonstracao x%lu)\n", (unsigned long)(intervaloAtual() / 1000UL),
+                (unsigned long)FATOR_DEMO);
+}
+
+void executarCiclo() {
+  lerSaturacao();
+  obterChuva();
+  leitura.nivel = avaliarNivel(leitura);
+  acionarAlertaLocal(leitura.nivel);
+  imprimirLeitura();
+  enviarLeitura();
+  ultimoCicloMs = millis();
+  cicloForcado = false;
+}
+
+// ========================================
+//  COMANDOS SERIAL (somente teste)
+// ========================================
+void cmdHelp() {
+  Serial.println("Comandos:");
+  Serial.println("  status          - ultimo ciclo e leitura atual do higrometro");
+  Serial.println("  calibrar        - mostra L_seco e L_sat");
+  Serial.println("  calibrar seco   - grava a leitura atual como L_seco (sonda em solo seco)");
+  Serial.println("  calibrar sat    - grava a leitura atual como L_sat (sonda em solo saturado)");
+  Serial.println("  calibrar reset  - volta para a calibracao padrao");
+  Serial.println("  chuva <mm>      - TESTE: injeta P72 em mm e roda um ciclo");
+  Serial.println("  chuva parcial <mm> - TESTE: dados incompletos (1 dia sem registro); minimo = mm");
+  Serial.println("  chuva na        - TESTE: simula APIs fora do ar (sem dados de chuva)");
+  Serial.println("  chuva off       - volta a usar BNDMET + OpenWeatherMap");
+  Serial.println("  help            - esta lista");
+}
+
+void cmdStatus() {
+  imprimirLeitura(); // valores do último ciclo
+  int adc = lerAdc();
+  Serial.printf("[AGORA] ADC=%d | S=%.2f%s\n", adc, calcularSaturacao(adc), leituraValida(adc) ? "" : " (leitura invalida)");
+  Serial.printf("[CALIB] L_seco=%d | L_sat=%d | modo chuva=%s\n", lSeco, lSat,
+                modoChuva == 1 ? "injetado" : (modoChuva == 2 ? "sem dados" : (modoChuva == 3 ? "incompleto injetado" : "APIs")));
+}
+
+void cmdCalibrar(const String &arg) {
+  int adc = lerAdc();
+  int novoSeco = lSeco, novoSat = lSat;
+  if (arg == "seco") novoSeco = adc;
+  else if (arg == "sat") novoSat = adc;
+  else if (arg == "reset") { novoSeco = L_SECO_PADRAO; novoSat = L_SAT_PADRAO; }
+  if (arg.length()) {
+    if (calibracaoValida(novoSeco, novoSat)) { lSeco = novoSeco; lSat = novoSat; salvarCalibracao(); }
+    else Serial.println("[CALIB] Recusado: L_seco e L_sat ficariam iguais");
+  }
+  Serial.printf("[CALIB] L_seco=%d | L_sat=%d | ADC atual=%d\n", lSeco, lSat, adc);
+}
+
+void cmdChuva(const String &arg) {
+  if (arg == "off") modoChuva = 0;
+  else if (arg == "na") modoChuva = 2;
+  else if (arg.startsWith("parcial ") && arg.length() > 8 && (isDigit(arg[8]) || arg[8] == '.')) {
+    modoChuva = 3;
+    p72Teste = arg.substring(8).toFloat();
+  }
+  else if (arg.length() && (isDigit(arg[0]) || arg[0] == '.')) { modoChuva = 1; p72Teste = arg.toFloat(); }
+  else { Serial.println("Uso: chuva <mm> | chuva parcial <mm> | chuva na | chuva off"); return; }
+  Serial.printf("[TESTE] modo chuva = %s\n", modoChuva == 1 ? "injetado" : (modoChuva == 2 ? "sem dados" : (modoChuva == 3 ? "incompleto injetado" : "APIs")));
+  cicloForcado = true;
+}
+
+void tratarComando(String linha) {
+  linha.trim();
+  linha.toLowerCase();
+  int esp = linha.indexOf(' ');
+  String cmd = esp < 0 ? linha : linha.substring(0, esp);
+  String arg = esp < 0 ? "" : linha.substring(esp + 1);
+  arg.trim();
+  if (cmd == "status") cmdStatus();
+  else if (cmd == "calibrar") cmdCalibrar(arg);
+  else if (cmd == "chuva") cmdChuva(arg);
+  else if (cmd == "help") cmdHelp();
+  else if (cmd.length()) Serial.println("Comando desconhecido. Digite help.");
+}
+
+void lerSerial() {
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (linhaSerial.length()) tratarComando(linhaSerial);
+      linhaSerial = "";
+    } else {
+      linhaSerial += c;
+    }
+  }
+}
+
+// ========================================
+//  SETUP E LOOP
+// ========================================
+void configurarPinos() {
+  const uint8_t saidas[] = {PIN_LED_VERDE, PIN_LED_AMARELO, PIN_LED_VERMELHO, PIN_BUZZER};
+  for (uint8_t p : saidas) { pinMode(p, OUTPUT); digitalWrite(p, LOW); }
+}
+
+void testarIndicadores() { // acende cada LED e toca o buzzer rapidamente na partida
+  const uint8_t leds[] = {PIN_LED_VERDE, PIN_LED_AMARELO, PIN_LED_VERMELHO};
+  for (uint8_t p : leds) { digitalWrite(p, HIGH); delay(300); digitalWrite(p, LOW); } // Fonte: software
+  digitalWrite(PIN_BUZZER, HIGH); delay(150); digitalWrite(PIN_BUZZER, LOW);          // Fonte: software
+}
+
+void setup() {
+  Serial.begin(BAUD);
+  delay(500); // Fonte: software (estabiliza a serial)
+  Serial.println("\n=== Alerta de barragem v21 (ESP8266) - PROTOTIPO FISICO ===");
+  Serial.printf("Modo demonstracao: tempos divididos por %lu\n", (unsigned long)FATOR_DEMO);
+  configurarPinos();
+  testarIndicadores();
+  carregarCalibracao();
+  if (garantirWiFi()) sincronizarRelogio();
+  cmdHelp();
+}
+
+// Entre um ciclo e outro (10 ou 60 min) o firmware fica em silêncio; esta linha mostra
+// que o loop continua rodando e quanto falta para a próxima leitura.
+void avisarEspera() {
+  static uint32_t ultimoAviso = 0;
+  if (INTERVALO_EVENTO_MS <= AVISO_ESPERA_MS) return; // ciclo curto (modo demonstração): sem aviso
+  if (millis() - ultimoAviso < AVISO_ESPERA_MS) return;
+  ultimoAviso = millis();
+  uint32_t decorrido = millis() - ultimoCicloMs;
+  uint32_t falta = intervaloAtual() > decorrido ? intervaloAtual() - decorrido : 0;
+  Serial.printf("[ESPERA] proximo ciclo em %lu min %02lu s | ADC agora=%d (digite status ou chuva <mm>)\n",
+                (unsigned long)(falta / 60000UL), (unsigned long)((falta / 1000UL) % 60UL), lerAdc());
+}
+
+void loop() {
+  lerSerial();
+  if (cicloForcado || millis() - ultimoCicloMs >= intervaloAtual()) executarCiclo();
+  else avisarEspera();
+  delay(20); // Fonte: software (libera o processador para o Wi-Fi do ESP8266)
+}
+\end{lstlisting}
+
+\chapter{Código-fonte do \textit{firmware} da simulação}
+\label{apendice:firmware-wokwi}
+
+\section*{\texttt{sketch\_v3.ino}}
+\addcontentsline{toc}{section}{sketch\_v3.ino}
+\begin{lstlisting}[language=C++]
+/*
+ * ========================================
+ *  SISTEMA DE ALERTA PARA BARRAGEM DE REJEITOS - SIMULAÇÃO WOKWI (ESP32) - versão 3
+ *  TCC UERJ-IPRJ | Thamires Ramos dos Santos
+ *
+ *  Modelo de alerta (limiar hidrometeorológico de duas variáveis):
+ *    Eq. 1  S   = (L - L_seco) / (L_sat - L_seco)            saturação relativa (0 a 1)
+ *    Eq. 2  P72 = P48,obs + P24,prev                          chuva da janela de 72 h
+ *    Eq. 3  VERMELHO se S >= S2 e P72 >= P2
+ *           AMARELO  se S >= S1 e P72 >= P1 (e não vermelho)
+ *           VERDE    nos demais casos
+ *  Contingências (cap4, tab:contingencia):
+ *    higrômetro com falha  -> só chuva: P72 >= P1 AMARELO; P72 >= P2 VERMELHO
+ *    chuva incompleta      -> parcela não obtida OU dia sem registro (null) no BNDMET:
+ *                             P72 mínimo = soma do que foi obtido (chuva não é negativa).
+ *                             Mínimo >= P1: regra aplicada com o mínimo ("dados de chuva
+ *                             incompletos"); mínimo < P1: como sem dados de chuva
+ *    sem dados de chuva    -> só solo: S >= S2 AMARELO; senão VERDE ("sem dados de chuva")
+ *    sem os dois           -> AMARELO por precaução
+ *  Dia null no BNDMET (I006) = dado AUSENTE (não é 0 mm): fica fora da soma e deixa P48
+ *  incompleto. P48 só fica indisponível quando a API não responde (HTTP/conexão/JSON).
+ *
+ *  Hardware (diagram.json):
+ *    Potenciômetro pot1 -> GPIO34 (representa o higrômetro)
+ *    LED verde GPIO18 | LED amarelo GPIO14 | LED vermelho GPIO27 | buzzer GPIO26
+ *    Chave sw_rede -> GPIO32 (HIGH = rede elétrica presente)
+ *    Potenciômetro pot_bateria -> GPIO35 (representa a tensão da bateria, 2,50-4,20 V)
+ *    LED REDE GPIO25 | LED BACKUP GPIO22 | LED ATENÇÃO GPIO23
+ *
+ *  Simulação não é medição: os valores de S e de tensão vêm de potenciômetros.
+ *
+ *  Comandos serial: status | calibrar [seco|sat|reset] | chuva <mm>|parcial <mm>|off|na | help
+ *  Chaves e endereços: secrets.h (fora do Git). Modelo: secrets.h.example.
+ * ========================================
+ */
+
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
+#include <ArduinoJson.h>
+#include <Preferences.h>
+#include <time.h>
+#include "secrets.h" // WIFI_SSID, WIFI_PASS, API_BASE_URL, BNDMET_API_KEY, OWM_API_KEY
+
+// ========================================
+//  MODO DEMONSTRAÇÃO
+//  Divide TODOS os tempos do sistema (intervalos de leitura e tempo de recarga) por
+//  FATOR_DEMO. Com 1, o firmware opera nos tempos reais (60 min / 10 min / 19,5 h).
+//  Com 120: 60 min -> 30 s; 10 min -> 5 s; 19,5 h -> 9 min 45 s.
+//  É recurso de TESTE da simulação; o texto do TCC deve dizer isso.
+// ========================================
+const uint32_t FATOR_DEMO = 120; // Fonte: decisão de projeto (modo de teste; não é parâmetro do modelo)
+
+// ========================================
+//  PINOS (diagram.json)
+// ========================================
+const int PIN_HIGROMETRO = 34;   // Fonte: espressif_esp32 (GPIO34 = entrada ADC1)
+const int PIN_BATERIA_ADC = 35;  // Fonte: espressif_esp32 (GPIO35 = entrada ADC1)
+const int PIN_REDE = 32;         // Fonte: wokwi_slideswitch (pino comum da chave)
+const int PIN_LED_VERDE = 18;    // Fonte: espressif_esp32 (GPIO de saída)
+const int PIN_LED_AMARELO = 14;  // Fonte: espressif_esp32 (GPIO de saída)
+const int PIN_LED_VERMELHO = 27; // Fonte: espressif_esp32 (GPIO de saída)
+const int PIN_BUZZER = 26;       // Fonte: espressif_esp32 (GPIO de saída; sinal do buzzer)
+const int PIN_LED_REDE = 25;     // Fonte: espressif_esp32 (GPIO de saída)
+const int PIN_LED_BACKUP = 22;   // Fonte: espressif_esp32 (GPIO de saída)
+const int PIN_LED_ATENCAO = 23;  // Fonte: espressif_esp32 (GPIO de saída)
+
+// ========================================
+//  CONSTANTES DO MODELO (Eq. 1-3)
+// ========================================
+const int ADC_MAX = 4095;      // Fonte: espressif_esp32 (ADC SAR de 12 bits: 0 a 4095)
+const float S1 = 0.64f;        // Fonte: mirus2018developing (Tabela 1, Seattle: limiar inferior de saturação)
+const float S2 = 0.86f;        // Fonte: mirus2018developing (Tabela 1, Seattle: limiar superior de saturação)
+const float P1_MM = 60.0f;     // Fonte: mendes2020proposicao (72 h, nível de atenção, Campos do Jordão)
+const float P2_MM = 100.0f;    // Fonte: mendes2020proposicao (72 h, nível de alerta, Campos do Jordão)
+const int DIAS_P48 = 2;        // Fonte: mirus2018developing (janela de t-48 h; 2 totais diários I006)
+const int BLOCOS_P24 = 8;      // Fonte: mirus2018developing (janela até t+24 h) + openweathermap_forecast5 (passo de 3 h: 8 x 3 h)
+
+// Calibração inicial do potenciômetro (Eq. 1). Substituída pelo comando "calibrar".
+// No Wokwi o potenciômetro é linear; no higrômetro real a escala é invertida
+// (seco = leitura alta), o que a Eq. 1 já trata, pois só usa a diferença.
+const int L_SECO_PADRAO = 0;   // Fonte: espressif_esp32 (início da escala do ADC; valor de calibração)
+const int L_SAT_PADRAO = 4095; // Fonte: espressif_esp32 (fim da escala do ADC; valor de calibração)
+
+// Buzzer: o físico (TMB-12A03) é ATIVO e soa com nível alto. A peça "wokwi-buzzer" é
+// piezoelétrica e só soa com sinal oscilante (wokwi_buzzer); por isso a simulação gera
+// uma onda quadrada na frequência de ressonância do TMB-12A03.
+const unsigned int FREQ_BUZZER_HZ = 2300; // Fonte: quickteck_tmb12a03 (ressonância 2300 +/- 500 Hz)
+
+// ========================================
+//  INTERVALOS DE LEITURA E ENVIO
+// ========================================
+const uint32_t INTERVALO_NORMAL_MS = 60UL * 60UL * 1000UL / FATOR_DEMO; // Fonte: freitas2021analise (60 min sem chuva)
+const uint32_t INTERVALO_EVENTO_MS = 10UL * 60UL * 1000UL / FATOR_DEMO; // Fonte: freitas2021analise (10 min com chuva)
+
+// ========================================
+//  ENERGIA (simulação; valores do Cap. 3 do TCC, Seção de alimentação redundante)
+// ========================================
+const int VBAT_MIN_MV = 2500;     // Fonte: adafruit_5035 (tensão de corte de descarga do pacote, 2,5 V)
+const int VBAT_MAX_MV = 4200;     // Fonte: adafruit_5035 (tensão de fim de carga do pacote, 4,2 V)
+const int VBAT_BAIXA_MV = 3300;   // Fonte: panasonic_ncr18650b (célula de referência, curva 0,2 C: ~3,3 V)
+const int VBAT_CRITICA_MV = 3000; // Fonte: panasonic_ncr18650b (célula de referência, curva 0,2 C: ~96 %)
+// T_est = t_pad x I_pad / I_carr = 8 h x 2010 mA / 1000 mA = 16,1 h; T_carga adotado = 19,5 h
+const uint32_t T_CARGA_MS = 70200UL * 1000UL / FATOR_DEMO; // Fonte: adafruit_5035 + adafruit_2465_produto (19,5 h = 70.200 s)
+
+// ========================================
+//  PARÂMETROS DE SOFTWARE (não são parâmetros do modelo; ficam só no código -
+//  são detalhes de software e não aparecem no texto do TCC)
+// ========================================
+const uint32_t BAUD = 115200;           // Fonte: espressif_esp32 (taxa padrão da UART0); software
+const uint32_t TIMEOUT_HTTP_MS = 15000; // Fonte: software (tempo máximo de espera por resposta HTTP)
+const uint32_t TIMEOUT_WIFI_MS = 10000; // Fonte: software (tempo máximo para conectar ao Wi-Fi)
+const uint32_t PISCA_MS = 500;          // Fonte: software (meio período do LED ATENÇÃO piscando)
+const long FUSO_S = -3L * 3600L;        // Fonte: software (horário de Brasília, UTC-3, para as datas do BNDMET)
+const long DIA_S = 86400L;              // Fonte: software (segundos em um dia)
+
+const char *BNDMET_URL = "https://api-bndmet.decea.mil.br/v1/estacoes/D6594/fenomenos/I006"; // Fonte: decea_bndmet (estação D6594, precipitação diária I006)
+const char *OWM_URL = "https://pro.openweathermap.org/data/2.5/forecast?lat=-20.1433&lon=-44.1997&units=metric&cnt="; // Fonte: openweathermap_forecast5 (Brumadinho-MG)
+const char *API_LEITURAS = "/leituras"; // Fonte: rota do backend (POST /leituras)
+
+// ========================================
+//  TIPOS E ESTADO
+// ========================================
+enum Nivel { VERDE, AMARELO, VERMELHO };
+enum EstadoBateria { BAT_NORMAL, BAT_BAIXA, BAT_CRITICA, BAT_FALHA };
+
+struct Leitura {
+  int adc = 0;
+  float S = 0;
+  bool sensorOk = false;
+  float p48 = 0, p24 = 0, p72 = 0;
+  bool p48Ok = false, p24Ok = false;
+  int p48DiasNulos = 0;       // dias sem registro (null ou ausentes): P48 incompleto
+  bool p72Injetado = false;
+  Nivel nivel = VERDE;
+};
+
+struct Energia {
+  bool rede = true;
+  int vbatMv = VBAT_MAX_MV;
+  EstadoBateria estado = BAT_NORMAL;
+  bool recarregando = false;
+  uint32_t inicioRecargaMs = 0;
+};
+
+Leitura leitura;
+Energia energia;
+Preferences prefs;
+int lSeco = L_SECO_PADRAO;
+int lSat = L_SAT_PADRAO;
+
+// Modo de teste do comando "chuva": 0 = APIs reais; 1 = P72 injetado; 2 = sem dados de chuva;
+// 3 = dados incompletos injetados ("chuva parcial <mm>": P48 = mm com 1 dia sem registro, P24 = 0)
+int modoChuva = 0;
+float p72Teste = 0;
+
+uint32_t ultimoCicloMs = 0;
+bool cicloForcado = true; // primeiro ciclo logo após o setup
+String linhaSerial = "";
+
+// ========================================
+//  TEXTOS
+// ========================================
+const char *textoNivel(Nivel n) {
+  return n == VERMELHO ? "VERMELHO" : (n == AMARELO ? "AMARELO" : "VERDE");
+}
+
+const char *textoBateria(EstadoBateria e) {
+  switch (e) {
+    case BAT_BAIXA: return "BAIXA";
+    case BAT_CRITICA: return "CRITICA";
+    case BAT_FALHA: return "FALHA";
+    default: return "NORMAL";
+  }
+}
+
+// ========================================
+//  CALIBRAÇÃO (L_seco e L_sat na memória não volátil)
+// ========================================
+void carregarCalibracao() {
+  prefs.begin("calib", true);
+  lSeco = prefs.getInt("seco", L_SECO_PADRAO);
+  lSat = prefs.getInt("sat", L_SAT_PADRAO);
+  prefs.end();
+}
+
+void salvarCalibracao() {
+  prefs.begin("calib", false);
+  prefs.putInt("seco", lSeco);
+  prefs.putInt("sat", lSat);
+  prefs.end();
+}
+
+// ========================================
+//  EQUAÇÃO 1 - SATURAÇÃO RELATIVA DO SOLO
+// ========================================
+// Leitura no extremo da escala (0 ou 4095) = circuito aberto ou em curto -> falha.
+bool leituraValida(int adc) {
+  return adc > 0 && adc < ADC_MAX;
+}
+
+float calcularSaturacao(int adc) {
+  if (lSat == lSeco) return 0.0f;
+  float s = (float)(adc - lSeco) / (float)(lSat - lSeco);
+  return constrain(s, 0.0f, 1.0f);
+}
+
+void lerSaturacao() {
+  leitura.adc = analogRead(PIN_HIGROMETRO);
+  leitura.sensorOk = leituraValida(leitura.adc) && (lSat != lSeco);
+  leitura.S = leitura.sensorOk ? calcularSaturacao(leitura.adc) : 0.0f;
+}
+
+// ========================================
+//  CONECTIVIDADE
+// ========================================
+bool garantirWiFi() {
+  if (WiFi.status() == WL_CONNECTED) return true;
+  String bufferTexto = "";
+  bufferTexto += "[WiFi] Conectando a " + String(WIFI_SSID) + "...\r\n";
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  uint32_t t0 = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < TIMEOUT_WIFI_MS) {
+    delay(250); // Fonte: software (espera entre tentativas)
+  }
+  bool ok = WiFi.status() == WL_CONNECTED;
+  if (ok) bufferTexto += "[WiFi] OK - IP " + WiFi.localIP().toString() + "\r\n";
+  else bufferTexto += "[WiFi] FALHA - sem conexao.\r\n";
+  Serial.print(bufferTexto);
+  return ok;
+}
+
+bool relogioSincronizado() {
+  return time(nullptr) > 1600000000L; // Fonte: software (qualquer data posterior a 2020 indica NTP sincronizado)
+}
+
+void sincronizarRelogio() {
+  configTime(FUSO_S, 0, "pool.ntp.org");
+  uint32_t t0 = millis();
+  while (!relogioSincronizado() && millis() - t0 < TIMEOUT_WIFI_MS) delay(250); // Fonte: software (espera NTP)
+  String bufferTexto = "";
+  if (relogioSincronizado()) bufferTexto += "[NTP] OK - relogio sincronizado.\r\n";
+  else bufferTexto += "[NTP] FALHA - relogio nao sincronizado.\r\n";
+  Serial.print(bufferTexto);
+}
+
+String formatarData(time_t t) {
+  struct tm *tm = localtime(&t);
+  char buf[11];
+  strftime(buf, sizeof(buf), "%Y-%m-%d", tm);
+  return String(buf);
+}
+
+// GET HTTPS genérico. Devolve o corpo (só com HTTP 200) ou "" em caso de erro.
+// "tag" identifica a API nas linhas do terminal. "urlExibida" é a URL impressa
+// (na OWM a chave é mascarada para não aparecer nos prints do TCC).
+String httpsGet(const char *tag, const String &url, const String &urlExibida, const char *chaveBndmet) {
+  String bufferTexto = "";
+  bufferTexto += String(tag) + " GET " + urlExibida + "\r\n";
+
+  WiFiClientSecure cliente;
+  cliente.setInsecure();
+  HTTPClient http;
+  http.setTimeout(TIMEOUT_HTTP_MS);
+  if (!http.begin(cliente, url)) {
+    bufferTexto += String(tag) + " FALHA - URL invalida.\r\n";
+    Serial.print(bufferTexto);
+    return "";
+  }
+  http.addHeader("Accept", "*/*"); // igual ao Postman
+  if (chaveBndmet && strlen(chaveBndmet) > 0) http.addHeader("x-api-key", chaveBndmet);
+
+  int codigo = http.GET();
+  String corpo = "";
+  if (codigo == 200) {
+    corpo = http.getString();
+  } else if (codigo > 0) {
+    bufferTexto += String(tag) + " FALHA - HTTP " + String(codigo) + ": " + http.getString().substring(0, 120) + "\r\n";
+    if (codigo == 401 || codigo == 403)
+      bufferTexto += String(tag) + " Dica: chave recusada. Confira a chave no secrets.h.\r\n";
+  } else {
+    bufferTexto += String(tag) + " FALHA - " + http.errorToString(codigo) + " (codigo " + String(codigo) + ")\r\n";
+  }
+  http.end();
+  Serial.print(bufferTexto);
+  return corpo;
+}
+
+// Texto do valor de um dia: "12.0 mm", "null (ausente)" ou "sem registro (ausente)".
+String textoDia(const String &data, bool existe, bool nulo, float mm) {
+  String t = data + ": ";
+  if (!existe) return t + "sem registro (ausente)";
+  if (nulo) return t + "null (ausente)";
+  return t + String(mm, 1) + " mm";
+}
+
+// ========================================
+//  EQUAÇÃO 2 - P48 (BNDMET) + P24 (OpenWeatherMap)
+// ========================================
+// P48: soma dos totais diários (I006) dos 2 últimos dias completos (anteontem e ontem).
+// Com HTTP 200, a API respondeu. Dia com null (ou ausente da lista) é dado AUSENTE: fica
+// fora da soma e é contado em p48DiasNulos; P48 passa a ser um mínimo (incompleto).
+// P48 só fica indisponível quando a consulta falha (HTTP/conexão/JSON).
+bool buscarP48(float &p48, int &diasNulos) {
+  const char *tag = "[BNDMET I006]";
+  if (!relogioSincronizado()) {
+    String bufferTexto = "";
+    bufferTexto += String(tag) + " PULADO - horario ainda nao sincronizado.\r\n";
+    Serial.print(bufferTexto);
+    return false;
+  }
+  time_t agora = time(nullptr);
+  String dAnteontem = formatarData(agora - DIAS_P48 * DIA_S);
+  String dOntem = formatarData(agora - DIA_S);
+  String url = String(BNDMET_URL) + "?dataInicio=" + dAnteontem + "&dataFinal=" + dOntem;
+  String corpo = httpsGet(tag, url, url, BNDMET_API_KEY);
+  if (corpo.isEmpty()) return false;
+
+  String bufferTexto = "";
+  JsonDocument doc;
+  DeserializationError erro = deserializeJson(doc, corpo);
+  if (erro) {
+    bufferTexto += String(tag) + " FALHA - JSON invalido: " + String(erro.c_str()) + "\r\n";
+    Serial.print(bufferTexto);
+    return false;
+  }
+  JsonArray dados = doc["data"]["data"].as<JsonArray>(); // pares [timestamp_ms, valor_ou_null]
+  if (dados.isNull()) {
+    bufferTexto += String(tag) + " FALHA - campo data.data ausente.\r\n";
+    Serial.print(bufferTexto);
+    return false;
+  }
+
+  // Associa cada par ao dia pela data do timestamp.
+  bool existeA = false, nuloA = false, existeO = false, nuloO = false;
+  float mmA = 0, mmO = 0;
+  for (JsonArray par : dados) {
+    if (par.size() < 2) continue;
+    String dia = formatarData((time_t)(par[0].as<long long>() / 1000LL));
+    bool nulo = par[1].isNull();
+    float mm = nulo ? 0.0f : par[1].as<float>(); // null: não entra na soma (ausente)
+    if (dia == dAnteontem) { existeA = true; nuloA = nulo; mmA = mm; }
+    if (dia == dOntem) { existeO = true; nuloO = nulo; mmO = mm; }
+  }
+  diasNulos = (!existeA || nuloA) + (!existeO || nuloO);
+  p48 = (existeA && !nuloA ? mmA : 0.0f) + (existeO && !nuloO ? mmO : 0.0f); // só dias com valor
+
+  bufferTexto += String(tag) + " anteontem " + textoDia(dAnteontem, existeA, nuloA, mmA) +
+                 " | ontem " + textoDia(dOntem, existeO, nuloO, mmO) + "\r\n";
+  if (diasNulos == 0)
+    bufferTexto += String(tag) + " OK - P48 = " + String(p48, 1) + " mm\r\n";
+  else
+    bufferTexto += String(tag) + " INCOMPLETO - P48 >= " + String(p48, 1) + " mm (" + String(diasNulos) +
+                   " dia(s) sem registro na estacao)\r\n";
+  Serial.print(bufferTexto);
+  return true;
+}
+
+// P24: soma de rain.3h (mm) nos 8 próximos blocos de 3 h. Bloco sem "rain" = 0 mm.
+bool buscarP24(float &p24) {
+  const char *tag = "[OWM 24h]";
+  String base = String(OWM_URL) + BLOCOS_P24 + "&appid=";
+  String corpo = httpsGet(tag, base + OWM_API_KEY, base + "***", nullptr);
+  if (corpo.isEmpty()) return false;
+
+  String bufferTexto = "";
+  JsonDocument doc;
+  DeserializationError erro = deserializeJson(doc, corpo);
+  if (erro) {
+    bufferTexto += String(tag) + " FALHA - JSON invalido: " + String(erro.c_str()) + "\r\n";
+    Serial.print(bufferTexto);
+    return false;
+  }
+  JsonArray lista = doc["list"].as<JsonArray>();
+  if (lista.isNull() || (int)lista.size() < BLOCOS_P24) {
+    bufferTexto += String(tag) + " FALHA - menos de " + String(BLOCOS_P24) + " blocos de 3 h na resposta.\r\n";
+    Serial.print(bufferTexto);
+    return false;
+  }
+
+  float soma = 0;
+  int n = 0;
+  bufferTexto += String(tag) + " mm por bloco de 3 h:";
+  for (JsonObject bloco : lista) {
+    float mm = bloco["rain"]["3h"] | 0.0f;
+    soma += mm;
+    bufferTexto += String(n == 0 ? " " : " | ") + String(mm, 1);
+    if (++n >= BLOCOS_P24) break;
+  }
+  bufferTexto += "\r\n";
+  p24 = soma;
+  bufferTexto += String(tag) + " OK - P24 = " + String(p24, 1) + " mm\r\n";
+  Serial.print(bufferTexto);
+  return true;
+}
+
+void obterChuva() {
+  leitura.p72Injetado = false;
+  leitura.p48DiasNulos = 0;
+  if (modoChuva == 1) { // teste: P72 injetado pelo comando "chuva <mm>"
+    leitura.p48Ok = leitura.p24Ok = true;
+    leitura.p48 = leitura.p24 = 0;
+    leitura.p72 = p72Teste;
+    leitura.p72Injetado = true;
+    return;
+  }
+  if (modoChuva == 2) { // teste: simula APIs fora do ar
+    leitura.p48Ok = leitura.p24Ok = false;
+    return;
+  }
+  if (modoChuva == 3) { // teste: dados incompletos (dia null no BNDMET); mínimo garantido = mm informado
+    leitura.p48Ok = leitura.p24Ok = true;
+    leitura.p48 = p72Teste;
+    leitura.p24 = 0;
+    leitura.p48DiasNulos = 1;
+    leitura.p72 = p72Teste;
+    leitura.p72Injetado = true;
+    return;
+  }
+  bool rede = garantirWiFi();
+  leitura.p48Ok = rede && buscarP48(leitura.p48, leitura.p48DiasNulos);
+  leitura.p24Ok = rede && buscarP24(leitura.p24);
+  if (leitura.p48Ok && leitura.p24Ok) leitura.p72 = leitura.p48 + leitura.p24; // Eq. 2
+}
+
+// Chuva completa: as duas parcelas obtidas e nenhum dia sem registro no BNDMET.
+bool chuvaCompleta() {
+  return leitura.p48Ok && leitura.p24Ok && leitura.p48DiasNulos == 0;
+}
+
+// Chuva incompleta: algo foi obtido, mas falta uma parcela ou um dia do BNDMET.
+bool chuvaIncompleta() {
+  return (leitura.p48Ok || leitura.p24Ok) && !chuvaCompleta();
+}
+
+// P72 mínimo garantido: soma do que foi obtido (a chuva ausente não é negativa).
+float p72Minimo() {
+  return (leitura.p48Ok ? leitura.p48 : 0.0f) + (leitura.p24Ok ? leitura.p24 : 0.0f);
+}
+
+// Chuva usada na regra: P72 completo, ou o mínimo garantido se ele já atinge P1.
+// Devolve false quando a regra deve tratar como "sem dados de chuva".
+bool chuvaParaRegra(float &p) {
+  if (chuvaCompleta()) { p = leitura.p72; return true; }
+  if (chuvaIncompleta() && p72Minimo() >= P1_MM) { p = p72Minimo(); return true; }
+  return false;
+}
+
+// ========================================
+//  EQUAÇÃO 3 + CONTINGÊNCIAS - NÍVEL DE ALERTA
+// ========================================
+Nivel nivelPorChuva(float p72) {
+  if (p72 >= P2_MM) return VERMELHO;
+  if (p72 >= P1_MM) return AMARELO;
+  return VERDE;
+}
+
+Nivel avaliarNivel(const Leitura &l) {
+  float p = 0;
+  bool chuva = chuvaParaRegra(p);
+  if (l.sensorOk && chuva) { // Eq. 3: limiar bilinear (S e P72 ao mesmo tempo)
+    if (l.S >= S2 && p >= P2_MM) return VERMELHO;
+    if (l.S >= S1 && p >= P1_MM) return AMARELO;
+    return VERDE;
+  }
+  if (!l.sensorOk && chuva) return nivelPorChuva(p); // higrômetro com falha: só chuva
+  if (l.sensorOk && !chuva) return (l.S >= S2) ? AMARELO : VERDE; // caso especial (S >= S2 sem dados de chuva)
+  // Sem higrômetro E sem chuva: a Eq. 3 não pode ser avaliada. Regra de projeto:
+  // AMARELO por precaução, mesma lógica do caso especial.
+  return AMARELO;
+}
+
+// ========================================
+//  ALERTA LOCAL (LEDs de nível e buzzer)
+// ========================================
+void acionarAlertaLocal(Nivel n) {
+  digitalWrite(PIN_LED_VERDE, n == VERDE);
+  digitalWrite(PIN_LED_AMARELO, n == AMARELO);
+  digitalWrite(PIN_LED_VERMELHO, n == VERMELHO);
+  // Buzzer só no VERMELHO. tone() só é chamado na mudança de estado.
+  static bool buzzerLigado = false;
+  bool ligar = (n == VERMELHO);
+  if (ligar && !buzzerLigado) tone(PIN_BUZZER, FREQ_BUZZER_HZ);
+  if (!ligar && buzzerLigado) noTone(PIN_BUZZER);
+  buzzerLigado = ligar;
+}
+
+// ========================================
+//  SUPERVISÃO DE ENERGIA
+// ========================================
+int lerTensaoBateriaMv() {
+  long adc = analogRead(PIN_BATERIA_ADC);
+  return VBAT_MIN_MV + (int)(adc * (VBAT_MAX_MV - VBAT_MIN_MV) / ADC_MAX);
+}
+
+EstadoBateria classificarBateria(const Energia &e) {
+  if (e.rede && e.recarregando && millis() - e.inicioRecargaMs >= T_CARGA_MS) return BAT_FALHA;
+  if (e.vbatMv < VBAT_CRITICA_MV) return BAT_CRITICA;
+  if (e.vbatMv < VBAT_BAIXA_MV) return BAT_BAIXA;
+  return BAT_NORMAL;
+}
+
+// Devolve true quando a rede ou o estado da bateria mudou (evento de energia).
+bool supervisionarEnergia() {
+  bool redeAnterior = energia.rede;
+  EstadoBateria estadoAnterior = energia.estado;
+
+  energia.rede = digitalRead(PIN_REDE) == HIGH;
+  energia.vbatMv = lerTensaoBateriaMv();
+
+  // Recarga: rede presente e bateria abaixo da tensão de fim de carga.
+  bool emRecarga = energia.rede && energia.vbatMv < VBAT_MAX_MV;
+  if (emRecarga && !energia.recarregando) energia.inicioRecargaMs = millis();
+  energia.recarregando = emRecarga;
+
+  energia.estado = classificarBateria(energia);
+  return energia.rede != redeAnterior || energia.estado != estadoAnterior;
+}
+
+void atualizarLedsEnergia() {
+  digitalWrite(PIN_LED_REDE, energia.rede);
+  digitalWrite(PIN_LED_BACKUP, !energia.rede);
+  bool pisca = (millis() / PISCA_MS) % 2;
+  switch (energia.estado) {
+    case BAT_FALHA: digitalWrite(PIN_LED_ATENCAO, HIGH); break; // aceso: substituir bateria
+    case BAT_BAIXA:
+    case BAT_CRITICA: digitalWrite(PIN_LED_ATENCAO, pisca); break; // piscando
+    default: digitalWrite(PIN_LED_ATENCAO, LOW);
+  }
+}
+
+String textoEnergia() {
+  String bufferTexto = "";
+  bufferTexto += "[ENERGIA] rede=" + String(energia.rede ? "PRESENTE" : "AUSENTE (backup)") +
+                 " | vbat=" + String(energia.vbatMv / 1000.0f, 2) + " V | bateria=" +
+                 textoBateria(energia.estado) + (energia.recarregando && energia.estado != BAT_FALHA ? " (recarregando)" : "") + "\r\n";
+  if (energia.recarregando && energia.estado != BAT_FALHA) {
+    uint32_t decorrido = (millis() - energia.inicioRecargaMs) / 1000;
+    bufferTexto += "[ENERGIA] recarga: " + String(decorrido) + " s de " + String(T_CARGA_MS / 1000) + " s ate FALHA\r\n";
+  }
+  return bufferTexto;
+}
+
+// ========================================
+//  ENVIO JSON AO BACKEND
+// ========================================
+String montarJson(const char *evento) {
+  JsonDocument doc;
+  doc["evento"] = evento; // "ciclo" ou "energia"
+  doc["nivel"] = textoNivel(leitura.nivel);
+  if (leitura.sensorOk) doc["S"] = serialized(String(leitura.S, 2)); else doc["S"] = nullptr;
+  if (leitura.p48Ok && !leitura.p72Injetado) doc["P48"] = leitura.p48; else doc["P48"] = nullptr;
+  if (leitura.p24Ok && !leitura.p72Injetado) doc["P24"] = leitura.p24; else doc["P24"] = nullptr;
+  if (chuvaCompleta()) doc["P72"] = leitura.p72; else doc["P72"] = nullptr;
+  if (chuvaIncompleta()) doc["p72Minimo"] = p72Minimo(); // limite inferior de P72
+  doc["p48DiasNulos"] = leitura.p48DiasNulos; // dias sem registro no BNDMET (P48 incompleto)
+  doc["rede"] = energia.rede;
+  doc["vbat"] = serialized(String(energia.vbatMv / 1000.0f, 2));
+  doc["estadoBateria"] = textoBateria(energia.estado);
+  doc["sensorIndisponivel"] = !leitura.sensorOk;
+  doc["p48Indisponivel"] = !leitura.p48Ok;
+  doc["p24Indisponivel"] = !leitura.p24Ok;
+  doc["chuvaIncompleta"] = chuvaIncompleta();
+  doc["semDadosChuva"] = !leitura.p48Ok && !leitura.p24Ok;
+  doc["p72Injetado"] = leitura.p72Injetado; // true = cenário de teste (comando "chuva")
+  doc["simulacao"] = true;
+  String saida;
+  serializeJson(doc, saida);
+  return saida;
+}
+
+void enviarLeitura(const char *evento) {
+  String json = montarJson(evento);
+  String bufferTexto = "";
+  bufferTexto += "[JSON] " + json + "\r\n";
+  Serial.print(bufferTexto);
+  if (!garantirWiFi()) return;
+  HTTPClient http;
+  http.setTimeout(TIMEOUT_HTTP_MS);
+  http.begin(String(API_BASE_URL) + API_LEITURAS);
+  http.addHeader("Content-Type", "application/json");
+  int codigo = http.POST(json);
+  http.end();
+  bufferTexto = "";
+  bufferTexto += "[BACKEND] POST " + String(API_BASE_URL) + API_LEITURAS + " -> " + String(codigo) + "\r\n";
+  Serial.print(bufferTexto);
+}
+
+// ========================================
+//  CICLO DE LEITURA (60 min / 10 min)
+// ========================================
+uint32_t intervaloAtual() {
+  bool chuva = (leitura.p48Ok && leitura.p48 > 0) || (leitura.p24Ok && leitura.p24 > 0) ||
+               (leitura.p72Injetado && leitura.p72 > 0);
+  return (chuva || leitura.nivel != VERDE) ? INTERVALO_EVENTO_MS : INTERVALO_NORMAL_MS;
+}
+
+String textoLeitura() {
+  String bufferTexto = "";
+  bufferTexto += "----------------------------------------\r\n";
+  if (leitura.sensorOk)
+    bufferTexto += "[SOLO]  ADC=" + String(leitura.adc) + " | S=" + String(leitura.S, 2) +
+                   " (S1=" + String(S1, 2) + ", S2=" + String(S2, 2) + ")\r\n";
+  else
+    bufferTexto += "[SOLO]  ADC=" + String(leitura.adc) + " | HIGROMETRO INDISPONIVEL\r\n";
+
+  if (leitura.p72Injetado && chuvaCompleta())
+    bufferTexto += "[CHUVA] P72=" + String(leitura.p72, 1) + " mm (INJETADO - TESTE)\r\n";
+  else if (chuvaCompleta())
+    bufferTexto += "[CHUVA] P48=" + String(leitura.p48, 1) + " + P24=" + String(leitura.p24, 1) +
+                   " = P72=" + String(leitura.p72, 1) + " mm (P1=" + String(P1_MM, 0) + ", P2=" + String(P2_MM, 0) + ")\r\n";
+  else if (chuvaIncompleta()) {
+    bufferTexto += "[CHUVA] DADOS DE CHUVA INCOMPLETOS - P72 >= " + String(p72Minimo(), 1) + " mm (minimo garantido)\r\n";
+    bufferTexto += "[CHUVA] P48: " + String(!leitura.p48Ok ? "indisponivel" :
+                   (leitura.p48DiasNulos > 0 ? String(leitura.p48, 1) + " mm, " + String(leitura.p48DiasNulos) + " dia(s) sem registro" :
+                   String(leitura.p48, 1) + " mm")) +
+                   " | P24: " + String(leitura.p24Ok ? String(leitura.p24, 1) + " mm" : "indisponivel") + "\r\n";
+    if (p72Minimo() < P1_MM) bufferTexto += "[CHUVA] Minimo abaixo de P1: tratado como sem dados de chuva\r\n";
+    if (leitura.p72Injetado) bufferTexto += "[CHUVA] (INJETADO - TESTE: dia sem registro simulado)\r\n";
+  } else
+    bufferTexto += "[CHUVA] SEM DADOS DE CHUVA (P48 e P24 indisponiveis)\r\n";
+
+  bufferTexto += "[NIVEL] " + String(textoNivel(leitura.nivel)) + "\r\n";
+  bufferTexto += textoEnergia();
+  bufferTexto += "[CICLO] proximo em " + String(intervaloAtual() / 1000) + " s (modo demonstracao x" + String(FATOR_DEMO) + ")\r\n";
+  return bufferTexto;
+}
+
+void executarCiclo() {
+  lerSaturacao();
+  obterChuva();
+  leitura.nivel = avaliarNivel(leitura);
+  acionarAlertaLocal(leitura.nivel);
+  Serial.print(textoLeitura());
+  enviarLeitura("ciclo");
+  ultimoCicloMs = millis();
+  cicloForcado = false;
+}
+
+// ========================================
+//  COMANDOS SERIAL (somente teste)
+// ========================================
+void cmdHelp() {
+  String bufferTexto = "";
+  bufferTexto += "Comandos:\r\n";
+  bufferTexto += "  status          - leitura atual do solo, chuva, nivel e energia\r\n";
+  bufferTexto += "  calibrar        - mostra L_seco e L_sat\r\n";
+  bufferTexto += "  calibrar seco   - grava a leitura atual como L_seco (solo seco)\r\n";
+  bufferTexto += "  calibrar sat    - grava a leitura atual como L_sat (solo saturado)\r\n";
+  bufferTexto += "  calibrar reset  - volta para 0 / 4095\r\n";
+  bufferTexto += "  chuva <mm>      - TESTE: injeta P72 em mm e roda um ciclo\r\n";
+  bufferTexto += "  chuva parcial <mm> - TESTE: dados incompletos (1 dia sem registro); minimo = mm\r\n";
+  bufferTexto += "  chuva na        - TESTE: simula APIs fora do ar (sem dados de chuva)\r\n";
+  bufferTexto += "  chuva off       - volta a usar BNDMET + OpenWeatherMap\r\n";
+  bufferTexto += "  help            - esta lista\r\n";
+  Serial.print(bufferTexto);
+}
+
+String textoModoChuva() {
+  return modoChuva == 1 ? "injetado" : (modoChuva == 2 ? "sem dados" : (modoChuva == 3 ? "incompleto injetado" : "APIs"));
+}
+
+void cmdStatus() {
+  String bufferTexto = textoLeitura(); // valores do último ciclo
+  int adc = analogRead(PIN_HIGROMETRO); // potenciômetro agora (o nível só muda no próximo ciclo)
+  bufferTexto += "[AGORA] ADC=" + String(adc) + " | S=" + String(calcularSaturacao(adc), 2) +
+                 (leituraValida(adc) ? "" : " (leitura invalida)") + "\r\n";
+  bufferTexto += "[CALIB] L_seco=" + String(lSeco) + " | L_sat=" + String(lSat) + " | modo chuva=" + textoModoChuva() + "\r\n";
+  Serial.print(bufferTexto);
+}
+
+void cmdCalibrar(const String &arg) {
+  int adc = analogRead(PIN_HIGROMETRO);
+  if (arg == "seco") lSeco = adc;
+  else if (arg == "sat") lSat = adc;
+  else if (arg == "reset") { lSeco = L_SECO_PADRAO; lSat = L_SAT_PADRAO; }
+  if (arg.length()) salvarCalibracao();
+  String bufferTexto = "";
+  bufferTexto += "[CALIB] L_seco=" + String(lSeco) + " | L_sat=" + String(lSat) + " | ADC atual=" + String(adc) + "\r\n";
+  if (lSeco == lSat) bufferTexto += "[CALIB] ATENCAO: L_seco = L_sat, a Eq. 1 nao pode ser calculada\r\n";
+  Serial.print(bufferTexto);
+}
+
+void cmdChuva(const String &arg) {
+  String bufferTexto = "";
+  if (arg == "off") modoChuva = 0;
+  else if (arg == "na") modoChuva = 2;
+  else if (arg.startsWith("parcial ") && arg.length() > 8 && (isDigit(arg[8]) || arg[8] == '.')) {
+    modoChuva = 3;
+    p72Teste = arg.substring(8).toFloat();
+  }
+  else if (arg.length() && (isDigit(arg[0]) || arg[0] == '.')) { modoChuva = 1; p72Teste = arg.toFloat(); }
+  else {
+    bufferTexto += "Uso: chuva <mm> | chuva parcial <mm> | chuva na | chuva off\r\n";
+    Serial.print(bufferTexto);
+    return;
+  }
+  bufferTexto += "[TESTE] modo chuva = " + textoModoChuva() + "\r\n";
+  Serial.print(bufferTexto);
+  cicloForcado = true;
+}
+
+void tratarComando(String linha) {
+  linha.trim();
+  linha.toLowerCase();
+  int esp = linha.indexOf(' ');
+  String cmd = esp < 0 ? linha : linha.substring(0, esp);
+  String arg = esp < 0 ? "" : linha.substring(esp + 1);
+  arg.trim();
+  if (cmd == "status") cmdStatus();
+  else if (cmd == "calibrar") cmdCalibrar(arg);
+  else if (cmd == "chuva") cmdChuva(arg);
+  else if (cmd == "help") cmdHelp();
+  else if (cmd.length()) {
+    String bufferTexto = "";
+    bufferTexto += "Comando desconhecido: '" + linha + "'. Digite help.\r\n";
+    Serial.print(bufferTexto);
+  }
+}
+
+void lerSerial() {
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (linhaSerial.length()) tratarComando(linhaSerial);
+      linhaSerial = "";
+    } else if (c >= 32 && c <= 126) { // só caracteres imprimíveis: descarta lixo da UART no boot
+      linhaSerial += c;
+    }
+  }
+}
+
+// ========================================
+//  SETUP E LOOP
+// ========================================
+void configurarPinos() {
+  const int saidas[] = {PIN_LED_VERDE, PIN_LED_AMARELO, PIN_LED_VERMELHO, PIN_BUZZER,
+                        PIN_LED_REDE, PIN_LED_BACKUP, PIN_LED_ATENCAO};
+  for (int p : saidas) { pinMode(p, OUTPUT); digitalWrite(p, LOW); }
+  pinMode(PIN_REDE, INPUT);
+  analogReadResolution(12); // Fonte: espressif_esp32 (ADC de 12 bits)
+}
+
+void setup() {
+  Serial.begin(BAUD);
+  delay(500); // Fonte: software (estabiliza a serial)
+  String bufferTexto = "";
+  bufferTexto += "\r\n=== Alerta de barragem v3 (Wokwi / ESP32) - SIMULACAO ===\r\n";
+  bufferTexto += "Modo demonstracao: tempos divididos por " + String(FATOR_DEMO) + "\r\n";
+  Serial.print(bufferTexto);
+  configurarPinos();
+  carregarCalibracao();
+  supervisionarEnergia();
+  atualizarLedsEnergia();
+  if (garantirWiFi()) sincronizarRelogio();
+  cmdHelp();
+}
+
+void loop() {
+  lerSerial();
+  if (supervisionarEnergia()) { // evento de energia: informa na hora
+    Serial.print(textoEnergia());
+    enviarLeitura("energia");
+  }
+  atualizarLedsEnergia();
+  if (cicloForcado || millis() - ultimoCicloMs >= intervaloAtual()) executarCiclo();
+  delay(20); // Fonte: software (alivia a CPU do simulador)
+}
+\end{lstlisting}
+
+\chapter{Código-fonte do \textit{backend} e do banco de dados}
+\label{apendice:backend}
+
+\section*{\texttt{docker-compose.yml}}
+\addcontentsline{toc}{section}{docker-compose.yml}
+\begin{lstlisting}[language={}]
+services:
+  # -- Banco de dados PostgreSQL ----------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: bndmet-postgres
+    environment:
+      POSTGRES_DB: bndmet
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha123
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d/   # roda 01-schema.sql na 1a subida
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d bndmet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -- Adminer - interface web para ver as tabelas ------------------------------
+  adminer:
+    image: adminer:latest
+    container_name: bndmet-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+  # -- Backend Node.js ----------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bndmet-backend
+    ports:
+      - "3001:3001"
+    environment:
+      TZ: UTC
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: "postgresql://admin:senha123@postgres:5432/bndmet?schema=public"
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: bndmet-network
+\end{lstlisting}
+
+\section*{\texttt{database/init/01-schema.sql}}
+\addcontentsline{toc}{section}{database/init/01-schema.sql}
+\begin{lstlisting}[language=SQL]
+-- database > init > 01-schema.sql
+-- Versão v3-simples: 4 tabelas, PostgreSQL simples.
+-- Executado automaticamente pelo container postgres na primeira subida
+-- (pasta montada em /docker-entrypoint-initdb.d). Igual ao prisma/schema.prisma.
+
+SET timezone = 'UTC';
+ALTER DATABASE bndmet SET timezone = 'UTC';
+
+-- Leituras enviadas pelo dispositivo (POST /leituras)
+CREATE TABLE IF NOT EXISTS leituras (
+    id                   SERIAL PRIMARY KEY,
+    criado_em            TIMESTAMPTZ(6) NOT NULL DEFAULT now(),
+    evento               VARCHAR(10)  NOT NULL DEFAULT 'ciclo',   -- ciclo | energia
+    nivel                VARCHAR(10)  NOT NULL,                   -- VERDE | AMARELO | VERMELHO
+    s                    DECIMAL(4,2),                            -- saturação relativa 0-1
+    p48                  DECIMAL(7,2),                            -- mm (BNDMET)
+    p24                  DECIMAL(7,2),                            -- mm (OpenWeatherMap)
+    p72                  DECIMAL(7,2),                            -- mm (P48 + P24); nulo se incompleto
+    p72_minimo           DECIMAL(7,2),                            -- mm, mínimo garantido (só se incompleto)
+    p48_dias_nulos       SMALLINT NOT NULL DEFAULT 0,             -- dias sem registro no BNDMET
+    rede                 BOOLEAN,                                 -- nulo no protótipo físico
+    vbat                 DECIMAL(4,2),                            -- V
+    estado_bateria       VARCHAR(10),                             -- NORMAL | BAIXA | CRITICA | FALHA
+    sensor_indisponivel  BOOLEAN NOT NULL DEFAULT false,
+    p48_indisponivel     BOOLEAN NOT NULL DEFAULT false,
+    p24_indisponivel     BOOLEAN NOT NULL DEFAULT false,
+    chuva_incompleta     BOOLEAN NOT NULL DEFAULT false,          -- falta uma parcela ou um dia
+    sem_dados_chuva      BOOLEAN NOT NULL DEFAULT false,          -- nenhuma parcela obtida
+    p72_injetado         BOOLEAN NOT NULL DEFAULT false,          -- cenário de teste (comando "chuva")
+    simulacao            BOOLEAN NOT NULL DEFAULT false
+);
+CREATE INDEX IF NOT EXISTS leituras_criado_em_idx ON leituras (criado_em);
+
+-- Moradores cadastrados para receber alertas
+CREATE TABLE IF NOT EXISTS usuarios_basicos (
+    id          SERIAL PRIMARY KEY,
+    nome        VARCHAR(100) NOT NULL,
+    email       VARCHAR(255) NOT NULL UNIQUE,
+    telefone    VARCHAR(20),
+    localidade  VARCHAR(100),
+    ativo       BOOLEAN NOT NULL DEFAULT true,
+    criado_em   TIMESTAMPTZ(6) NOT NULL DEFAULT now()
+);
+
+-- Administradores do painel
+CREATE TABLE IF NOT EXISTS administradores (
+    id            SERIAL PRIMARY KEY,
+    nome          VARCHAR(100) NOT NULL,
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    senha_hash    VARCHAR(255) NOT NULL,
+    ativo         BOOLEAN NOT NULL DEFAULT true,
+    ultimo_login  TIMESTAMPTZ(6),
+    criado_em     TIMESTAMPTZ(6) NOT NULL DEFAULT now()
+);
+
+-- Eventos: nível subiu, energia e alertas enviados pelo administrador
+CREATE TABLE IF NOT EXISTS eventos (
+    id                SERIAL PRIMARY KEY,
+    criado_em         TIMESTAMPTZ(6) NOT NULL DEFAULT now(),
+    tipo              VARCHAR(20) NOT NULL,                       -- NIVEL_SUBIU | ENERGIA | ALERTA_MANUAL
+    nivel             VARCHAR(10),
+    descricao         TEXT NOT NULL,
+    leitura_id        INTEGER REFERENCES leituras(id) ON DELETE SET NULL,
+    administrador_id  INTEGER REFERENCES administradores(id) ON DELETE SET NULL,
+    destinatarios     INTEGER NOT NULL DEFAULT 0,
+    enviados          INTEGER NOT NULL DEFAULT 0,
+    falhas            INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS eventos_criado_em_idx ON eventos (criado_em);
+
+-- Administrador padrão (senha: admin123 - troque depois do primeiro acesso)
+INSERT INTO administradores (nome, email, senha_hash) VALUES
+('Administrador', 'admin@bndmet.com',
+ '$2a$10$ClVatGSU.R9nFJzbHBv1N.MMHuPV04mEslmUJSmQFytyXuZxJTHgC')
+ON CONFLICT (email) DO NOTHING;
+\end{lstlisting}
+
+\section*{\texttt{database/atualizacoes/01-chuva-incompleta.sql}}
+\addcontentsline{toc}{section}{database/atualizacoes/01-chuva-incompleta.sql}
+\begin{lstlisting}[language=SQL]
+-- database > atualizacoes > 01-chuva-incompleta.sql
+-- Para um banco que JÁ existia antes destes campos (o 01-schema.sql novo já os cria).
+-- Pode rodar mais de uma vez sem erro.
+--   docker exec -i bndmet-postgres psql -U admin -d bndmet < database/atualizacoes/01-chuva-incompleta.sql
+
+ALTER TABLE leituras ADD COLUMN IF NOT EXISTS p72_minimo       DECIMAL(7,2);
+ALTER TABLE leituras ADD COLUMN IF NOT EXISTS p48_dias_nulos   SMALLINT NOT NULL DEFAULT 0;
+ALTER TABLE leituras ADD COLUMN IF NOT EXISTS chuva_incompleta BOOLEAN  NOT NULL DEFAULT false;
+\end{lstlisting}
+
+\section*{\texttt{backend/prisma/schema.prisma}}
+\addcontentsline{toc}{section}{backend/prisma/schema.prisma}
+\begin{lstlisting}[language=Prisma]
+// backend > prisma > schema.prisma
+// Versão v3-simples: 4 tabelas. Deve ficar igual a database/init/01-schema.sql.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Uma linha por JSON recebido do dispositivo (POST /leituras).
+// Campos de energia ficam nulos quando a leitura vem do protótipo físico.
+model Leitura {
+  id                 Int      @id @default(autoincrement())
+  criadoEm           DateTime @default(now()) @map("criado_em") @db.Timestamptz(6)
+  evento             String   @default("ciclo") @db.VarChar(10) // "ciclo" | "energia"
+  nivel              String   @db.VarChar(10) // "VERDE" | "AMARELO" | "VERMELHO"
+  s                  Decimal? @db.Decimal(4, 2) // saturação relativa (0-1)
+  p48                Decimal? @db.Decimal(7, 2) // mm, BNDMET
+  p24                Decimal? @db.Decimal(7, 2) // mm, OpenWeatherMap
+  p72                Decimal? @db.Decimal(7, 2) // mm, P48 + P24 (nulo se incompleto)
+  p72Minimo          Decimal? @map("p72_minimo") @db.Decimal(7, 2) // mm, mínimo garantido (só se incompleto)
+  p48DiasNulos       Int      @default(0) @map("p48_dias_nulos") @db.SmallInt // dias sem registro no BNDMET
+  rede               Boolean?
+  vbat               Decimal? @db.Decimal(4, 2) // V
+  estadoBateria      String?  @map("estado_bateria") @db.VarChar(10) // NORMAL | BAIXA | CRITICA | FALHA
+  sensorIndisponivel Boolean  @default(false) @map("sensor_indisponivel")
+  p48Indisponivel    Boolean  @default(false) @map("p48_indisponivel")
+  p24Indisponivel    Boolean  @default(false) @map("p24_indisponivel")
+  chuvaIncompleta    Boolean  @default(false) @map("chuva_incompleta") // falta uma parcela ou um dia
+  semDadosChuva      Boolean  @default(false) @map("sem_dados_chuva") // nenhuma parcela obtida
+  p72Injetado        Boolean  @default(false) @map("p72_injetado")
+  simulacao          Boolean  @default(false)
+  eventos            Evento[]
+
+  @@index([criadoEm])
+  @@map("leituras")
+}
+
+// Registro de tudo o que gera aviso: nível subiu, mudança de energia e
+// e-mails de alerta enviados pelo administrador.
+model Evento {
+  id              Int            @id @default(autoincrement())
+  criadoEm        DateTime       @default(now()) @map("criado_em") @db.Timestamptz(6)
+  tipo            String         @db.VarChar(20) // NIVEL_SUBIU | ENERGIA | ALERTA_MANUAL
+  nivel           String?        @db.VarChar(10)
+  descricao       String
+  leituraId       Int?           @map("leitura_id")
+  administradorId Int?           @map("administrador_id")
+  destinatarios   Int            @default(0)
+  enviados        Int            @default(0)
+  falhas          Int            @default(0)
+  leitura         Leitura?       @relation(fields: [leituraId], references: [id], onDelete: SetNull)
+  administrador   Administrador? @relation(fields: [administradorId], references: [id], onDelete: SetNull)
+
+  @@index([criadoEm])
+  @@map("eventos")
+}
+
+// Moradores cadastrados pela landing page ("Quero receber alertas").
+model UsuarioBasico {
+  id         Int      @id @default(autoincrement())
+  nome       String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(255)
+  telefone   String?  @db.VarChar(20)
+  localidade String?  @db.VarChar(100)
+  ativo      Boolean  @default(true)
+  criadoEm   DateTime @default(now()) @map("criado_em") @db.Timestamptz(6)
+
+  @@map("usuarios_basicos")
+}
+
+// Quem faz login no painel e envia os alertas.
+model Administrador {
+  id          Int       @id @default(autoincrement())
+  nome        String    @db.VarChar(100)
+  email       String    @unique @db.VarChar(255)
+  senhaHash   String    @map("senha_hash") @db.VarChar(255)
+  ativo       Boolean   @default(true)
+  ultimoLogin DateTime? @map("ultimo_login") @db.Timestamptz(6)
+  criadoEm    DateTime  @default(now()) @map("criado_em") @db.Timestamptz(6)
+  eventos     Evento[]
+
+  @@map("administradores")
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/server.ts}}
+\addcontentsline{toc}{section}{backend/src/server.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > server.ts
+import { env } from './config/env';
+import app from './app';
+import prisma from './config/database';
+import { EmailService } from './services/emailService';
+
+async function iniciar() {
+  try {
+    await prisma.$connect();
+    console.log(' Banco de dados conectado');
+
+    EmailService.init();
+    const smtpOk = await EmailService.verificarConexao();
+    console.log(` E-mail: ${smtpOk ? 'SMTP conectado' : 'modo simulação (só console)'}`);
+
+    app.listen(env.PORT, '0.0.0.0', () => {
+      console.log(` API rodando em http://localhost:${env.PORT}`);
+    });
+  } catch (erro) {
+    console.error(' Erro ao iniciar o servidor:', erro);
+    process.exit(1);
+  }
+}
+
+async function encerrar() {
+  await EmailService.fechar();
+  await prisma.$disconnect();
+  process.exit(0);
+}
+
+process.on('SIGINT', encerrar);
+process.on('SIGTERM', encerrar);
+
+iniciar();
+\end{lstlisting}
+
+\section*{\texttt{backend/src/app.ts}}
+\addcontentsline{toc}{section}{backend/src/app.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > app.ts
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import { corsOptions, errorHandler, notFoundHandler, requestLogger } from './middleware';
+import routes from './routes';
+
+const app = express();
+
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '100kb' }));
+app.use(requestLogger);
+
+// As rotas respondem na raiz (o firmware posta em API_BASE_URL + "/leituras")
+// e também em /api (prefixo usado pelo frontend).
+app.use('/', routes);
+app.use('/api', routes);
+
+app.get('/', (req, res) => {
+  res.json({
+    nome: 'API do Sistema de Monitoramento de Barragem (v3-simples)',
+    rotas: [
+      'POST /leituras',
+      'GET /leituras/ultima',
+      'GET /leituras?inicio=&fim=',
+      'POST /usuarios',
+      'POST /auth/login',
+      'POST /auth/logout',
+      'GET /usuarios [admin]',
+      'GET /alertas/modelos [admin]',
+      'POST /alertas [admin]',
+      'GET /eventos [admin]',
+      'GET /health',
+    ],
+  });
+});
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+export default app;
+\end{lstlisting}
+
+\section*{\texttt{backend/src/config/env.ts}}
+\addcontentsline{toc}{section}{backend/src/config/env.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > config > env.ts
+import dotenv from 'dotenv';
+
+dotenv.config();
+process.env.TZ = 'UTC';
+
+export const env = {
+  PORT: Number(process.env.PORT || 3001),
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  DATABASE_URL: process.env.DATABASE_URL!,
+
+  // Login do administrador
+  JWT_SECRET: process.env.JWT_SECRET!,
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
+
+  // Frontend autorizado (CORS)
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+
+  // E-mail (sem SMTP configurado, o envio é só registrado no console)
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: parseInt(process.env.SMTP_PORT || '587'),
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS,
+};
+
+for (const nome of ['DATABASE_URL', 'JWT_SECRET']) {
+  if (!process.env[nome]) {
+    throw new Error(`Variável de ambiente obrigatória não definida: ${nome}`);
+  }
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/config/database.ts}}
+\addcontentsline{toc}{section}{backend/src/config/database.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > config > database.ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export default prisma;
+\end{lstlisting}
+
+\section*{\texttt{backend/src/config/niveis.ts}}
+\addcontentsline{toc}{section}{backend/src/config/niveis.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > config > niveis.ts
+// Os três níveis de alerta do modelo (Eq. 3) e sua ordem.
+export const NIVEIS = ['VERDE', 'AMARELO', 'VERMELHO'] as const;
+export type Nivel = (typeof NIVEIS)[number];
+export const ORDEM_NIVEL: Record<string, number> = { VERDE: 0, AMARELO: 1, VERMELHO: 2 };
+\end{lstlisting}
+
+\section*{\texttt{backend/src/middleware/index.ts}}
+\addcontentsline{toc}{section}{backend/src/middleware/index.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > middleware > index.ts
+import { Request, Response, NextFunction } from 'express';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import { env } from '../config/env';
+
+export const corsOptions = {
+  origin: env.CORS_ORIGIN,
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Limita tentativas de login (10 a cada 15 min por IP)
+export const limiteLogin = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Muitas tentativas de login. Tente de novo em 15 minutos.' },
+});
+
+export const requestLogger = morgan(':method :url :status - :response-time ms');
+
+export function notFoundHandler(req: Request, res: Response) {
+  res.status(404).json({ success: false, error: `Rota ${req.method} ${req.path} não encontrada` });
+}
+
+export function errorHandler(err: any, req: Request, res: Response, _next: NextFunction) {
+  console.error('Erro:', err);
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({ success: false, error: err.message || 'Erro interno do servidor' });
+}
+
+// Erro com código HTTP, usado pelos services para responder 400/401/404/409
+export class HttpError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+  }
+}
+
+// Envolve rotas async para que erros cheguem ao errorHandler
+export const rota =
+  (fn: (req: Request, res: Response) => Promise<unknown>) =>
+  (req: Request, res: Response, next: NextFunction) =>
+    fn(req, res).catch(next);
+\end{lstlisting}
+
+\section*{\texttt{backend/src/middleware/authMiddleware.ts}}
+\addcontentsline{toc}{section}{backend/src/middleware/authMiddleware.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > middleware > authMiddleware.ts
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
+
+export interface AdminToken {
+  id: number;
+  nome: string;
+  email: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      admin?: AdminToken;
+    }
+  }
+}
+
+// Só deixa passar quem enviou "Authorization: Bearer <token>" válido
+export function exigirAdmin(req: Request, res: Response, next: NextFunction) {
+  const cabecalho = req.headers.authorization || '';
+  const token = cabecalho.startsWith('Bearer ') ? cabecalho.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ success: false, error: 'Faça login como administrador.' });
+  }
+
+  try {
+    req.admin = jwt.verify(token, env.JWT_SECRET) as AdminToken;
+    next();
+  } catch {
+    return res.status(401).json({ success: false, error: 'Sessão expirada ou inválida. Faça login de novo.' });
+  }
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/routes/index.ts}}
+\addcontentsline{toc}{section}{backend/src/routes/index.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > routes > index.ts
+// Todas as rotas da API em um só lugar.
+//
+// Dispositivo (público):
+//   POST /leituras                 recebe o JSON do ESP32/ESP8266
+//   GET  /leituras/ultima          última leitura
+//   GET  /leituras?inicio=&fim=    histórico (ISO 8601; padrão: últimas 24 h)
+// Site:
+//   POST /usuarios                 cadastro do usuário básico (público)
+//   POST /auth/login               login do administrador
+//   POST /auth/logout              logout (o frontend descarta o token)
+//   GET  /usuarios                 lista de usuários básicos       [admin]
+//   GET  /alertas/modelos          mensagens-modelo preenchidas    [admin]
+//   POST /alertas                  envia e-mail VERDE/AMARELO/VERMELHO aos usuários básicos [admin]
+//   GET  /eventos?tipo=&limite=    nível subiu, energia e envios   [admin]
+//   GET  /health                   situação do servidor e do banco
+
+import { Router } from 'express';
+import prisma from '../config/database';
+import { limiteLogin, rota } from '../middleware';
+import { exigirAdmin } from '../middleware/authMiddleware';
+import { LeiturasService } from '../services/leiturasService';
+import { UsuariosService } from '../services/usuariosService';
+import { AuthService } from '../services/authService';
+import { EventosService } from '../services/eventosService';
+
+const router = Router();
+
+// -- Dispositivo ----------------------------------------
+
+router.post('/leituras', rota(async (req, res) => {
+  res.status(201).json({ success: true, data: await LeiturasService.salvar(req.body) });
+}));
+
+router.get('/leituras/ultima', rota(async (req, res) => {
+  res.json({ success: true, data: await LeiturasService.ultima() });
+}));
+
+router.get('/leituras', rota(async (req, res) => {
+  const { inicio, fim, limite } = req.query as Record<string, string>;
+  res.json({ success: true, data: await LeiturasService.listar(inicio, fim, limite) });
+}));
+
+// -- Usuários e login ----------------------------------------
+
+router.post('/usuarios', rota(async (req, res) => {
+  res.status(201).json({ success: true, data: await UsuariosService.cadastrar(req.body) });
+}));
+
+router.post('/auth/login', limiteLogin, rota(async (req, res) => {
+  res.json({ success: true, data: await AuthService.login(req.body) });
+}));
+
+router.post('/auth/logout', (req, res) => {
+  res.json({ success: true, message: 'Sessão encerrada. Descarte o token no navegador.' });
+});
+
+router.get('/usuarios', exigirAdmin, rota(async (req, res) => {
+  res.json({ success: true, data: await UsuariosService.listar() });
+}));
+
+// -- Alertas e eventos ----------------------------------------
+
+router.get('/alertas/modelos', exigirAdmin, rota(async (req, res) => {
+  res.json({ success: true, data: await EventosService.modelos() });
+}));
+
+router.post('/alertas', exigirAdmin, rota(async (req, res) => {
+  res.status(201).json({ success: true, data: await EventosService.alertaManual(req.admin!, req.body) });
+}));
+
+router.get('/eventos', exigirAdmin, rota(async (req, res) => {
+  const { limite, tipo } = req.query as Record<string, string>;
+  res.json({ success: true, data: await EventosService.listar(limite, tipo) });
+}));
+
+// -- Saúde ----------------------------------------
+
+router.get('/health', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ success: true, status: 'ok', banco: 'conectado', hora: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ success: false, status: 'erro', banco: 'desconectado' });
+  }
+});
+
+export default router;
+\end{lstlisting}
+
+\section*{\texttt{backend/src/services/authService.ts}}
+\addcontentsline{toc}{section}{backend/src/services/authService.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > services > authService.ts
+// Login do administrador. O token JWT vale pelo tempo de JWT_EXPIRES_IN;
+// no logout o frontend apenas descarta o token.
+
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import prisma from '../config/database';
+import { env } from '../config/env';
+import { HttpError } from '../middleware';
+import { AdminToken } from '../middleware/authMiddleware';
+
+export class AuthService {
+  static async login(corpo: any) {
+    const email = String(corpo?.email || '').trim().toLowerCase();
+    const senha = String(corpo?.senha || '');
+    if (!email || !senha) throw new HttpError(400, 'Informe e-mail e senha.');
+
+    const admin = await prisma.administrador.findUnique({ where: { email } });
+    const senhaOk = admin && admin.ativo && (await bcrypt.compare(senha, admin.senhaHash));
+    if (!senhaOk) throw new HttpError(401, 'E-mail ou senha inválidos.');
+
+    await prisma.administrador.update({ where: { id: admin.id }, data: { ultimoLogin: new Date() } });
+
+    const payload: AdminToken = { id: admin.id, nome: admin.nome, email: admin.email };
+    const token = jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN } as jwt.SignOptions);
+
+    return { token, administrador: payload };
+  }
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/services/usuariosService.ts}}
+\addcontentsline{toc}{section}{backend/src/services/usuariosService.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > services > usuariosService.ts
+// Cadastro público do usuário básico ("Quero receber alertas") e lista para o admin.
+
+import prisma from '../config/database';
+import { HttpError } from '../middleware';
+
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function texto(valor: any, max: number): string | null {
+  if (valor === undefined || valor === null) return null;
+  const t = String(valor).trim();
+  if (t.length > max) throw new HttpError(400, `Texto maior que ${max} caracteres.`);
+  return t || null;
+}
+
+export class UsuariosService {
+  static async cadastrar(corpo: any) {
+    const nome = texto(corpo?.nome, 100);
+    const email = texto(corpo?.email, 255)?.toLowerCase();
+    if (!nome) throw new HttpError(400, 'Informe o nome.');
+    if (!email || !EMAIL_VALIDO.test(email)) throw new HttpError(400, 'Informe um e-mail válido.');
+
+    const existente = await prisma.usuarioBasico.findUnique({ where: { email } });
+    if (existente) throw new HttpError(409, 'Este e-mail já está cadastrado.');
+
+    const u = await prisma.usuarioBasico.create({
+      data: {
+        nome,
+        email,
+        telefone: texto(corpo.telefone, 20),
+        localidade: texto(corpo.localidade, 100),
+      },
+    });
+    return { id: u.id, nome: u.nome, email: u.email };
+  }
+
+  static async listar() {
+    const lista = await prisma.usuarioBasico.findMany({ orderBy: { nome: 'asc' } });
+    return lista.map((u) => ({
+      id: u.id,
+      nome: u.nome,
+      email: u.email,
+      telefone: u.telefone,
+      localidade: u.localidade,
+      ativo: u.ativo,
+      criadoEm: u.criadoEm.toISOString(),
+    }));
+  }
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/services/leiturasService.ts}}
+\addcontentsline{toc}{section}{backend/src/services/leiturasService.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > services > leiturasService.ts
+// Recebe o JSON do dispositivo, grava a leitura e verifica se houve
+// "nível subiu" ou evento de energia (que geram e-mail automático aos administradores).
+
+import { Leitura } from '@prisma/client';
+import prisma from '../config/database';
+import { HttpError } from '../middleware';
+import { EventosService } from './eventosService';
+import { NIVEIS, Nivel, ORDEM_NIVEL } from '../config/niveis';
+
+
+const ESTADOS_BATERIA = ['NORMAL', 'BAIXA', 'CRITICA', 'FALHA'];
+const LIMITE_PADRAO = 500;
+const LIMITE_MAXIMO = 5000;
+
+// -- Validação do JSON enviado pelo firmware ---------------------------------
+
+function numeroOuNulo(corpo: any, campo: string, min: number, max: number): number | null {
+  const valor = corpo[campo] ?? corpo[campo.toLowerCase()];
+  if (valor === undefined || valor === null) return null;
+  const n = Number(valor);
+  if (!Number.isFinite(n) || n < min || n > max) {
+    throw new HttpError(400, `Campo "${campo}" inválido: esperado número entre ${min} e ${max} ou null.`);
+  }
+  return n;
+}
+
+function booleano(corpo: any, campo: string): boolean {
+  const valor = corpo[campo];
+  if (valor === undefined || valor === null) return false;
+  if (typeof valor !== 'boolean') throw new HttpError(400, `Campo "${campo}" deve ser true ou false.`);
+  return valor;
+}
+
+function inteiro(corpo: any, campo: string, min: number, max: number): number {
+  const valor = corpo[campo];
+  if (valor === undefined || valor === null) return 0;
+  if (!Number.isInteger(valor) || valor < min || valor > max) {
+    throw new HttpError(400, `Campo "${campo}" inválido: esperado inteiro entre ${min} e ${max}.`);
+  }
+  return valor;
+}
+
+export function validarLeitura(corpo: any) {
+  if (!corpo || typeof corpo !== 'object') throw new HttpError(400, 'Corpo JSON ausente.');
+
+  const nivel = String(corpo.nivel || '').toUpperCase();
+  if (!NIVEIS.includes(nivel as Nivel)) {
+    throw new HttpError(400, 'Campo "nivel" obrigatório: VERDE, AMARELO ou VERMELHO.');
+  }
+
+  const evento = corpo.evento ?? 'ciclo';
+  if (evento !== 'ciclo' && evento !== 'energia') {
+    throw new HttpError(400, 'Campo "evento" deve ser "ciclo" ou "energia".');
+  }
+
+  let estadoBateria: string | null = null;
+  if (corpo.estadoBateria !== undefined && corpo.estadoBateria !== null) {
+    estadoBateria = String(corpo.estadoBateria).toUpperCase();
+    if (!ESTADOS_BATERIA.includes(estadoBateria)) {
+      throw new HttpError(400, 'Campo "estadoBateria" deve ser NORMAL, BAIXA, CRITICA ou FALHA.');
+    }
+  }
+
+  let rede: boolean | null = null;
+  if (corpo.rede !== undefined && corpo.rede !== null) {
+    if (typeof corpo.rede !== 'boolean') throw new HttpError(400, 'Campo "rede" deve ser true ou false.');
+    rede = corpo.rede;
+  }
+
+  // Dados de chuva incompletos (falta uma parcela ou um dia do BNDMET): o firmware
+  // manda P72 = null e o mínimo garantido em p72Minimo. Fora desse caso, p72Minimo
+  // não tem significado e é descartado.
+  const chuvaIncompleta = booleano(corpo, 'chuvaIncompleta');
+  const p72Minimo = numeroOuNulo(corpo, 'p72Minimo', 0, 10000);
+
+  return {
+    evento,
+    nivel,
+    s: numeroOuNulo(corpo, 'S', 0, 1),
+    p48: numeroOuNulo(corpo, 'P48', 0, 10000),
+    p24: numeroOuNulo(corpo, 'P24', 0, 10000),
+    p72: numeroOuNulo(corpo, 'P72', 0, 10000),
+    p72Minimo: chuvaIncompleta ? p72Minimo : null,
+    p48DiasNulos: inteiro(corpo, 'p48DiasNulos', 0, 31),
+    rede,
+    vbat: numeroOuNulo(corpo, 'vbat', 0, 10),
+    estadoBateria,
+    sensorIndisponivel: booleano(corpo, 'sensorIndisponivel'),
+    p48Indisponivel: booleano(corpo, 'p48Indisponivel'),
+    p24Indisponivel: booleano(corpo, 'p24Indisponivel'),
+    chuvaIncompleta,
+    semDadosChuva: booleano(corpo, 'semDadosChuva'),
+    p72Injetado: booleano(corpo, 'p72Injetado'),
+    simulacao: booleano(corpo, 'simulacao'),
+  };
+}
+
+// -- Formato de saída (Decimal do Prisma -> número) --------------------------
+
+const num = (d: any) => (d === null || d === undefined ? null : Number(d));
+
+export function formatarLeitura(l: Leitura) {
+  return {
+    id: l.id,
+    criadoEm: l.criadoEm.toISOString(),
+    evento: l.evento,
+    nivel: l.nivel,
+    S: num(l.s),
+    P48: num(l.p48),
+    P24: num(l.p24),
+    P72: num(l.p72),
+    p72Minimo: num(l.p72Minimo),
+    p48DiasNulos: l.p48DiasNulos,
+    rede: l.rede,
+    vbat: num(l.vbat),
+    estadoBateria: l.estadoBateria,
+    sensorIndisponivel: l.sensorIndisponivel,
+    p48Indisponivel: l.p48Indisponivel,
+    p24Indisponivel: l.p24Indisponivel,
+    chuvaIncompleta: l.chuvaIncompleta,
+    semDadosChuva: l.semDadosChuva,
+    p72Injetado: l.p72Injetado,
+    simulacao: l.simulacao,
+  };
+}
+
+// -- Regras de evento ----------------------------------------
+
+export function nivelSubiu(anterior: Leitura | null, nova: Leitura): boolean {
+  const antes = anterior ? ORDEM_NIVEL[anterior.nivel] : ORDEM_NIVEL.VERDE;
+  return ORDEM_NIVEL[nova.nivel] > antes;
+}
+
+// Lista as mudanças de energia entre a leitura anterior e a nova.
+// Se o firmware marcou evento "energia" mas não há leitura anterior para
+// comparar, descreve o estado atual.
+export function mudancasEnergia(anterior: Leitura | null, nova: Leitura): string[] {
+  const mudancas: string[] = [];
+  const v = nova.vbat !== null ? ` (${Number(nova.vbat).toFixed(2).replace('.', ',')} V)` : '';
+  const comparar = anterior !== null;
+
+  if (nova.rede !== null && (!comparar || anterior.rede !== nova.rede)) {
+    if (nova.rede === false) mudancas.push('Falta de rede elétrica: dispositivo operando na bateria.');
+    else if (comparar && anterior.rede === false) mudancas.push('Rede elétrica restabelecida.');
+  }
+
+  if (nova.estadoBateria !== null && (!comparar || anterior.estadoBateria !== nova.estadoBateria)) {
+    const textos: Record<string, string> = {
+      BAIXA: `Bateria baixa${v}.`,
+      CRITICA: `Bateria crítica${v}: próxima da tensão de corte.`,
+      FALHA: 'Falha na bateria: não completou a recarga no tempo previsto. Substituir.',
+      // "voltou ao normal" só quando a anterior tinha estado conhecido e diferente
+      NORMAL: comparar && anterior.estadoBateria !== null ? `Bateria voltou ao estado normal${v}.` : '',
+    };
+    if (textos[nova.estadoBateria]) mudancas.push(textos[nova.estadoBateria]);
+  }
+
+  return mudancas;
+}
+
+// -- Operações ----------------------------------------
+
+export class LeiturasService {
+  static async salvar(corpo: any) {
+    const dados = validarLeitura(corpo);
+    const anterior = await prisma.leitura.findFirst({ orderBy: { id: 'desc' } });
+    const nova = await prisma.leitura.create({ data: dados });
+
+    const eventos: { tipo: string; descricao: string }[] = [];
+
+    if (nivelSubiu(anterior, nova)) {
+      const de = anterior ? anterior.nivel : 'VERDE';
+      const ev = await EventosService.nivelSubiu(de, nova);
+      eventos.push({ tipo: ev.tipo, descricao: ev.descricao });
+    }
+
+    const energia = mudancasEnergia(anterior, nova);
+    if (energia.length > 0) {
+      const ev = await EventosService.energia(energia, nova);
+      eventos.push({ tipo: ev.tipo, descricao: ev.descricao });
+    }
+
+    return { leitura: formatarLeitura(nova), eventos };
+  }
+
+  static async ultima() {
+    const l = await prisma.leitura.findFirst({ orderBy: { id: 'desc' } });
+    if (!l) throw new HttpError(404, 'Nenhuma leitura recebida ainda.');
+    return formatarLeitura(l);
+  }
+
+  // inicio/fim em ISO 8601 (ex.: 2026-10-03T00:00:00Z). Sem datas: últimas 24 h.
+  static async listar(inicio?: string, fim?: string, limite?: string) {
+    const dataFim = fim ? new Date(fim) : new Date();
+    const dataInicio = inicio ? new Date(inicio) : new Date(dataFim.getTime() - 24 * 3600 * 1000);
+    if (isNaN(dataInicio.getTime()) || isNaN(dataFim.getTime())) {
+      throw new HttpError(400, 'Datas inválidas. Use ISO 8601, ex.: 2026-10-03T00:00:00Z');
+    }
+    if (dataInicio > dataFim) throw new HttpError(400, '"inicio" deve ser anterior a "fim".');
+
+    const take = Math.min(Number(limite) || LIMITE_PADRAO, LIMITE_MAXIMO);
+    // Pega as mais recentes do período e devolve em ordem cronológica (para o gráfico)
+    const lista = (
+      await prisma.leitura.findMany({
+        where: { criadoEm: { gte: dataInicio, lte: dataFim } },
+        orderBy: { criadoEm: 'desc' },
+        take,
+      })
+    ).reverse();
+
+    return {
+      inicio: dataInicio.toISOString(),
+      fim: dataFim.toISOString(),
+      total: lista.length,
+      leituras: lista.map(formatarLeitura),
+    };
+  }
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/services/eventosService.ts}}
+\addcontentsline{toc}{section}{backend/src/services/eventosService.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > services > eventosService.ts
+// Registra eventos na tabela "eventos" e dispara os e-mails:
+//  - automáticos (nível subiu / energia) -> administradores ativos;
+//  - manuais (o administrador escolhe o nível) -> usuários básicos ativos.
+
+import { Leitura } from '@prisma/client';
+import prisma from '../config/database';
+import { HttpError } from '../middleware';
+import { AdminToken } from '../middleware/authMiddleware';
+import { DadosEmail, Destinatario, EmailService } from './emailService';
+import { NIVEIS, Nivel } from '../config/niveis';
+
+const TIPOS_EVENTO = ['NIVEL_SUBIU', 'ENERGIA', 'ALERTA_MANUAL'];
+
+// -- Mensagens-modelo (P1_referencias, item d) -------------------------------
+// {nome} é trocado no envio; os demais campos vêm da última leitura.
+
+const MODELOS: Record<Nivel, { assunto: string; mensagem: string }> = {
+  VERDE: {
+    assunto: '[Monitoramento] Nível VERDE - condição normal',
+    mensagem: [
+      'Olá, {nome}.',
+      'Em {data_hora}, o sistema de monitoramento registrou condição normal na área ' +
+        'monitorada (saturação do solo {S}; chuva de 72 h {P72}).',
+      'Não há necessidade de deslocamento.',
+      'Aproveite para conhecer a rota de fuga e o ponto de encontro sinalizados na sua ' +
+        'localidade e participe dos simulados promovidos pelo empreendedor e pela Defesa Civil.',
+      'Este aviso é informativo e não substitui as sirenes nem as orientações oficiais da Defesa Civil.',
+    ].join('\n'),
+  },
+  AMARELO: {
+    assunto: '[Monitoramento] Nível AMARELO - atenção',
+    mensagem: [
+      'Olá, {nome}.',
+      'Em {data_hora}, o sistema de monitoramento registrou solo úmido e chuva acumulada ' +
+        'e prevista acima do limite de atenção (saturação do solo {S}; chuva de 72 h {P72}).',
+      'Neste momento, não é necessário sair de casa. Prepare-se:',
+      '- confirme qual é a rota de fuga e o ponto de encontro sinalizados na sua localidade;',
+      '- acompanhe os próximos avisos deste sistema e as orientações da Defesa Civil;',
+      '- se a sirene tocar, siga imediatamente as orientações oficiais.',
+      'Este aviso não substitui as sirenes nem as orientações oficiais da Defesa Civil.',
+      '{aviso_dado_indisponivel}',
+    ].join('\n'),
+  },
+  VERMELHO: {
+    assunto: '[Monitoramento] Nível VERMELHO - desloque-se para o ponto de encontro',
+    mensagem: [
+      'Olá, {nome}.',
+      'Em {data_hora}, o sistema de monitoramento registrou solo próximo da saturação e ' +
+        'chuva acumulada e prevista acima do limite de alerta (saturação do solo {S}; ' +
+        'chuva de 72 h {P72}).',
+      'Desloque-se agora para o ponto de encontro, pela rota de fuga sinalizada na sua localidade.',
+      'Siga as orientações da Defesa Civil e das equipes de emergência.',
+      'Este aviso não substitui as sirenes nem as orientações oficiais da Defesa Civil.',
+    ].join('\n'),
+  },
+};
+
+// -- Ajudantes de texto ----------------------------------------
+
+const virgula = (n: number, casas: number) => n.toFixed(casas).replace('.', ',');
+
+function dataHora(d: Date): string {
+  return d.toLocaleString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function textoS(l: Leitura | null) {
+  return l && l.s !== null ? virgula(Number(l.s), 2) : 'indisponível';
+}
+
+function textoMm(valor: any) {
+  return valor !== null && valor !== undefined ? `${virgula(Number(valor), 1)} mm` : 'sem dados';
+}
+
+// P48 com dia sem registro na estação é um valor mínimo
+function textoP48(l: Leitura) {
+  if (l.p48 === null) return 'sem dados';
+  if (l.p48DiasNulos > 0) return `>= ${textoMm(l.p48)} (${l.p48DiasNulos} dia(s) sem registro na estação)`;
+  return textoMm(l.p48);
+}
+
+// P72 completo; ou, com dados incompletos, o mínimo garantido enviado pelo firmware
+function textoP72(l: Leitura | null) {
+  if (!l) return 'sem dados';
+  if (l.p72 !== null) return textoMm(l.p72);
+  if (l.chuvaIncompleta && l.p72Minimo !== null) {
+    return `no mínimo ${textoMm(l.p72Minimo)}, com dados de chuva incompletos`;
+  }
+  return 'sem dados';
+}
+
+function avisos(l: Leitura | null): string[] {
+  if (!l) return ['Nenhuma leitura recebida do dispositivo até o momento.'];
+  const lista: string[] = [];
+  if (l.sensorIndisponivel) lista.push('Sensor de umidade indisponível no momento.');
+  if (l.semDadosChuva) lista.push('Sem dados de chuva no momento.');
+  else {
+    if (l.chuvaIncompleta && l.p72Minimo !== null) {
+      lista.push(`Dados de chuva incompletos: P72 de no mínimo ${textoMm(l.p72Minimo)}.`);
+    }
+    if (l.p48Indisponivel) lista.push('Chuva observada (BNDMET) indisponível no momento.');
+    if (l.p24Indisponivel) lista.push('Previsão de chuva (OpenWeatherMap) indisponível no momento.');
+  }
+  return lista;
+}
+
+function preencher(mensagem: string, l: Leitura | null): string {
+  return mensagem
+    .split('{data_hora}').join(dataHora(l ? l.criadoEm : new Date()))
+    .split('{S}').join(textoS(l))
+    .split('{P72}').join(textoP72(l))
+    .split('{aviso_dado_indisponivel}').join(avisos(l).join(' '))
+    .trim();
+}
+
+// Linhas de rodapé para e-mails automáticos: deixa claro quando é teste (R9)
+function marcasTeste(l: Leitura): string[] {
+  const m: string[] = [];
+  if (l.simulacao) m.push('Leitura vinda da simulação (Wokwi).');
+  if (l.p72Injetado) m.push('Chuva de 72 h injetada para teste (comando "chuva").');
+  return m;
+}
+
+// -- Envio + registro ----------------------------------------
+
+async function administradoresAtivos(): Promise<Destinatario[]> {
+  return prisma.administrador.findMany({ where: { ativo: true }, select: { nome: true, email: true } });
+}
+
+async function moradoresAtivos(): Promise<Destinatario[]> {
+  return prisma.usuarioBasico.findMany({ where: { ativo: true }, select: { nome: true, email: true } });
+}
+
+async function enviarEAtualizar(eventoId: number, destinatarios: Destinatario[], dados: DadosEmail) {
+  const r = await EmailService.enviarLote(destinatarios, dados);
+  return prisma.evento.update({
+    where: { id: eventoId },
+    data: { enviados: r.enviados, falhas: r.falhas },
+  });
+}
+
+// E-mail automático: não segura a resposta ao dispositivo
+function enviarEmSegundoPlano(eventoId: number, destinatarios: Destinatario[], dados: DadosEmail) {
+  enviarEAtualizar(eventoId, destinatarios, dados).catch((erro) =>
+    console.error(` Erro no envio do evento ${eventoId}:`, erro),
+  );
+}
+
+export class EventosService {
+  static async nivelSubiu(de: string, l: Leitura) {
+    const admins = await administradoresAtivos();
+    const descricao = `Nível subiu de ${de} para ${l.nivel}.`;
+
+    const evento = await prisma.evento.create({
+      data: { tipo: 'NIVEL_SUBIU', nivel: l.nivel, descricao, leituraId: l.id, destinatarios: admins.length },
+    });
+
+    const mensagem = [
+      'Olá, {nome}.',
+      `Em ${dataHora(l.criadoEm)}, o nível do monitoramento subiu de ${de} para ${l.nivel}.`,
+      `Saturação do solo (S): ${textoS(l)}`,
+      `Chuva observada 48 h (P48): ${textoP48(l)}`,
+      `Chuva prevista 24 h (P24): ${textoMm(l.p24)}`,
+      `Chuva 72 h (P72): ${textoP72(l)}`,
+      ...avisos(l),
+      ...marcasTeste(l),
+      'Acesse o painel para decidir o envio do alerta aos moradores cadastrados.',
+    ].join('\n');
+
+    enviarEmSegundoPlano(evento.id, admins, {
+      tipo: l.nivel as Nivel,
+      assunto: `[Monitoramento] Nível subiu: ${de} -> ${l.nivel}`,
+      mensagem,
+    });
+    return evento;
+  }
+
+  static async energia(mudancas: string[], l: Leitura) {
+    const admins = await administradoresAtivos();
+    const descricao = mudancas.join(' ');
+
+    const evento = await prisma.evento.create({
+      data: { tipo: 'ENERGIA', nivel: l.nivel, descricao, leituraId: l.id, destinatarios: admins.length },
+    });
+
+    const mensagem = [
+      'Olá, {nome}.',
+      `Em ${dataHora(l.criadoEm)}, o dispositivo informou:`,
+      ...mudancas.map((m) => `- ${m}`),
+      `Rede elétrica: ${l.rede === null ? 'sem informação' : l.rede ? 'presente' : 'ausente'}`,
+      `Bateria: ${l.estadoBateria ?? 'sem informação'}${l.vbat !== null ? ` (${virgula(Number(l.vbat), 2)} V)` : ''}`,
+      `Nível atual: ${l.nivel}`,
+      ...marcasTeste(l),
+    ].join('\n');
+
+    enviarEmSegundoPlano(evento.id, admins, {
+      tipo: 'ENERGIA',
+      assunto: `[Monitoramento] Energia: ${mudancas[0]}`,
+      mensagem,
+    });
+    return evento;
+  }
+
+  // Modelos já preenchidos com a última leitura ({nome} fica para o envio)
+  static async modelos() {
+    const ultima = await prisma.leitura.findFirst({ orderBy: { id: 'desc' } });
+    const resultado: Record<string, { assunto: string; mensagem: string }> = {};
+    for (const nivel of NIVEIS) {
+      resultado[nivel] = { assunto: MODELOS[nivel].assunto, mensagem: preencher(MODELOS[nivel].mensagem, ultima) };
+    }
+    return { nivelAtual: ultima?.nivel ?? null, modelos: resultado };
+  }
+
+  // Envio manual do administrador para os moradores cadastrados
+  static async alertaManual(admin: AdminToken, corpo: any) {
+    const nivel = String(corpo?.nivel || '').toUpperCase() as Nivel;
+    if (!NIVEIS.includes(nivel)) throw new HttpError(400, 'Campo "nivel" obrigatório: VERDE, AMARELO ou VERMELHO.');
+
+    const ultima = await prisma.leitura.findFirst({ orderBy: { id: 'desc' } });
+    const assunto = String(corpo.assunto || MODELOS[nivel].assunto).trim();
+    const mensagem = String(corpo.mensagem || preencher(MODELOS[nivel].mensagem, ultima)).trim();
+    if (!assunto || !mensagem) throw new HttpError(400, 'Assunto e mensagem não podem ficar vazios.');
+
+    const moradores = await moradoresAtivos();
+    if (moradores.length === 0) throw new HttpError(409, 'Nenhum usuário básico ativo cadastrado.');
+
+    const evento = await prisma.evento.create({
+      data: {
+        tipo: 'ALERTA_MANUAL',
+        nivel,
+        descricao: `Alerta ${nivel} enviado por ${admin.nome} a ${moradores.length} usuário(s).`,
+        leituraId: ultima?.id ?? null,
+        administradorId: admin.id,
+        destinatarios: moradores.length,
+      },
+    });
+
+    const atualizado = await enviarEAtualizar(evento.id, moradores, { tipo: nivel, assunto, mensagem });
+    return formatarEvento(atualizado, admin.nome);
+  }
+
+  static async listar(limite?: string, tipo?: string) {
+    const where: any = {};
+    if (tipo) {
+      const t = tipo.toUpperCase();
+      if (!TIPOS_EVENTO.includes(t)) throw new HttpError(400, `"tipo" deve ser ${TIPOS_EVENTO.join(', ')}.`);
+      where.tipo = t;
+    }
+    const lista = await prisma.evento.findMany({
+      where,
+      orderBy: { id: 'desc' },
+      take: Math.min(Number(limite) || 50, 500),
+      include: { administrador: { select: { nome: true } } },
+    });
+    return lista.map((e) => formatarEvento(e, e.administrador?.nome ?? null));
+  }
+}
+
+function formatarEvento(e: any, nomeAdmin: string | null) {
+  return {
+    id: e.id,
+    criadoEm: e.criadoEm.toISOString(),
+    tipo: e.tipo,
+    nivel: e.nivel,
+    descricao: e.descricao,
+    leituraId: e.leituraId,
+    enviadoPor: nomeAdmin,
+    destinatarios: e.destinatarios,
+    enviados: e.enviados,
+    falhas: e.falhas,
+  };
+}
+\end{lstlisting}
+
+\section*{\texttt{backend/src/services/emailService.ts}}
+\addcontentsline{toc}{section}{backend/src/services/emailService.ts}
+\begin{lstlisting}[language=JavaScript]
+// backend > src > services > emailService.ts
+// Reaproveitado da versão anterior: mesmo transporter (nodemailer + SMTP do .env)
+// e mesmo envio em lote. Agora com os níveis VERDE / AMARELO / VERMELHO e o tipo
+// ENERGIA. Sem SMTP no .env, o envio é só registrado no console (modo simulação).
+
+import * as nodemailer from 'nodemailer';
+import { env } from '../config/env';
+
+export type TipoEmail = 'VERDE' | 'AMARELO' | 'VERMELHO' | 'ENERGIA';
+
+export interface Destinatario {
+  email: string;
+  nome: string;
+}
+
+export interface DadosEmail {
+  tipo: TipoEmail;
+  assunto: string;
+  mensagem: string; // pode conter {nome}, trocado pelo nome de cada destinatário
+}
+
+const CORES: Record<TipoEmail, string> = {
+  VERDE: '#16a34a',
+  AMARELO: '#ca8a04',
+  VERMELHO: '#dc2626',
+  ENERGIA: '#2563eb',
+};
+
+// Rodapé comum (P1_referencias, item d)
+export const RODAPE =
+  'Sistema acadêmico de monitoramento (TCC - IPRJ/UERJ). As cores deste sistema não ' +
+  'correspondem aos níveis oficiais de emergência da Agência Nacional de Mineração.';
+
+export class EmailService {
+  private static transporter: nodemailer.Transporter | null = null;
+
+  static init() {
+    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+      console.warn('  SMTP não configurado: e-mails serão apenas registrados no console.');
+      return;
+    }
+    this.transporter = nodemailer.createTransport({
+      host: env.SMTP_HOST,
+      port: env.SMTP_PORT,
+      secure: env.SMTP_PORT === 465,
+      auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+      pool: true,
+      maxConnections: 5,
+      rateLimit: 10, // no máximo 10 e-mails por segundo
+    });
+  }
+
+  static async verificarConexao(): Promise<boolean> {
+    if (!this.transporter) return false;
+    try {
+      await this.transporter.verify();
+      return true;
+    } catch (erro: any) {
+      console.error(' Falha ao conectar no SMTP:', erro.message);
+      return false;
+    }
+  }
+
+  static async enviarAlerta(dest: Destinatario, dados: DadosEmail): Promise<boolean> {
+    const texto = dados.mensagem.split('{nome}').join(dest.nome) + '\n\n' + RODAPE;
+
+    if (!this.transporter) {
+      console.log(` [SIMULADO] ${dados.assunto} -> ${dest.email}`);
+      return true;
+    }
+
+    try {
+      await this.transporter.sendMail({
+        from: `"Monitoramento de Barragem" <${env.SMTP_USER}>`,
+        to: dest.email,
+        subject: dados.assunto,
+        text: texto,
+        html: this.gerarHtml(dados.tipo, dados.assunto, texto),
+        priority: dados.tipo === 'VERMELHO' ? 'high' : 'normal',
+      });
+      console.log(` ${dados.assunto} -> ${dest.email}`);
+      return true;
+    } catch (erro: any) {
+      console.error(` Falha ao enviar para ${dest.email}:`, erro.message);
+      return false;
+    }
+  }
+
+  // Envia em grupos de 5 para não sobrecarregar o SMTP
+  static async enviarLote(destinatarios: Destinatario[], dados: DadosEmail) {
+    let enviados = 0;
+    let falhas = 0;
+    const tamanhoGrupo = 5;
+
+    for (let i = 0; i < destinatarios.length; i += tamanhoGrupo) {
+      const grupo = destinatarios.slice(i, i + tamanhoGrupo);
+      const resultados = await Promise.all(grupo.map((d) => this.enviarAlerta(d, dados)));
+      resultados.forEach((ok) => (ok ? enviados++ : falhas++));
+    }
+
+    return { destinatarios: destinatarios.length, enviados, falhas };
+  }
+
+  static async fechar() {
+    this.transporter?.close();
+  }
+
+  private static escapar(texto: string): string {
+    return texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  private static gerarHtml(tipo: TipoEmail, assunto: string, texto: string): string {
+    return `
+<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+  <div style="background:${CORES[tipo]};color:#fff;padding:16px 20px;font-size:18px;font-weight:bold">
+    ${this.escapar(assunto)}
+  </div>
+  <div style="padding:20px;color:#111827;line-height:1.5">
+    ${this.escapar(texto).replace(/\n/g, '<br>')}
+  </div>
+</div>`;
+  }
+}
+\end{lstlisting}
+
+\chapter{Código-fonte do \textit{frontend}}
+\label{apendice:frontend}
+
+\section*{\texttt{frontend/src/app/layout.js}}
+\addcontentsline{toc}{section}{frontend/src/app/layout.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/app/layout.js =============
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/contexts/AuthContext';
+import '@/styles/globals.css';
+
+export const metadata = {
+  title: 'Monitoramento de Barragem',
+  description: 'Sistema de alerta para barragem de rejeitos: saturação do solo e chuva de 72 h.',
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR">
+      <body>
+        <AuthProvider>
+          {children}
+          <Toaster position="top-right" toastOptions={{ duration: 5000 }} />
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/app/page.js}}
+\addcontentsline{toc}{section}{frontend/src/app/page.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/app/page.js =============
+import LandingPage from '@/components/LandingPage';
+
+export default function Inicio() {
+  return <LandingPage />;
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/app/login/page.js}}
+\addcontentsline{toc}{section}{frontend/src/app/login/page.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/app/login/page.js =============
+// Login do administrador.
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ShieldAlert } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+
+export default function LoginPage() {
+  const { admin, carregando, entrar } = useAuth();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
+  const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    if (!carregando && admin) router.replace('/painel');
+  }, [admin, carregando, router]);
+
+  async function enviar(e) {
+    e.preventDefault();
+    setErro('');
+    if (!email.trim() || !senha) return setErro('Informe e-mail e senha.');
+    setEnviando(true);
+    const r = await entrar(email.trim(), senha);
+    setEnviando(false);
+    if (r.ok) router.replace('/painel');
+    else setErro(r.mensagem);
+  }
+
+  return (
+    <main className="pagina-login">
+      <form className="cartao cartao-login" onSubmit={enviar} noValidate>
+        <div className="marca">
+          <ShieldAlert size={22} aria-hidden />
+          <span>Monitoramento de Barragem</span>
+        </div>
+        <h1>Entrar como administrador</h1>
+        <label>
+          E-mail
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" autoFocus />
+        </label>
+        <label>
+          Senha
+          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} autoComplete="current-password" />
+        </label>
+        {erro && <p className="erro-form" role="alert">{erro}</p>}
+        <button type="submit" className="btn btn-primario" disabled={enviando}>
+          {enviando ? 'Entrando...' : 'Entrar'}
+        </button>
+        <Link href="/" className="btn btn-link">Voltar ao início</Link>
+      </form>
+    </main>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/app/painel/page.js}}
+\addcontentsline{toc}{section}{frontend/src/app/painel/page.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/app/painel/page.js =============
+// Painel único do administrador.
+'use client';
+
+import ProtectedRoute from '@/components/ProtectedRoute';
+import Painel from '@/components/painel/Painel';
+
+export default function PainelPage() {
+  return (
+    <ProtectedRoute>
+      <Painel />
+    </ProtectedRoute>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/LandingPage.js}}
+\addcontentsline{toc}{section}{frontend/src/components/LandingPage.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/LandingPage.js =============
+// Página pública: resumo do projeto, como funciona o alerta e cadastro do morador.
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { CheckCircle2, CloudRain, Droplets, Gauge, ShieldAlert } from 'lucide-react';
+import { usuariosApi, mensagemErro } from '@/services/api';
+import { INFO_NIVEL, NIVEIS, RODAPE } from '@/config/niveis';
+
+const VAZIO = { nome: '', email: '', telefone: '', localidade: '' };
+
+function mascaraTelefone(valor) {
+  const d = valor.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 2) return d.length ? `(${d}` : '';
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function FormularioCadastro() {
+  const [form, setForm] = useState(VAZIO);
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState('');
+  const [cadastrado, setCadastrado] = useState(null);
+
+  const mudar = (campo) => (e) => {
+    const valor = campo === 'telefone' ? mascaraTelefone(e.target.value) : e.target.value;
+    setForm((f) => ({ ...f, [campo]: valor }));
+  };
+
+  async function enviar(e) {
+    e.preventDefault();
+    setErro('');
+    if (!form.nome.trim()) return setErro('Informe o nome.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setErro('Informe um e-mail válido.');
+
+    setEnviando(true);
+    try {
+      const u = await usuariosApi.cadastrar({
+        nome: form.nome.trim(),
+        email: form.email.trim(),
+        telefone: form.telefone.trim() || null,
+        localidade: form.localidade.trim() || null,
+      });
+      setCadastrado(u);
+      setForm(VAZIO);
+    } catch (err) {
+      setErro(mensagemErro(err, 'Não foi possível fazer o cadastro.'));
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  if (cadastrado) {
+    return (
+      <div className="cadastro-ok" role="status">
+        <CheckCircle2 size={28} aria-hidden />
+        <div>
+          <strong>Cadastro feito, {cadastrado.nome}.</strong>
+          <p>Os avisos serão enviados para {cadastrado.email}.</p>
+          <button type="button" className="btn btn-link" onClick={() => setCadastrado(null)}>
+            Cadastrar outra pessoa
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form className="formulario" onSubmit={enviar} noValidate>
+      <label>
+        Nome *
+        <input value={form.nome} onChange={mudar('nome')} maxLength={100} autoComplete="name" />
+      </label>
+      <label>
+        E-mail *
+        <input type="email" value={form.email} onChange={mudar('email')} maxLength={255} autoComplete="email" />
+      </label>
+      <label>
+        Telefone (opcional)
+        <input value={form.telefone} onChange={mudar('telefone')} placeholder="(31) 99999-9999" autoComplete="tel" />
+      </label>
+      <label>
+        Bairro / localidade
+        <input value={form.localidade} onChange={mudar('localidade')} maxLength={100} />
+      </label>
+      {erro && <p className="erro-form" role="alert">{erro}</p>}
+      <button type="submit" className="btn btn-primario" disabled={enviando}>
+        {enviando ? 'Enviando...' : 'Quero receber alertas'}
+      </button>
+    </form>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <div className="landing">
+      <header className="topo">
+        <div className="conteudo topo-linha">
+          <div className="marca">
+            <ShieldAlert size={22} aria-hidden />
+            <span>Monitoramento de Barragem</span>
+          </div>
+          <Link href="/login" className="btn btn-secundario">Entrar</Link>
+        </div>
+      </header>
+
+      <section className="hero">
+        <div className="conteudo">
+          <p className="sobretitulo">Trabalho de Conclusão de Curso - IPRJ/UERJ</p>
+          <h1>O papel da engenharia da computação na prevenção de acidentes em barragens de rejeitos</h1>
+          <p>
+            Um dispositivo no local mede a umidade do solo e consulta a chuva das últimas 48 horas e a
+            previsão para as próximas 24 horas. Com esses dados, o sistema indica um nível de alerta em
+            três cores e avisa os moradores cadastrados por e-mail.
+          </p>
+          <a href="#cadastro" className="btn btn-primario">Quero receber alertas</a>
+        </div>
+      </section>
+
+      <section className="conteudo secao">
+        <h2>O que o sistema acompanha</h2>
+        <div className="grade-3">
+          <article className="cartao">
+            <Droplets aria-hidden />
+            <h3>Saturação do solo</h3>
+            <p>Higrômetro instalado no local. Indica se o solo já está úmido.</p>
+          </article>
+          <article className="cartao">
+            <CloudRain aria-hidden />
+            <h3>Chuva das últimas 48 h</h3>
+            <p>Dados observados das estações meteorológicas (BNDMET).</p>
+          </article>
+          <article className="cartao">
+            <Gauge aria-hidden />
+            <h3>Previsão para 24 h</h3>
+            <p>Chuva prevista para as próximas 24 horas (OpenWeatherMap).</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="conteudo secao">
+        <h2>Como funciona o alerta</h2>
+        <p className="texto-apoio">
+          O nível sobe quando o solo está úmido <strong>e</strong> a chuva das últimas 48 h somada à
+          prevista para as próximas 24 h passa dos limites de atenção ou de alerta.
+        </p>
+        <div className="grade-3">
+          {NIVEIS.map((n) => (
+            <article key={n} className={`cartao-nivel nivel-${n.toLowerCase()}`}>
+              <span className="etiqueta-nivel">{INFO_NIVEL[n].titulo}</span>
+              <h3>{INFO_NIVEL[n].resumo}</h3>
+              <p>{INFO_NIVEL[n].texto}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="cadastro" className="conteudo secao secao-cadastro">
+        <div>
+          <h2>Quero receber alertas</h2>
+          <p className="texto-apoio">
+            Cadastre-se para receber por e-mail os avisos enviados pelo administrador do sistema.
+            O aviso não substitui as sirenes nem as orientações oficiais da Defesa Civil.
+          </p>
+        </div>
+        <FormularioCadastro />
+      </section>
+
+      <footer className="rodape">
+        <div className="conteudo">{RODAPE}</div>
+      </footer>
+    </div>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/ProtectedRoute.js}}
+\addcontentsline{toc}{section}{frontend/src/components/ProtectedRoute.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/ProtectedRoute.js =============
+// Só mostra o conteúdo se o administrador estiver logado; senão, vai para /login.
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+
+export default function ProtectedRoute({ children }) {
+  const { admin, carregando } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!carregando && !admin) router.replace('/login');
+  }, [admin, carregando, router]);
+
+  if (carregando || !admin) {
+    return <div className="carregando-pagina">Carregando...</div>;
+  }
+  return children;
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/Painel.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/Painel.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/Painel.js =============
+// Painel único do administrador: situação atual, histórico, envio de alerta e registros.
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import { LogOut, RefreshCw, ShieldAlert } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { leiturasApi, usuariosApi, mensagemErro } from '@/services/api';
+import NivelAtual from './NivelAtual';
+import Avisos from './Avisos';
+import Indicadores from './Indicadores';
+import Energia from './Energia';
+import GraficoHistorico from './GraficoHistorico';
+import EnvioAlerta from './EnvioAlerta';
+import ListaEventos from './ListaEventos';
+import Moradores from './Moradores';
+
+// Frequência com que a TELA consulta a API. Não é parâmetro do modelo de alerta
+// (a frequência de leitura do dispositivo é 60/10 min, definida no firmware).
+const ATUALIZAR_A_CADA_MS = 30 * 1000;
+
+export default function Painel() {
+  const { admin, sair } = useAuth();
+  const [leitura, setLeitura] = useState(undefined); // undefined = carregando; null = nenhuma leitura
+  const [moradores, setMoradores] = useState([]);
+  const [erroConexao, setErroConexao] = useState('');
+  const [versao, setVersao] = useState(0); // muda a cada atualização (gráfico e eventos recarregam)
+  const [atualizando, setAtualizando] = useState(false);
+
+  const atualizar = useCallback(async () => {
+    setAtualizando(true);
+    try {
+      const [ultima, lista] = await Promise.all([leiturasApi.ultima(), usuariosApi.listar()]);
+      setLeitura(ultima);
+      setMoradores(lista);
+      setErroConexao('');
+    } catch (erro) {
+      setErroConexao(mensagemErro(erro));
+      setLeitura((atual) => (atual === undefined ? null : atual));
+    } finally {
+      setAtualizando(false);
+      setVersao((v) => v + 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    atualizar();
+    const id = setInterval(atualizar, ATUALIZAR_A_CADA_MS);
+    return () => clearInterval(id);
+  }, [atualizar]);
+
+  const ativos = moradores.filter((m) => m.ativo).length;
+
+  return (
+    <div className="painel">
+      <header className="topo">
+        <div className="conteudo topo-linha">
+          <div className="marca">
+            <ShieldAlert size={22} aria-hidden />
+            <span>Painel do administrador</span>
+          </div>
+          <div className="topo-acoes">
+            <span className="texto-suave">{admin?.nome}</span>
+            <button type="button" className="btn btn-secundario" onClick={atualizar} disabled={atualizando}>
+              <RefreshCw size={16} aria-hidden className={atualizando ? 'girando' : ''} />
+              Atualizar
+            </button>
+            <button type="button" className="btn btn-secundario" onClick={sair}>
+              <LogOut size={16} aria-hidden />
+              Sair
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="conteudo painel-grade">
+        <div className="linha-principal">
+          <NivelAtual leitura={leitura} />
+          <Energia leitura={leitura} />
+        </div>
+
+        <Avisos leitura={leitura} erroConexao={erroConexao} />
+        <Indicadores leitura={leitura} />
+        <GraficoHistorico versao={versao} />
+
+        <div className="linha-dupla">
+          <EnvioAlerta nivelAtual={leitura?.nivel} totalAtivos={ativos} onEnviado={atualizar} />
+          <Moradores moradores={moradores} />
+        </div>
+
+        <ListaEventos versao={versao} />
+      </main>
+    </div>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/NivelAtual.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/NivelAtual.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/NivelAtual.js =============
+// Cartão grande com a cor do nível atual (calculado pelo dispositivo).
+'use client';
+
+import { AlertOctagon, AlertTriangle, CheckCircle2, HelpCircle } from 'lucide-react';
+import { INFO_NIVEL } from '@/config/niveis';
+import { dataHora, haQuanto } from '@/utils/formato';
+
+const ICONE = { VERDE: CheckCircle2, AMARELO: AlertTriangle, VERMELHO: AlertOctagon };
+
+export default function NivelAtual({ leitura }) {
+  if (leitura === undefined) {
+    return <section className="cartao-nivel-atual nivel-vazio">Carregando...</section>;
+  }
+  if (leitura === null) {
+    return (
+      <section className="cartao-nivel-atual nivel-vazio">
+        <HelpCircle size={40} aria-hidden />
+        <div>
+          <p className="rotulo">Nível atual</p>
+          <h1>Sem leitura</h1>
+          <p>Nenhuma leitura recebida do dispositivo até o momento.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const info = INFO_NIVEL[leitura.nivel];
+  const Icone = ICONE[leitura.nivel] ?? HelpCircle;
+
+  return (
+    <section className={`cartao-nivel-atual nivel-${leitura.nivel.toLowerCase()}`} aria-live="polite">
+      <Icone size={48} aria-hidden />
+      <div>
+        <p className="rotulo">Nível atual</p>
+        <h1>
+          {info.titulo} <span className="nivel-resumo">. {info.resumo}</span>
+        </h1>
+        <p>{info.texto}</p>
+        <p className="nivel-hora">
+          Última leitura: {dataHora(leitura.criadoEm)} ({haQuanto(leitura.criadoEm)})
+        </p>
+        <div className="selos">
+          {leitura.simulacao && <span className="selo">Simulação (Wokwi)</span>}
+          {leitura.p72Injetado && <span className="selo">Chuva de 72 h injetada para teste</span>}
+          {leitura.evento === 'energia' && <span className="selo">Leitura enviada por evento de energia</span>}
+        </div>
+      </div>
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/Energia.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/Energia.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/Energia.js =============
+// Rede elétrica e bateria. Só a simulação (Wokwi) envia esses campos;
+// o protótipo físico é alimentado por USB-C ou fonte e os deixa nulos.
+'use client';
+
+import { BatteryFull, BatteryLow, BatteryWarning, PlugZap, Unplug } from 'lucide-react';
+import { ESTADO_BATERIA } from '@/config/niveis';
+import { numero } from '@/utils/formato';
+
+const ICONE_BATERIA = { NORMAL: BatteryFull, BAIXA: BatteryLow, CRITICA: BatteryWarning, FALHA: BatteryWarning };
+const CLASSE_BATERIA = { NORMAL: 'ok', BAIXA: 'atencao', CRITICA: 'critico', FALHA: 'critico' };
+
+export default function Energia({ leitura }) {
+  const semDados =
+    !leitura || (leitura.rede === null && leitura.vbat === null && leitura.estadoBateria === null);
+
+  return (
+    <section className="cartao energia">
+      <h2>Energia</h2>
+      {semDados ? (
+        <p className="texto-suave">
+          {leitura
+            ? 'Esta leitura não traz dados de energia. O protótipo físico é alimentado por USB-C ou fonte, sem bateria.'
+            : 'Sem leitura.'}
+        </p>
+      ) : (
+        <ul className="lista-energia">
+          <li className={leitura.rede === false ? 'atencao' : 'ok'}>
+            {leitura.rede === false ? <Unplug aria-hidden /> : <PlugZap aria-hidden />}
+            <div>
+              <span className="rotulo">Rede elétrica</span>
+              <strong>
+                {leitura.rede === null ? 'sem informação' : leitura.rede ? 'Presente' : 'Ausente: operando na bateria'}
+              </strong>
+            </div>
+          </li>
+          <li className={CLASSE_BATERIA[leitura.estadoBateria] ?? ''}>
+            {(() => {
+              const Icone = ICONE_BATERIA[leitura.estadoBateria] ?? BatteryFull;
+              return <Icone aria-hidden />;
+            })()}
+            <div>
+              <span className="rotulo">Bateria</span>
+              <strong>
+                {ESTADO_BATERIA[leitura.estadoBateria] ?? 'sem informação'}
+                {leitura.vbat !== null && ` . ${numero(leitura.vbat, 2)} V`}
+              </strong>
+            </div>
+          </li>
+        </ul>
+      )}
+      {leitura?.simulacao && !semDados && (
+        <p className="nota">Valores da simulação: chave = rede elétrica; potenciômetro = tensão da bateria.</p>
+      )}
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/Indicadores.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/Indicadores.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/Indicadores.js =============
+// S, P48, P24 e P72 da última leitura, com os limiares de referência.
+// Dados de chuva incompletos (chuvaIncompleta = true): o cartão P72 mostra
+// "Dados de chuva incompletos - P72 >= <p72Minimo> mm". P48 com p48DiasNulos > 0
+// aparece como mínimo (">= X mm"). "Sem dados de chuva" só com semDadosChuva = true.
+'use client';
+
+import { LIMIARES } from '@/config/niveis';
+import { numero } from '@/utils/formato';
+
+function faixa(valor, atencao, alerta) {
+  if (valor === null || valor === undefined) return null;
+  if (valor >= alerta) return 'Acima do limiar de alerta';
+  if (valor >= atencao) return 'Acima do limiar de atenção';
+  return 'Abaixo do limiar de atenção';
+}
+
+// Com valor mínimo, "abaixo" não é certeza: o valor real pode ser maior.
+function faixaMinimo(minimo, atencao, alerta) {
+  if (minimo === null || minimo === undefined) return null;
+  if (minimo >= alerta) return 'Mínimo acima do limiar de alerta';
+  if (minimo >= atencao) return 'Mínimo acima do limiar de atenção';
+  return 'Mínimo abaixo do limiar de atenção (o valor real pode ser maior)';
+}
+
+// Cartão do P72 quando chuvaIncompleta = true: a frase substitui o valor de P72.
+function IndicadorP72Incompleto({ minimo }) {
+  const temMinimo = minimo !== null && minimo !== undefined;
+  return (
+    <article className="indicador indicador-incompleto">
+      <p className="indicador-sigla">
+        P72 <span>chuva de 72 h</span>
+      </p>
+      <p className="indicador-valor indicador-valor-texto">
+        Dados de chuva incompletos - P72 >= {temMinimo ? numero(minimo, 1) : '?'} mm
+      </p>
+      {temMinimo && <p className="indicador-situacao">{faixaMinimo(minimo, LIMIARES.P1, LIMIARES.P2)}</p>}
+      <p className="indicador-detalhe">
+        Soma do que foi obtido (mínimo garantido). Atenção >= {LIMIARES.P1} mm . Alerta >= {LIMIARES.P2} mm (
+        {LIMIARES.fonteP}).
+      </p>
+    </article>
+  );
+}
+
+function Indicador({ sigla, nome, valor, unidade, indisponivel, textoIndisponivel, naoUsado, detalhe, situacao }) {
+  if (naoUsado) {
+    return (
+      <article className="indicador">
+        <p className="indicador-sigla">
+          {sigla} <span>{nome}</span>
+        </p>
+        <p className="indicador-valor">-</p>
+        <p className="indicador-detalhe">Não usada nesta leitura: P72 injetado para teste.</p>
+      </article>
+    );
+  }
+
+  return (
+    <article className={`indicador ${indisponivel ? 'indicador-indisponivel' : ''}`}>
+      <p className="indicador-sigla">
+        {sigla} <span>{nome}</span>
+      </p>
+      <p className="indicador-valor">
+        {indisponivel ? textoIndisponivel || 'indisponível' : valor}
+        {!indisponivel && unidade && <small> {unidade}</small>}
+      </p>
+      {situacao && !indisponivel && <p className="indicador-situacao">{situacao}</p>}
+      <p className="indicador-detalhe">{detalhe}</p>
+    </article>
+  );
+}
+
+export default function Indicadores({ leitura }) {
+  const l = leitura || {};
+  const semS = !leitura || l.sensorIndisponivel || l.S === null;
+  const injetado = !!l.p72Injetado; // teste: o firmware envia P48 e P24 nulos
+  const semP48 = !leitura || l.p48Indisponivel || l.P48 === null;
+  const semP24 = !leitura || l.p24Indisponivel || l.P24 === null;
+  const p48Minimo = !semP48 && l.p48DiasNulos > 0; // dia sem registro: P48 é um mínimo
+  const incompleta = !!leitura && !!l.chuvaIncompleta && !l.semDadosChuva && !l.p72Injetado;
+  const semP72 = !leitura || l.P72 === null;
+
+  return (
+    <section className="indicadores" aria-label="Variáveis da última leitura">
+      <Indicador
+        sigla="S"
+        nome="saturação do solo"
+        valor={numero(l.S, 2)}
+        indisponivel={semS}
+        situacao={faixa(l.S, LIMIARES.S1, LIMIARES.S2)}
+        detalhe={`Escala 0 a 1. Atenção >= ${numero(LIMIARES.S1, 2)} . Alerta >= ${numero(LIMIARES.S2, 2)} (${LIMIARES.fonteS}).`}
+      />
+      <Indicador
+        sigla="P48"
+        nome="chuva observada"
+        valor={p48Minimo ? `>= ${numero(l.P48, 1)}` : numero(l.P48, 1)}
+        unidade="mm"
+        indisponivel={semP48}
+        naoUsado={injetado && l.P48 === null}
+        detalhe={
+          p48Minimo
+            ? `Acumulada nas últimas 48 h (BNDMET). ${l.p48DiasNulos} dia(s) sem registro na estação BNDMET: valor mínimo.`
+            : 'Acumulada nas últimas 48 h (BNDMET).'
+        }
+      />
+      <Indicador
+        sigla="P24"
+        nome="chuva prevista"
+        valor={numero(l.P24, 1)}
+        unidade="mm"
+        indisponivel={semP24}
+        naoUsado={injetado && l.P24 === null}
+        detalhe="Prevista para as próximas 24 h (OpenWeatherMap)."
+      />
+      {incompleta ? (
+        <IndicadorP72Incompleto minimo={l.p72Minimo} />
+      ) : (
+        <Indicador
+          sigla="P72"
+          nome={l.p72Injetado ? 'chuva de 72 h (injetada para teste)' : 'chuva de 72 h'}
+          valor={numero(l.P72, 1)}
+          unidade="mm"
+          indisponivel={semP72}
+          textoIndisponivel={l.semDadosChuva ? 'Sem dados de chuva' : undefined}
+          situacao={faixa(l.P72, LIMIARES.P1, LIMIARES.P2)}
+          detalhe={`P48 + P24. Atenção >= ${LIMIARES.P1} mm . Alerta >= ${LIMIARES.P2} mm (${LIMIARES.fonteP}).`}
+        />
+      )}
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/Avisos.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/Avisos.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/Avisos.js =============
+// Avisos de dado indisponível ou incompleto (flags enviadas pelo dispositivo) e de conexão.
+'use client';
+
+import { AlertTriangle, WifiOff } from 'lucide-react';
+import { LIMIARES } from '@/config/niveis';
+import { numero } from '@/utils/formato';
+
+// Flags do JSON do firmware (sketch_v3, P5 Parte B):
+// - semDadosChuva   = nenhuma parcela de chuva obtida (nem P48 nem P24);
+// - chuvaIncompleta = falta uma parcela ou um dia do BNDMET. P72 vem null e
+//   p72Minimo traz o mínimo garantido. Mínimo >= P1: o nível usou o mínimo;
+//   mínimo < P1: o nível foi definido como "sem dados de chuva".
+// - p48DiasNulos    = dias sem registro na estação (P48 é um valor mínimo).
+export function avisosDaLeitura(l) {
+  if (!l) return [];
+  const lista = [];
+  const indisponivel = (texto) => lista.push({ titulo: 'Dado indisponível.', texto });
+  const incompleto = (texto) => lista.push({ titulo: 'Dado incompleto.', texto });
+
+  if (l.sensorIndisponivel) {
+    indisponivel('Sensor de umidade (higrômetro) indisponível: sem saturação do solo (S) nesta leitura.');
+  }
+  if (l.p48Indisponivel) indisponivel('Chuva observada nas últimas 48 h (BNDMET) indisponível.');
+  if (l.p24Indisponivel) indisponivel('Previsão de chuva para as próximas 24 h (OpenWeatherMap) indisponível.');
+  if (l.p48DiasNulos > 0) {
+    incompleto(`${l.p48DiasNulos} dia(s) sem registro na estação BNDMET: P48 é um valor mínimo.`);
+  }
+
+  // A chuva entrou na regra? (P72 completo, ou mínimo garantido >= P1)
+  const minimo = l.chuvaIncompleta ? l.p72Minimo : null;
+  const minimoUsado = minimo !== null && minimo !== undefined && minimo >= LIMIARES.P1;
+
+  // "Sem dados de chuva" aparece SÓ com semDadosChuva = true (nenhuma parcela obtida)
+  if (l.semDadosChuva) {
+    indisponivel(
+      l.sensorIndisponivel
+        ? 'Sem dados de chuva e sem saturação do solo: o nível não pôde usar nenhuma das duas variáveis.'
+        : 'Sem dados de chuva (BNDMET e OpenWeatherMap): o nível foi definido só com a saturação do solo.',
+    );
+  } else if (l.chuvaIncompleta) {
+    const mm = minimo !== null && minimo !== undefined ? `${numero(minimo, 1)} mm` : '? mm (mínimo não informado)';
+    if (minimoUsado) {
+      incompleto(`Dados de chuva incompletos - P72 >= ${mm}. O nível foi definido com esse mínimo.`);
+    } else {
+      incompleto(
+        `Dados de chuva incompletos - P72 >= ${mm}, abaixo do limiar de atenção (${LIMIARES.P1} mm): ` +
+          (l.sensorIndisponivel
+            ? 'a chuva não entrou na regra e, sem saturação do solo, o nível não pôde usar nenhuma das duas variáveis.'
+            : 'a chuva não entrou na regra e o nível foi definido só com a saturação do solo.'),
+      );
+    }
+  }
+
+  if (l.sensorIndisponivel && !l.semDadosChuva && (!l.chuvaIncompleta || minimoUsado)) {
+    lista.push({
+      titulo: 'Dado indisponível.',
+      texto: minimoUsado
+        ? 'O nível foi definido só com o mínimo garantido da chuva de 72 h (P72).'
+        : 'O nível foi definido só com a chuva de 72 h (P72).',
+    });
+  }
+  return lista;
+}
+
+export default function Avisos({ leitura, erroConexao }) {
+  const lista = avisosDaLeitura(leitura);
+  if (!erroConexao && lista.length === 0) return null;
+
+  return (
+    <section className="avisos" role="alert">
+      {erroConexao && (
+        <p>
+          <WifiOff size={18} aria-hidden />
+          <span>
+            <strong>Sem conexão com o servidor.</strong> {erroConexao} Os dados abaixo podem estar desatualizados.
+          </span>
+        </p>
+      )}
+      {lista.map((a) => (
+        <p key={a.texto}>
+          <AlertTriangle size={18} aria-hidden />
+          <span>
+            <strong>{a.titulo}</strong> {a.texto}
+          </span>
+        </p>
+      ))}
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/GraficoHistorico.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/GraficoHistorico.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/GraficoHistorico.js =============
+// Histórico de S e de P72. Dois gráficos separados (escalas diferentes, sem eixo duplo).
+// Linhas tracejadas = limiares de atenção e de alerta. Falha de dado aparece como intervalo na linha.
+// P72 com dados de chuva incompletos (P72 nulo) aparece como pontos vazados no mínimo garantido (p72Minimo).
+'use client';
+
+import { useEffect, useState } from 'react';
+import {
+  CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
+} from 'recharts';
+import { leiturasApi, mensagemErro } from '@/services/api';
+import { LIMIARES } from '@/config/niveis';
+import { dataHora, horaCurta, numero } from '@/utils/formato';
+
+const PERIODOS = [
+  { id: '24h', rotulo: '24 horas', horas: 24 },
+  { id: '7d', rotulo: '7 dias', horas: 24 * 7 },
+  { id: '30d', rotulo: '30 dias', horas: 24 * 30 },
+];
+
+const COR_SERIE = '#2563eb';
+const COR_ATENCAO = '#b45309';
+const COR_ALERTA = '#b91c1c';
+
+function DicaTooltip({ active, payload, campo, campoMinimo, casas, unidade }) {
+  if (!active || !payload?.length) return null;
+  const p = payload[0].payload;
+  const valor = p[campo];
+  const minimo = campoMinimo ? p[campoMinimo] : null;
+  const u = unidade ? ` ${unidade}` : '';
+  let texto = campo === 'P72' && p.semDadosChuva ? 'sem dados de chuva' : 'indisponível';
+  if (valor !== null && valor !== undefined) texto = `${numero(valor, casas)}${u}`;
+  else if (minimo !== null && minimo !== undefined) texto = `>= ${numero(minimo, casas)}${u} (dados de chuva incompletos)`;
+  return (
+    <div className="dica-grafico">
+      <strong>{dataHora(p.criadoEm)}</strong>
+      <span>
+        {campo}: {texto}
+      </span>
+      <span>Nível: {p.nivel}</span>
+    </div>
+  );
+}
+
+function Grafico({ titulo, dados, campo, campoMinimo, dominio, casas, unidade, atencao, alerta, fonte, comDia }) {
+  const temMinimo = !!campoMinimo && dados.some((d) => d[campoMinimo] !== null && d[campoMinimo] !== undefined);
+  return (
+    <figure className="grafico">
+      <figcaption>{titulo}</figcaption>
+      <ResponsiveContainer width="100%" height={220}>
+        <LineChart data={dados} margin={{ top: 8, right: 84, bottom: 0, left: 0 }}>
+          <CartesianGrid vertical={false} stroke="#e5e7eb" />
+          <XAxis
+            dataKey="t"
+            type="number"
+            scale="time"
+            domain={['dataMin', 'dataMax']}
+            tickFormatter={(ms) => horaCurta(ms, comDia)}
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+            stroke="#d1d5db"
+            minTickGap={40}
+          />
+          <YAxis
+            domain={dominio}
+            ticks={casas === 2 ? [0, 0.2, 0.4, 0.6, 0.8, 1] : undefined}
+            tickFormatter={(v) => numero(v, casas === 2 ? 1 : 0)}
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+            stroke="#d1d5db"
+            width={44}
+          />
+          <ReferenceLine
+            y={atencao}
+            stroke={COR_ATENCAO}
+            strokeDasharray="5 4"
+            label={{ value: `Atenção ${numero(atencao, casas === 2 ? 2 : 0)}`, position: 'right', fontSize: 11, fill: '#374151' }}
+          />
+          <ReferenceLine
+            y={alerta}
+            stroke={COR_ALERTA}
+            strokeDasharray="5 4"
+            label={{ value: `Alerta ${numero(alerta, casas === 2 ? 2 : 0)}`, position: 'right', fontSize: 11, fill: '#374151' }}
+          />
+          <Tooltip content={<DicaTooltip campo={campo} campoMinimo={campoMinimo} casas={casas} unidade={unidade} />} />
+          <Line
+            type="monotone"
+            dataKey={campo}
+            stroke={COR_SERIE}
+            strokeWidth={2}
+            dot={dados.length <= 60 ? { r: 3, fill: COR_SERIE, stroke: COR_SERIE } : false}
+            activeDot={{ r: 5, fill: COR_SERIE }}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+          {temMinimo && (
+            <Line
+              type="monotone"
+              dataKey={campoMinimo}
+              stroke={COR_SERIE}
+              strokeWidth={0}
+              dot={{ r: 4, fill: '#ffffff', stroke: COR_SERIE, strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: '#ffffff', stroke: COR_SERIE }}
+              connectNulls={false}
+              isAnimationActive={false}
+              legendType="none"
+            />
+          )}
+        </LineChart>
+      </ResponsiveContainer>
+      <p className="nota">
+        Limiares: {fonte}.
+        {temMinimo && ' Pontos cheios = valor completo; pontos vazados = mínimo garantido (dados de chuva incompletos).'}
+      </p>
+    </figure>
+  );
+}
+
+export default function GraficoHistorico({ versao }) {
+  const [periodo, setPeriodo] = useState('24h');
+  const [dados, setDados] = useState([]);
+  const [erro, setErro] = useState('');
+  const [carregado, setCarregado] = useState(false);
+
+  useEffect(() => {
+    let ativo = true;
+    const horas = PERIODOS.find((p) => p.id === periodo).horas;
+    const fim = new Date();
+    const inicio = new Date(fim.getTime() - horas * 3600 * 1000);
+
+    leiturasApi
+      .historico(inicio.toISOString(), fim.toISOString())
+      .then((r) => {
+        if (!ativo) return;
+        setDados(r.leituras.map((l) => ({ ...l, t: new Date(l.criadoEm).getTime() })));
+        setErro('');
+      })
+      .catch((e) => ativo && setErro(mensagemErro(e)))
+      .finally(() => ativo && setCarregado(true));
+
+    return () => {
+      ativo = false;
+    };
+  }, [periodo, versao]);
+
+  const comDia = periodo !== '24h';
+
+  return (
+    <section className="cartao historico">
+      <div className="cabecalho-secao">
+        <h2>Histórico</h2>
+        <div className="seletor" role="group" aria-label="Período do histórico">
+          {PERIODOS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={periodo === p.id ? 'ativo' : ''}
+              aria-pressed={periodo === p.id}
+              onClick={() => setPeriodo(p.id)}
+            >
+              {p.rotulo}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {erro && <p className="erro-form">{erro}</p>}
+      {carregado && !erro && dados.length === 0 && <p className="texto-suave">Nenhuma leitura no período.</p>}
+
+      {dados.length > 0 && (
+        <div className="graficos">
+          <Grafico
+            titulo="Saturação do solo (S)"
+            dados={dados}
+            campo="S"
+            dominio={[0, 1]}
+            casas={2}
+            atencao={LIMIARES.S1}
+            alerta={LIMIARES.S2}
+            fonte={LIMIARES.fonteS}
+            comDia={comDia}
+          />
+          <Grafico
+            titulo="Chuva de 72 h (P72 = P48 + P24), em mm"
+            dados={dados}
+            campo="P72"
+            campoMinimo="p72Minimo"
+            dominio={[0, (max) => Math.max(LIMIARES.P2 * 1.2, Math.ceil(max / 20) * 20)]}
+            casas={1}
+            unidade="mm"
+            atencao={LIMIARES.P1}
+            alerta={LIMIARES.P2}
+            fonte={LIMIARES.fonteP}
+            comDia={comDia}
+          />
+        </div>
+      )}
+      <p className="nota">{dados.length} leitura(s) no período. Intervalos na linha indicam dado indisponível.</p>
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/EnvioAlerta.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/EnvioAlerta.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/EnvioAlerta.js =============
+// O administrador escolhe VERDE/AMARELO/VERMELHO; o sistema preenche a mensagem-modelo
+// do nível com a última leitura; o texto pode ser editado e vai aos moradores ativos.
+'use client';
+
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Send } from 'lucide-react';
+import { alertasApi, mensagemErro } from '@/services/api';
+import { INFO_NIVEL, NIVEIS, RODAPE } from '@/config/niveis';
+
+export default function EnvioAlerta({ nivelAtual, totalAtivos, onEnviado }) {
+  const [nivel, setNivel] = useState(null);
+  const [assunto, setAssunto] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [resultado, setResultado] = useState(null);
+
+  async function escolher(n) {
+    setNivel(n);
+    setConfirmando(false);
+    setResultado(null);
+    setCarregando(true);
+    try {
+      const { modelos } = await alertasApi.modelos();
+      setAssunto(modelos[n].assunto);
+      setMensagem(modelos[n].mensagem);
+    } catch (erro) {
+      toast.error(mensagemErro(erro, 'Não foi possível carregar a mensagem-modelo.'));
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  // Na primeira carga, já sugere o nível atual
+  useEffect(() => {
+    if (nivel === null && nivelAtual) escolher(nivelAtual);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nivelAtual]);
+
+  async function enviar() {
+    setEnviando(true);
+    try {
+      const r = await alertasApi.enviar({ nivel, assunto, mensagem });
+      setResultado(r);
+      setConfirmando(false);
+      toast.success(`E-mail ${nivel} enviado a ${r.enviados} de ${r.destinatarios} morador(es).`);
+      onEnviado?.();
+    } catch (erro) {
+      toast.error(mensagemErro(erro, 'Não foi possível enviar o alerta.'));
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  const semMoradores = totalAtivos === 0;
+  const podeEnviar = nivel && assunto.trim() && mensagem.trim() && !semMoradores && !carregando;
+
+  return (
+    <section className="cartao envio">
+      <h2>Enviar e-mail de alerta aos moradores</h2>
+
+      <div className="escolha-nivel" role="radiogroup" aria-label="Nível do e-mail">
+        {NIVEIS.map((n) => (
+          <button
+            key={n}
+            type="button"
+            role="radio"
+            aria-checked={nivel === n}
+            className={`botao-nivel nivel-${n.toLowerCase()} ${nivel === n ? 'escolhido' : ''}`}
+            onClick={() => escolher(n)}
+          >
+            {INFO_NIVEL[n].titulo}
+            {nivelAtual === n && <small>nível atual</small>}
+          </button>
+        ))}
+      </div>
+
+      {nivel && (
+        <>
+          <label>
+            Assunto
+            <input value={assunto} onChange={(e) => setAssunto(e.target.value)} disabled={carregando} />
+          </label>
+          <label>
+            Mensagem
+            <textarea
+              rows={10}
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
+              disabled={carregando}
+            />
+          </label>
+          <p className="nota">
+            {'{nome}'} é trocado pelo nome de cada morador. Rodapé incluído no envio: "{RODAPE}"
+          </p>
+          <button type="button" className="btn btn-link" onClick={() => escolher(nivel)} disabled={carregando}>
+            Restaurar mensagem-modelo
+          </button>
+        </>
+      )}
+
+      {semMoradores && (
+        <p className="texto-suave">Nenhum morador ativo cadastrado. O cadastro é feito na página inicial.</p>
+      )}
+
+      {!confirmando ? (
+        <button
+          type="button"
+          className="btn btn-primario"
+          disabled={!podeEnviar}
+          onClick={() => setConfirmando(true)}
+        >
+          <Send size={16} aria-hidden />
+          Enviar para {totalAtivos} morador(es)
+        </button>
+      ) : (
+        <div className={`confirmacao nivel-borda-${nivel.toLowerCase()}`} role="alertdialog" aria-label="Confirmar envio">
+          <p>
+            Confirmar o envio do e-mail <strong>{nivel}</strong> para <strong>{totalAtivos}</strong> morador(es)?
+          </p>
+          <div className="botoes">
+            <button type="button" className="btn btn-primario" onClick={enviar} disabled={enviando}>
+              {enviando ? 'Enviando...' : 'Confirmar envio'}
+            </button>
+            <button type="button" className="btn btn-secundario" onClick={() => setConfirmando(false)} disabled={enviando}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {resultado && (
+        <p className="resultado-envio" role="status">
+          Enviado a {resultado.enviados} de {resultado.destinatarios} morador(es)
+          {resultado.falhas > 0 ? ` . ${resultado.falhas} falha(s)` : ''}. Registro no {resultado.id}.
+        </p>
+      )}
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/Moradores.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/Moradores.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/Moradores.js =============
+// Lista (somente leitura) dos usuários básicos cadastrados pela página inicial.
+'use client';
+
+import { dataHora } from '@/utils/formato';
+
+export default function Moradores({ moradores }) {
+  const ativos = moradores.filter((m) => m.ativo).length;
+
+  return (
+    <section className="cartao moradores">
+      <h2>Moradores cadastrados</h2>
+      <p className="numero-destaque">
+        {ativos} <span>ativo(s) de {moradores.length}</span>
+      </p>
+      {moradores.length === 0 ? (
+        <p className="texto-suave">Ninguém se cadastrou ainda.</p>
+      ) : (
+        <div className="tabela-rolagem altura-limitada">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Localidade</th>
+                <th>Cadastro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {moradores.map((m) => (
+                <tr key={m.id} className={m.ativo ? '' : 'inativo'}>
+                  <td>
+                    {m.nome}
+                    {!m.ativo && ' (inativo)'}
+                  </td>
+                  <td>{m.email}</td>
+                  <td>{m.localidade ?? '-'}</td>
+                  <td className="sem-quebra">{dataHora(m.criadoEm)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/components/painel/ListaEventos.js}}
+\addcontentsline{toc}{section}{frontend/src/components/painel/ListaEventos.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/components/painel/ListaEventos.js =============
+// Registros da tabela "eventos": e-mails enviados aos moradores, nível subiu e energia.
+'use client';
+
+import { useEffect, useState } from 'react';
+import { eventosApi, mensagemErro } from '@/services/api';
+import { TIPO_EVENTO } from '@/config/niveis';
+import { dataHora } from '@/utils/formato';
+
+const FILTROS = [
+  { id: 'ALERTA_MANUAL', rotulo: 'E-mails aos moradores' },
+  { id: '', rotulo: 'Todos' },
+  { id: 'NIVEL_SUBIU', rotulo: 'Nível subiu' },
+  { id: 'ENERGIA', rotulo: 'Energia' },
+];
+
+export default function ListaEventos({ versao }) {
+  const [tipo, setTipo] = useState('ALERTA_MANUAL');
+  const [eventos, setEventos] = useState([]);
+  const [erro, setErro] = useState('');
+
+  useEffect(() => {
+    let ativo = true;
+    eventosApi
+      .listar({ limite: 30, tipo })
+      .then((lista) => {
+        if (!ativo) return;
+        setEventos(lista);
+        setErro('');
+      })
+      .catch((e) => ativo && setErro(mensagemErro(e)));
+    return () => {
+      ativo = false;
+    };
+  }, [tipo, versao]);
+
+  return (
+    <section className="cartao eventos">
+      <div className="cabecalho-secao">
+        <h2>Envios e eventos registrados</h2>
+        <div className="seletor" role="group" aria-label="Filtrar registros">
+          {FILTROS.map((f) => (
+            <button
+              key={f.id || 'todos'}
+              type="button"
+              className={tipo === f.id ? 'ativo' : ''}
+              aria-pressed={tipo === f.id}
+              onClick={() => setTipo(f.id)}
+            >
+              {f.rotulo}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {erro && <p className="erro-form">{erro}</p>}
+      {!erro && eventos.length === 0 && <p className="texto-suave">Nenhum registro.</p>}
+
+      {eventos.length > 0 && (
+        <div className="tabela-rolagem">
+          <table>
+            <thead>
+              <tr>
+                <th>Data e hora</th>
+                <th>Tipo</th>
+                <th>Nível</th>
+                <th>Descrição</th>
+                <th>Enviado por</th>
+                <th>E-mails</th>
+              </tr>
+            </thead>
+            <tbody>
+              {eventos.map((e) => (
+                <tr key={e.id}>
+                  <td className="sem-quebra">{dataHora(e.criadoEm)}</td>
+                  <td>{TIPO_EVENTO[e.tipo] ?? e.tipo}</td>
+                  <td>
+                    {e.nivel ? (
+                      <span className={`etiqueta-nivel pequena nivel-${e.nivel.toLowerCase()}`}>{e.nivel}</span>
+                    ) : (
+                      '-'
+                    )}
+                  </td>
+                  <td>{e.descricao}</td>
+                  <td>{e.enviadoPor ?? 'automático'}</td>
+                  <td className="sem-quebra">
+                    {e.enviados ?? 0}/{e.destinatarios ?? 0}
+                    {e.falhas > 0 ? ` (${e.falhas} falha${e.falhas > 1 ? 's' : ''})` : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="nota">E-mails automáticos (nível subiu e energia) vão só aos administradores.</p>
+    </section>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/config/niveis.js}}
+\addcontentsline{toc}{section}{frontend/src/config/niveis.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/config/niveis.js =============
+// Níveis de alerta (Eq. 3) e limiares do modelo, só para EXIBIÇÃO.
+// Quem calcula o nível é o dispositivo; o painel apenas mostra o que recebeu.
+
+export const NIVEIS = ['VERDE', 'AMARELO', 'VERMELHO'];
+
+export const INFO_NIVEL = {
+  VERDE: {
+    titulo: 'VERDE',
+    resumo: 'Condição normal',
+    texto: 'Não há necessidade de deslocamento. Manter-se informado.',
+  },
+  AMARELO: {
+    titulo: 'AMARELO',
+    resumo: 'Atenção',
+    texto: 'Preparar-se: conhecer a rota de fuga e o ponto de encontro e acompanhar novos avisos.',
+  },
+  VERMELHO: {
+    titulo: 'VERMELHO',
+    resumo: 'Alerta',
+    texto: 'Deslocar-se para o ponto de encontro pela rota de fuga e seguir as orientações da Defesa Civil.',
+  },
+};
+
+// Limiares de saturação: Mirus, Morphew e Smith (2018), Tabela 1 (S1 = 0,64; S2 = 0,86)
+// Limiares de chuva em 72 h: Mendes et al. (2020) (P1 = 60 mm; P2 = 100 mm)
+export const LIMIARES = {
+  S1: 0.64,
+  S2: 0.86,
+  P1: 60,
+  P2: 100,
+  fonteS: 'Mirus, Morphew e Smith (2018)',
+  fonteP: 'Mendes et al. (2020)',
+};
+
+export const ESTADO_BATERIA = {
+  NORMAL: 'Normal',
+  BAIXA: 'Baixa',
+  CRITICA: 'Crítica',
+  FALHA: 'Falha: substituir',
+};
+
+export const TIPO_EVENTO = {
+  ALERTA_MANUAL: 'E-mail aos moradores',
+  NIVEL_SUBIU: 'Nível subiu',
+  ENERGIA: 'Energia',
+};
+
+// Rodapé comum (P1_referencias, item d) - igual ao dos e-mails
+export const RODAPE =
+  'Sistema acadêmico de monitoramento (TCC - IPRJ/UERJ). As cores deste sistema não ' +
+  'correspondem aos níveis oficiais de emergência da Agência Nacional de Mineração.';
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/contexts/AuthContext.js}}
+\addcontentsline{toc}{section}{frontend/src/contexts/AuthContext.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/contexts/AuthContext.js =============
+// Login do administrador (único perfil com acesso ao painel).
+'use client';
+
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { authApi, mensagemErro, sessao } from '@/services/api';
+
+const AuthContext = createContext(null);
+
+export function useAuth() {
+  const contexto = useContext(AuthContext);
+  if (!contexto) throw new Error('useAuth deve ser usado dentro de AuthProvider');
+  return contexto;
+}
+
+export function AuthProvider({ children }) {
+  const [admin, setAdmin] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    setAdmin(sessao.ler()?.admin ?? null);
+    setCarregando(false);
+
+    const expirou = () => setAdmin(null);
+    window.addEventListener('sessao-expirada', expirou);
+    return () => window.removeEventListener('sessao-expirada', expirou);
+  }, []);
+
+  const entrar = useCallback(async (email, senha) => {
+    try {
+      const { token, administrador } = await authApi.login(email, senha);
+      sessao.salvar(token, administrador);
+      setAdmin(administrador);
+      return { ok: true };
+    } catch (erro) {
+      return { ok: false, mensagem: mensagemErro(erro, 'Não foi possível entrar.') };
+    }
+  }, []);
+
+  const sair = useCallback(async () => {
+    await authApi.logout();
+    sessao.limpar();
+    setAdmin(null);
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ admin, carregando, entrar, sair }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/services/api.js}}
+\addcontentsline{toc}{section}{frontend/src/services/api.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/services/api.js =============
+// Chamadas ao backend v3-simples (ver backend/src/routes/index.ts).
+import axios from 'axios';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 15000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+// -- Sessão do administrador (token JWT no navegador) ------------------------
+
+const CHAVE_TOKEN = 'token';
+const CHAVE_ADMIN = 'administrador';
+
+export const sessao = {
+  ler() {
+    try {
+      const token = localStorage.getItem(CHAVE_TOKEN);
+      const admin = JSON.parse(localStorage.getItem(CHAVE_ADMIN) || 'null');
+      return token && admin ? { token, admin } : null;
+    } catch {
+      return null;
+    }
+  },
+  salvar(token, admin) {
+    try {
+      localStorage.setItem(CHAVE_TOKEN, token);
+      localStorage.setItem(CHAVE_ADMIN, JSON.stringify(admin));
+    } catch {
+      /* navegador sem armazenamento: a sessão dura até recarregar a página */
+    }
+  },
+  limpar() {
+    try {
+      localStorage.removeItem(CHAVE_TOKEN);
+      localStorage.removeItem(CHAVE_ADMIN);
+    } catch {
+      /* nada a limpar */
+    }
+  },
+};
+
+api.interceptors.request.use((config) => {
+  const s = sessao.ler();
+  if (s) config.headers.Authorization = `Bearer ${s.token}`;
+  return config;
+});
+
+// Token vencido ou inválido: limpa a sessão e avisa o AuthContext
+api.interceptors.response.use(
+  (resposta) => resposta,
+  (erro) => {
+    const ehLogin = erro.config?.url?.includes('/auth/login');
+    if (erro.response?.status === 401 && !ehLogin && typeof window !== 'undefined') {
+      sessao.limpar();
+      window.dispatchEvent(new Event('sessao-expirada'));
+    }
+    return Promise.reject(erro);
+  },
+);
+
+const dados = (resposta) => resposta.data.data;
+
+export function mensagemErro(erro, padrao = 'Não foi possível concluir a operação.') {
+  if (erro?.response?.data?.error) return erro.response.data.error;
+  if (erro?.code === 'ERR_NETWORK' || erro?.code === 'ECONNABORTED') {
+    return 'Servidor indisponível. Verifique se a API está ligada.';
+  }
+  return padrao;
+}
+
+// -- Rotas ----------------------------------------
+
+export const leiturasApi = {
+  // Devolve null quando ainda não há leitura (a API responde 404)
+  async ultima() {
+    try {
+      return dados(await api.get('/leituras/ultima'));
+    } catch (erro) {
+      if (erro.response?.status === 404) return null;
+      throw erro;
+    }
+  },
+  async historico(inicio, fim) {
+    return dados(await api.get('/leituras', { params: { inicio, fim, limite: 5000 } }));
+  },
+};
+
+export const usuariosApi = {
+  async cadastrar({ nome, email, telefone, localidade }) {
+    return dados(await api.post('/usuarios', { nome, email, telefone, localidade }));
+  },
+  async listar() {
+    return dados(await api.get('/usuarios'));
+  },
+};
+
+export const authApi = {
+  async login(email, senha) {
+    return dados(await api.post('/auth/login', { email, senha }));
+  },
+  async logout() {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      /* o importante é descartar o token no navegador */
+    }
+  },
+};
+
+export const alertasApi = {
+  async modelos() {
+    return dados(await api.get('/alertas/modelos'));
+  },
+  async enviar({ nivel, assunto, mensagem }) {
+    return dados(await api.post('/alertas', { nivel, assunto, mensagem }));
+  },
+};
+
+export const eventosApi = {
+  async listar({ limite = 30, tipo } = {}) {
+    return dados(await api.get('/eventos', { params: { limite, tipo: tipo || undefined } }));
+  },
+};
+
+export default api;
+\end{lstlisting}
+
+\section*{\texttt{frontend/src/utils/formato.js}}
+\addcontentsline{toc}{section}{frontend/src/utils/formato.js}
+\begin{lstlisting}[language=JavaScript]
+// ============= src/utils/formato.js =============
+// Formatação em pt-BR (vírgula decimal, horário de Brasília).
+
+const FUSO = 'America/Sao_Paulo';
+
+export function numero(valor, casas = 1) {
+  if (valor === null || valor === undefined || Number.isNaN(Number(valor))) return null;
+  return Number(valor).toLocaleString('pt-BR', {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  });
+}
+
+export function dataHora(iso) {
+  if (!iso) return '-';
+  return new Date(iso).toLocaleString('pt-BR', {
+    timeZone: FUSO,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export function horaCurta(ms, comDia = false) {
+  return new Date(ms).toLocaleString('pt-BR', {
+    timeZone: FUSO,
+    ...(comDia ? { day: '2-digit', month: '2-digit' } : {}),
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export function haQuanto(iso, agora = Date.now()) {
+  if (!iso) return '';
+  const min = Math.max(0, Math.round((agora - new Date(iso).getTime()) / 60000));
+  if (min < 1) return 'agora há pouco';
+  if (min < 60) return `há ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `há ${h} h ${min % 60} min`;
+  const d = Math.floor(h / 24);
+  return `há ${d} dia${d > 1 ? 's' : ''}`;
+}
+\end{lstlisting}
+

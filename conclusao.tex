@@ -5,95 +5,82 @@
 \newline
 \newline
 
-O objetivo geral deste trabalho foi alcançado. Foi desenvolvido um
-sistema de monitoramento e alerta para barragens de rejeitos de
-mineração, baseado em IoT, que combina a saturação do solo, obtida no
-local, com a chuva observada e prevista, e emite alertas em três
-níveis, de forma local e remota, com alimentação redundante por bateria.
+O sistema desenvolvido combina a saturação do solo, medida no local, com
+a chuva observada e prevista e classifica a condição da área monitorada
+em três níveis de alerta. Nos 31 casos de teste, executados na simulação
+e no protótipo físico, a saída observada foi igual à saída esperada.
 
-Os seis objetivos específicos do \autoref{cap:objetivos} foram
-atendidos (\autoref{tab:cobertura_objetivos}). Nos 31 casos de teste
-executados, a saída observada foi igual à saída esperada
-(\autoref{tab:res-sintese}).
+O modelo de dois limiares elevou o nível apenas quando o solo úmido e a
+chuva ocorreram em conjunto. A chuva intensa com o solo seco e o solo
+saturado sem chuva mantiveram o nível VERDE. Esse comportamento está de
+acordo com o princípio dos limiares hidrometeorológicos descritos na
+literatura, segundo o qual nem a chuva nem a saturação do solo,
+isoladamente, indicam a condição de instabilidade.
 
-O modelo de alerta aplica um limiar hidrometeorológico: o nível sobe
-quando a causa, o solo úmido, e o gatilho, a chuva, ocorrem em conjunto
-\cite{bogaard2018hydrological}. A saturação relativa $S$ é obtida pelo
-higrômetro, e a chuva $P_{72}$ soma 48~horas observadas na BNDMET e
-24~horas previstas pelo OpenWeatherMap \cite[p.~5]{mirus2018developing}.
+As regras de contingência mantiveram um nível de alerta definido na
+falta do higrômetro, dos dados de chuva ou de ambos, e com dados de
+chuva incompletos. Como o nível é calculado no próprio dispositivo, o
+alerta local por LEDs e \textit{buzzer} não depende da rede nem do
+servidor.
 
-Cada limiar do modelo tem origem na literatura
-(\autoref{tab:limiares}). Os de saturação, $S_1 = 0{,}64$ e
-$S_2 = 0{,}86$, vêm de \citeonline[p.~9, Tabela~1]{mirus2018developing},
-e os de chuva, $P_1 = 60$\,mm e $P_2 = 100$\,mm em 72~horas, de
-\citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
+Pelo cálculo, um pacote de fábrica de células de íon-lítio, de 3,7\,V e
+9500\,mAh mínimos, atende ao requisito de 24~horas de supervisão e
+15~minutos de alarme, com autonomia teórica de cerca de 36~horas. Um
+único módulo carrega a bateria e alimenta o sistema ao mesmo tempo, sem
+interromper a saída na falta da rede elétrica. Na
+simulação, a supervisão de energia avisou o administrador da falta de
+rede, da bateria baixa, da bateria crítica e da falha de recarga.
 
-O alerta local é feito pelos LEDs de cada nível e pelo
-\textit{buzzer}, acionado no VERMELHO. Como o nível é calculado no
-próprio dispositivo, esse alerta não depende da rede nem do
-\textit{backend}, e as regras de contingência o mantêm quando falta o
-higrômetro ou os dados de chuva (\autoref{tab:contingencia}).
+O protótipo físico custou R\$\,59,18, e a alimentação redundante elevou
+o custo total a R\$\,421,20, valores muito inferiores aos de instrumentos
+geotécnicos automatizados.
 
-O alerta remoto é feito pela plataforma \textit{web}. O morador se
-cadastra na página inicial, e o administrador acompanha o painel e
-envia o e-mail de alerta verde, amarelo ou vermelho, com a orientação
-sobre a necessidade de deslocamento (\autoref{qua:mensagens-alerta}).
-No teste, o e-mail foi enviado aos cinco moradores
-cadastrados (\autoref{fig:res-w17b}), e o recebimento foi conferido na
-caixa de entrada de um deles (\autoref{fig:res-w19}).
+A plataforma \textit{web} cadastrou os moradores, exibiu ao
+administrador o nível, os dados e o histórico das leituras e enviou o
+e-mail de alerta com a orientação de deslocamento. As leituras e os
+eventos ficam guardados de forma permanente e podem ser fornecidos a
+órgãos de fiscalização e investigação.
 
-A redundância de energia foi dimensionada por cálculo. Para 24~horas
-de supervisão e 15~minutos de alarme \cite[item~5.3]{cbmmg2017it14},
-com margem de 20\% \cite{hammerberg2021calculation}, a bateria precisa
-de 7816\,mAh (\autoref{eq:cap-celula}). Por isso, foram adotadas três
-células NCR18650B em paralelo, com 9600\,mAh \cite{panasonic_ncr18650b}.
+Os resultados limitam-se a um único local de medição, cujos limiares
+não foram ajustados para esse local, ao uso de um sensor que fornece
+apenas uma leitura relativa da umidade do solo e a uma fonte externa
+redundante de suprimento de energia elétrica dimensionada por cálculo,
+mas não montada no protótipo físico.
 
-Na simulação, com a falta de rede, o dispositivo passou à bateria e
-continuou a calcular o nível e a enviar as leituras
-(\autoref{fig:res-e02}). Os avisos de bateria baixa, bateria crítica e
-falha de recarga também foram demonstrados (\autoref{tab:res-energia}).
-A autonomia teórica em supervisão é de cerca de 36~horas
-(\autoref{tab:autonomia}).
+Conclui-se que é possível construir, com componentes de baixo custo e
+tecnologias de código aberto, um sistema de alerta que possibilita
+auxiliar a execução do plano de emergência na evacuação antecipada da
+população que mora e/ou circula próxima a barragens de rejeitos. O
+sistema é complementar: não substitui a sirene, o plano de ação de
+emergência nem a Defesa Civil.
 
-A Política Nacional de Segurança de Barragens prevê, no plano de
-emergência, rotas de fuga e pontos de encontro sinalizados e um sistema
-sonoro ou outra solução tecnológica para situações de alerta
-\cite{brasil2010pnsb,brasil2020lei14066}. O sistema desenvolvido segue
-essa lógica, com o alerta sonoro local e o e-mail que orienta o
-deslocamento ao ponto de encontro.
+\paragraph*{Trabalhos futuros}
 
-O sistema, porém, é complementar: ele não substitui a sirene, o plano de
-emergência da barragem nem a Defesa Civil, e as suas cores não
-correspondem aos níveis de emergência definidos pela
-\citeonline{anm2022resolucao95}.
-
-Os resultados se limitam, como discutido na \autoref{sec:limitacoes},
-a um único ponto de medição, com um sensor que não mede a umidade
-volumétrica, limiares de referência não calibrados para Brumadinho nem
-para rejeito de minério de ferro e uma bateria apenas calculada e
-simulada, em testes acelerados.
-
-A partir dessas limitações, são propostos os seguintes trabalhos
-futuros:
+São propostos os seguintes trabalhos futuros:
 
 \begin{enumerate}
 
-  \item calibrar os limiares $S_1$, $S_2$, $P_1$ e $P_2$ para o local
-  monitorado e para o rejeito de minério de ferro;
+  \item enviar o alerta aos moradores também por SMS, que não depende de
+  acesso à internet;
 
-  \item substituir o higrômetro FC-28 por um sensor de umidade
-  volumétrica, para obter $S$ na mesma escala em que $S_1$ e $S_2$
-  foram definidos \cite[p.~5]{mirus2018developing};
+  \item analisar a sensibilidade do nível de alerta aos valores adotados no
+  modelo, como os
+  limiares $S_1$, $S_2$, $P_1$ e $P_2$, ajustados ao local, por meio de
+  superfícies de resposta;
 
-  \item montar a bateria, o carregador e a detecção da rede no
-  protótipo físico e ensaiar a autonomia real frente ao requisito de
-  24~horas de supervisão e 15~minutos de alarme
-  \cite[item~5.3]{cbmmg2017it14};
+  \item substituir o higrômetro por instrumentos geotécnicos, como
+  piezômetros, e por um sensor de umidade volumétrica;
 
   \item instalar múltiplos pontos de medição, em posições e
   profundidades diferentes da estrutura;
 
+  \item montar a bateria, o carregador e a detecção da rede no
+  protótipo físico e ensaiar a autonomia real;
+
   \item complementar os dias sem registro na estação da BNDMET com os
-  dados de uma segunda estação próxima.
+  dados de uma segunda estação próxima;
+
+  \item testar o sistema em um piloto em escala reduzida e/ou em campo,
+  em uma barragem real.
 
 \end{enumerate}

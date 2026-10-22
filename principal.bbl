@@ -13,18 +13,40 @@ Dispon{\'\i}vel em:
   \url{https://learn.adafruit.com/adafruit-powerboost-1000c-load-share-usb-charge-boost}.
   Acesso em: 1 out. 2026.}
 
-\bibitem[{ADAFRUIT INDUSTRIES} {[2026?]}]{adafruit_2465_produto}
-\abntrefinfo{{ADAFRUIT INDUSTRIES}}{{ADAFRUIT INDUSTRIES}}{{[2026?]}}
+\bibitem[{ADAFRUIT INDUSTRIES} {[2026]}]{adafruit_5035}
+\abntrefinfo{{ADAFRUIT INDUSTRIES}}{{ADAFRUIT INDUSTRIES}}{{[2026]}a}
+{{ADAFRUIT INDUSTRIES}. \emph{Lithium ion battery -- 3.7{V} 10050m{A}h (10
+  {A}h)}. {[2026]}.
+Dispon{\'\i}vel em: \url{https://www.adafruit.com/product/5035}. Acesso em: 22
+  out. 2026. Produto 5035.}
+
+\bibitem[{ADAFRUIT INDUSTRIES} {[2026]}]{adafruit_353}
+\abntrefinfo{{ADAFRUIT INDUSTRIES}}{{ADAFRUIT INDUSTRIES}}{{[2026]}b}
+{{ADAFRUIT INDUSTRIES}. \emph{Lithium ion battery pack -- 3.7{V} 6600m{A}h}.
+  {[2026]}.
+Dispon{\'\i}vel em: \url{https://www.adafruit.com/product/353}. Acesso em: 22
+  out. 2026. Produto 353.}
+
+\bibitem[{ADAFRUIT INDUSTRIES} {[2026]}]{adafruit_2465_produto}
+\abntrefinfo{{ADAFRUIT INDUSTRIES}}{{ADAFRUIT INDUSTRIES}}{{[2026]}c}
 {{ADAFRUIT INDUSTRIES}. \emph{{PowerBoost} 1000 charger -- rechargeable 5{V}
-  {LiPo} {USB} boost @ 1{A} -- 1000{C}}. {[2026?]}.
-Dispon{\'\i}vel em: \url{https://www.adafruit.com/product/2465}. Acesso em: 5
+  {LiPo} {USB} boost @ 1{A} -- 1000{C}}. {[2026]}.
+Dispon{\'\i}vel em: \url{https://www.adafruit.com/product/2465}. Acesso em: 22
   out. 2026. Produto 2465.}
 
-\bibitem[{ADVANCED MONOLITHIC SYSTEMS} {[20{-}{-}]}]{ams1117_datasheet}
+\bibitem[{ADAFRUIT\_SUPPORT\_BILL} 2016]{adafruit_forum_18650}
+\abntrefinfo{{ADAFRUIT\_SUPPORT\_BILL}}{{ADAFRUIT\_SUPPORT\_BILL}}{2016}
+{{ADAFRUIT\_SUPPORT\_BILL}. \emph{How many 18650s can {I} connect to your
+  {PowerBoost} {1000C}?} 2016. Fórum Adafruit Industries.
+Dispon{\'\i}vel em:
+  \url{https://forums.adafruit.com/viewtopic.php?f=19&t=107088}. Acesso em: 22
+  out. 2026. Mensagem de 26 nov. 2016.}
+
+\bibitem[{ADVANCED MONOLITHIC SYSTEMS} {[2026]}]{ams1117_datasheet}
 \abntrefinfo{{ADVANCED MONOLITHIC SYSTEMS}}{{ADVANCED MONOLITHIC
-  SYSTEMS}}{{[20{-}{-}]}}
+  SYSTEMS}}{{[2026]}}
 {{ADVANCED MONOLITHIC SYSTEMS}. \emph{{AMS1117-3.3}: 1A low dropout voltage
-  regulator -- datasheet}. {[20{--}{--}]}.
+  regulator -- datasheet}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/8122/AMS11173.3SOT223.pdf}.
   Acesso em: 1 out. 2026.}
@@ -37,6 +59,15 @@ Dispon{\'\i}vel em:
   \url{https://www.agenciaminas.mg.gov.br/news/pdf/112724.pdf}. Acesso em: 4
   out. 2026.}
 
+\bibitem[{AGÊNCIA MINAS} 2023]{agenciaminas2023alertas}
+\abntrefinfo{{AGÊNCIA MINAS}}{{AGÊNCIA MINAS}}{2023}
+{{AGÊNCIA MINAS}. \emph{Governo de Minas reforça importância do cadastro
+  para receber alertas da Defesa Civil no celular}. 2023. Belo Horizonte, 19
+  nov. 2023.
+Dispon{\'\i}vel em:
+  \url{https://www.agenciaminas.mg.gov.br/noticia/governo-de-minas-reforca-importancia-do-cadastro-para-receber-alertas-da-defesa-civil-no-celular-119883}.
+  Acesso em: 19 out. 2026.}
+
 \bibitem[{AGÊNCIA MINAS} 2024]{agenciaminas2024mariana}
 \abntrefinfo{{AGÊNCIA MINAS}}{{AGÊNCIA MINAS}}{2024}
 {{AGÊNCIA MINAS}. \emph{Tragédia de {Mariana} completa nove anos com novo
@@ -44,19 +75,6 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://www.agenciaminas.mg.gov.br/news/pdf/124136.pdf}. Acesso em: 4
   out. 2026.}
-
-\bibitem[{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA} 2024]{aneel2024nt90}
-\abntrefinfo{{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA}}{{AGÊNCIA NACIONAL DE
-  ENERGIA ELÉTRICA}}{2024}
-{{AGÊNCIA NACIONAL DE ENERGIA ELÉTRICA}. \emph{Nota Técnica n.
-  90/2024-{STD-SFT-SFF/ANEEL}: avaliação das contribuições recebidas
-  durante a Tomada de Subsídios 002/2024 e proposta de aprimoramentos
-  regulatórios associados ao aumento da resiliência do sistema de
-  distribuição e de transmissão a eventos climáticos extremos}. Brasília,
-  DF: [s.n.], 2024.
-Dispon{\'\i}vel em:
-  \url{https://static.poder360.com.br/2024/10/nota-tecnica-aneel-planos-cotingencia.pdf}.
-  Acesso em: 2 out. 2026. Processo 48500.006650/2023-59, 18 out. 2024.}
 
 \bibitem[{AGÊNCIA NACIONAL DE MINERAÇÃO} 2019]{anm2019relatorio}
 \abntrefinfo{{AGÊNCIA NACIONAL DE MINERAÇÃO}}{{AGÊNCIA NACIONAL DE
@@ -110,12 +128,23 @@ Dispon{\'\i}vel em:
 {{AI-THINKER}. \emph{{ESP-12E} {WiFi} Module (\textit{datasheet})}. 2015.
 Dispon{\'\i}vel em: \url{http://www.ai-thinker.com}. Acesso em: 1 out. 2026.}
 
-\bibitem[{AMAZON BRASIL} {[2026?]}]{amazon_powerboost1000c}
-\abntrefinfo{{AMAZON BRASIL}}{{AMAZON BRASIL}}{{[2026?]}}
+\bibitem[{AMAZON BRASIL} {[2026]}]{amazon_powerboost1000c}
+\abntrefinfo{{AMAZON BRASIL}}{{AMAZON BRASIL}}{{[2026]}}
 {{AMAZON BRASIL}. \emph{Adafruit carregador {PowerBoost} 1000 -- recarregável
-  5{V} {LiPo} {USB} {Boost} @ 1{A} -- 1000{C} [{ADA2465}]}. {[2026?]}.
+  5{V} {LiPo} {USB} {Boost} @ 1{A} -- 1000{C} [{ADA2465}]}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://www.amazon.com.br/dp/B01BMRBTH2}. Acesso em: 4
   out. 2026. Preço de R\$ 205,57, com taxas de importação incluídas.}
+
+\bibitem[{ANEEL} 2024]{aneel2024nt90}
+\abntrefinfo{{ANEEL}}{{ANEEL}}{2024}
+{{ANEEL}. \emph{Nota Técnica n. 90/2024-{STD-SFT-SFF/ANEEL}: avaliação das
+  contribuições recebidas durante a Tomada de Subsídios 002/2024 e proposta
+  de aprimoramentos regulatórios associados ao aumento da resiliência do
+  sistema de distribuição e de transmissão a eventos climáticos extremos}.
+  Brasília, DF: [s.n.], 2024.
+Dispon{\'\i}vel em:
+  \url{https://static.poder360.com.br/2024/10/nota-tecnica-aneel-planos-cotingencia.pdf}.
+  Acesso em: 2 out. 2026. Processo 48500.006650/2023-59, 18 out. 2024.}
 
 \bibitem[{ANM} 2023]{anm2023informe4}
 \abntrefinfo{{ANM}}{{ANM}}{2023}
@@ -154,29 +183,13 @@ Dispon{\'\i}vel em:
   \url{https://educapes.capes.gov.br/bitstream/capes/175231/1/Legislacao\_Juliana.pdf}.
   Acesso em: 24 maio 2025.}
 
-\bibitem[{BATTERY UNIVERSITY} 2021]{bu302_serieparalelo}
-\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021a}
-{{BATTERY UNIVERSITY}. \emph{{BU-302}: series and parallel battery
-  configurations}. 2021. Cadex Electronics.
-Dispon{\'\i}vel em:
-  \url{https://batteryuniversity.com/article/bu-302-series-and-parallel-battery-configurations}.
-  Acesso em: 5 out. 2026. Atualizado em 25 out. 2021.}
-
 \bibitem[{BATTERY UNIVERSITY} 2021]{bu402_crate}
-\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021b}
+\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021}
 {{BATTERY UNIVERSITY}. \emph{{BU-402}: what is {C-rate}?} 2021. Cadex
   Electronics.
 Dispon{\'\i}vel em:
   \url{https://batteryuniversity.com/article/bu-402-what-is-c-rate}. Acesso em:
   5 out. 2026. Atualizado em 25 out. 2021.}
-
-\bibitem[{BATTERY UNIVERSITY} 2021]{bu409_charging}
-\abntrefinfo{{BATTERY UNIVERSITY}}{{BATTERY UNIVERSITY}}{2021c}
-{{BATTERY UNIVERSITY}. \emph{{BU-409}: charging lithium-ion}. 2021. Cadex
-  Electronics.
-Dispon{\'\i}vel em:
-  \url{https://batteryuniversity.com/article/bu-409-charging-lithium-ion}.
-  Acesso em: 5 out. 2026. Atualizado em 25 out. 2021.}
 
 \bibitem[{BBC NEWS BRASIL} 2025]{bbc2025texas}
 \abntrefinfo{{BBC NEWS BRASIL}}{{BBC NEWS BRASIL}}{2025}
@@ -224,6 +237,15 @@ Brasília, DF, 2010. Dispon{\'\i}vel em:
   \url{https://www.planalto.gov.br/ccivil\_03/\_ato2007-2010/2010/lei/l12334.htm}.
   Acesso em: 19 maio 2025.}
 
+\bibitem[BRASIL 2017]{brasil2017lei13575}
+\abntrefinfo{BRASIL}{BRASIL}{2017}
+{BRASIL. \emph{Lei nº 13.575, de 26 de dezembro de 2017}: Cria a agência
+  nacional de mineração (anm); extingue o departamento nacional de produção
+  mineral (dnpm). Brasília, DF: [s.n.], 2017. Diário Oficial da União.
+Dispon{\'\i}vel em:
+  \url{https://www.planalto.gov.br/ccivil\_03/\_ato2015-2018/2017/lei/l13575.htm}.
+  Acesso em: 19 out. 2026.}
+
 \bibitem[{BRASIL} 2017]{brasil2017portaria70389}
 \abntrefinfo{{BRASIL}}{{BRASIL}}{2017}
 {{BRASIL}. \emph{Portaria nº 70.389, de 17 de maio de 2017. Cria o Cadastro
@@ -247,6 +269,15 @@ Dispon{\'\i}vel em:
 Brasília, 2018. Dispon{\'\i}vel em:
   \url{https://www.planalto.gov.br/ccivil\_03/\_Ato2015-2018/2018/Decreto/D9406.htm}.
   Acesso em: 27 abr. 2025.}
+
+\bibitem[BRASIL 2018]{brasil2018lgpd}
+\abntrefinfo{BRASIL}{BRASIL}{2018}
+{BRASIL. \emph{Lei nº 13.709, de 14 de agosto de 2018}: Lei geral de
+  proteção de dados pessoais (lgpd). Brasília, DF: [s.n.], 2018. Diário
+  Oficial da União.
+Dispon{\'\i}vel em:
+  \url{https://www.planalto.gov.br/ccivil\_03/\_ato2015-2018/2018/lei/l13709.htm}.
+  Acesso em: 19 out. 2026.}
 
 \bibitem[BRASIL 2020]{brasil2020lei14066}
 \abntrefinfo{BRASIL}{BRASIL}{2020}
@@ -293,13 +324,6 @@ Dispon{\'\i}vel em:
   \url{https://www.gov.br/planalto/pt-br/novo-acordo-do-rio-doce/conheca-a-linha-do-tempo-da-tragedia-de-mariana-mg}.
   Acesso em: 22 maio 2025.}
 
-\bibitem[{BTO} {[20{-}{-}]}]{bto_ncr18650_pcm}
-\abntrefinfo{{BTO}}{{BTO}}{{[20{-}{-}]}}
-{{BTO}. \emph{Product data sheet: {NCR18650-340PCM} (célula {NCR18650B} com
-  circuito de proteção)}. {[20{--}{--}]}.
-Dispon{\'\i}vel em: \url{https://static.rapidonline.com/pdf/12-5776\_v1.pdf}.
-  Acesso em: 1 out. 2026.}
-
 \bibitem[Carvalho et al. 2012]{carvalho2012dependencia}
 \abntrefinfo{Carvalho et al.}{CARVALHO et al.}{2012}
 {CARVALHO, C.~G. et al. A dependência da arrecadação do município de {Ouro
@@ -328,9 +352,9 @@ Dispon{\'\i}vel em:
   \url{https://www.teses.usp.br/teses/disponiveis/3/3134/tde-30092008-153409/publico/Dissertacao\_Revisada\_2008.pdf}.
   Acesso em: 21 jun. 2025.}
 
-\bibitem[Conceição 2018]{conceicao2018}
-\abntrefinfo{Conceição}{CONCEIçãO}{2018}
-{CONCEIçãO, R. A. C.~d.
+\bibitem[Concei{\c{c}}{\~{a}}o 2018]{conceicao2018}
+\abntrefinfo{Concei{\c{c}}{\~{a}}o}{CONCEI{\c{C}}{\~{A}}O}{2018}
+{CONCEI{\c{C}}{\~{A}}O, R. A. C.~d.
 \emph{Análise do potencial de risco de rompimento em barragens de rejeito de
   mineração do Estado do Pará}.
 68~p. Disserta\c{c}\~{a}o (Dissertação (Mestrado Profissional em Gestão de
@@ -339,6 +363,33 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em:
   \url{https://ppggrd.propesp.ufpa.br/ARQUIVOS/dissertacoes/disserta\%C3\%A7oes\%20ppggrd/Disserta\%C3\%A7\%C3\%A3o\%20Almir.pdf}.
   Acesso em: 24 maio 2025.}
+
+\bibitem[{CONSELHO NACIONAL DE DESENVOLVIMENTO CIENTÍFICO E TECNOLÓGICO}
+  2026]{cnpq2026portaria2664}
+\abntrefinfo{{CONSELHO NACIONAL DE DESENVOLVIMENTO CIENTÍFICO E
+  TECNOLÓGICO}}{{CONSELHO NACIONAL DE DESENVOLVIMENTO CIENTÍFICO E
+  TECNOLÓGICO}}{2026}
+{{CONSELHO NACIONAL DE DESENVOLVIMENTO CIENTÍFICO E TECNOLÓGICO}.
+  \emph{Portaria CNPq nº 2.664, de 6 de março de 2026}: Institui a política
+  de integridade na atividade científica do cnpq. 2026. Diário Oficial da
+  União: seção 1, Brasília, DF, ed. 47, p. 4, 11 mar. 2026.
+Dispon{\'\i}vel em:
+  \url{https://www.in.gov.br/web/dou/-/portaria-cnpq-n-2.664-de-6-de-marco-de-2026-691779232}.
+  Acesso em: 21 out. 2026.}
+
+\bibitem[{COORDENAÇÃO DE APERFEIÇOAMENTO DE PESSOAL DE NÍVEL SUPERIOR}
+  2025]{capes2025portaria363}
+\abntrefinfo{{COORDENAÇÃO DE APERFEIÇOAMENTO DE PESSOAL DE NÍVEL
+  SUPERIOR}}{{COORDENAÇÃO DE APERFEIÇOAMENTO DE PESSOAL DE NÍVEL
+  SUPERIOR}}{2025}
+{{COORDENAÇÃO DE APERFEIÇOAMENTO DE PESSOAL DE NÍVEL SUPERIOR}.
+  \emph{Portaria CAPES nº 363, de 17 de dezembro de 2025}: Institui grupo de
+  trabalho para propor regulamentação sobre o uso de inteligência artificial
+  no âmbito das atividades de competência da capes. 2025. Diário Oficial da
+  União: seção 2, Brasília, DF, ed. 242, p. 37, 19 dez. 2025.
+Dispon{\'\i}vel em:
+  \url{https://www.in.gov.br/web/dou/-/portaria-capes-n-363-de-17-de-dezembro-de-2025-676490326}.
+  Acesso em: 19 out. 2026.}
 
 \bibitem[Costa et al. 2004]{costa2004pipeline}
 \abntrefinfo{Costa et al.}{COSTA et al.}{2004}
@@ -406,6 +457,21 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://earthworks.org/resources/safety-first/}.
   Acesso em: 11 jun. 2025.}
 
+\bibitem[{ELETRODEX} {[2026]}]{eletrodex_jumper}
+\abntrefinfo{{ELETRODEX}}{{ELETRODEX}}{{[2026]}a}
+{{ELETRODEX}. \emph{Cabo jumper 40 vias 20cm}. {[2026]}.
+Dispon{\'\i}vel em:
+  \url{https://www.eletrodex.net/cabos-e-fios/eletronica/jumper/cabo-jumper-40-vias-20cm}.
+  Acesso em: 21 out. 2026. Preço de R\$ 12,60 por cabo, nas versões
+  fêmea/fêmea, macho/fêmea e macho/macho.}
+
+\bibitem[{ELETRODEX} {[2026]}]{eletrodex_protoboard_ks214}
+\abntrefinfo{{ELETRODEX}}{{ELETRODEX}}{{[2026]}b}
+{{ELETRODEX}. \emph{{KS214} -- protoboard mini 170 pts 35x47x8,5mm}. {[2026]}.
+Dispon{\'\i}vel em:
+  \url{https://www.eletrodex.net/montagem/pci/protoboards/ks214-protoboard-mini-170-pts-35x47x8-5mm}.
+  Acesso em: 21 out. 2026. Preço unitário de R\$ 4,99.}
+
 \bibitem[{ELETROGATE} 2025]{eletrogate_higrometro}
 \abntrefinfo{{ELETROGATE}}{{ELETROGATE}}{2025}
 {{ELETROGATE}. \emph{Módulo sensor de umidade de solo com saída analógica e
@@ -414,10 +480,10 @@ Dispon{\'\i}vel em:
   \url{https://www.eletrogate.com/modulo-sensor-de-umidade-de-solo}. Acesso em:
   20 mar. 2026.}
 
-\bibitem[{ENERGIZER} {[2019?]}]{energizer522}
-\abntrefinfo{{ENERGIZER}}{{ENERGIZER}}{{[2019?]}}
+\bibitem[{ENERGIZER} {[2026]}]{energizer522}
+\abntrefinfo{{ENERGIZER}}{{ENERGIZER}}{{[2026]}}
 {{ENERGIZER}. \emph{Energizer 522: product datasheet (9 volt alkaline, Form No.
-  522GL1019)}. {[2019?]}.
+  522GL1019)}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://www.farnell.com/datasheets/2934224.pdf}.
   Acesso em: 2 out. 2026.}
 
@@ -540,11 +606,6 @@ Goiânia, 2022. Aprovada pela Portaria n. 426, de 24 ago. 2022. Dispon{\'\i}vel
   \url{https://www.bombeiros.go.gov.br/wp-content/uploads/2021/03/NT-19\_2022\_-\_Sistema\_de\_deteccao\_e\_alarme\_de\_incendio.pdf}.
   Acesso em: 2 out. 2026.}
 
-\bibitem[Graham et al. 1994]{graham1994concrete}
-\abntrefinfo{Graham et al.}{GRAHAM et al.}{1994}
-{GRAHAM, R.~L.; KNUTH, D.~E.; PATASHNIK, O. \emph{Concrete mathematics: a
-  foundation for computer science}. 2. ed. Reading: Addison-Wesley, 1994.}
-
 \bibitem[Grebby et al. 2021]{grebby2021advanced}
 \abntrefinfo{Grebby et al.}{GREBBY et al.}{2021}
 {GREBBY, S. et al. Advanced analysis of satellite data reveals ground
@@ -664,11 +725,11 @@ Dispon{\'\i}vel em:
   \url{https://portalantigo.ipea.gov.br/agencia/images/stories/PDFs/boletim\_regional/170531\_bru\_16.pdf}.
   Acesso em: 1 jul. 2024.}
 
-\bibitem[{INTERNATIONAL COUNCIL ON MINING AND METALS} {[2026?]}]{icmm2025gistm}
+\bibitem[{INTERNATIONAL COUNCIL ON MINING AND METALS} {[2026]}]{icmm2025gistm}
 \abntrefinfo{{INTERNATIONAL COUNCIL ON MINING AND METALS}}{{INTERNATIONAL
-  COUNCIL ON MINING AND METALS}}{{[2026?]}}
+  COUNCIL ON MINING AND METALS}}{{[2026]}}
 {{INTERNATIONAL COUNCIL ON MINING AND METALS}. \emph{Global Industry Standard
-  on Tailings Management ({GISTM})}. {[2026?]}. ICMM.
+  on Tailings Management ({GISTM})}. {[2026]}. ICMM.
 Dispon{\'\i}vel em: \url{https://www.icmm.com/our-principles/gistm}. Acesso em:
   4 out. 2026.}
 
@@ -703,10 +764,10 @@ Dispon{\'\i}vel em:
   \url{https://www.researchgate.net/publication/304011831\_Metodologia\_probabilistica\_de\_previsao\_de\_brecha\_de\_ruptura\_de\_barragensProbabilistic\_approach\_to\_dam\_breach\_modeling}.
   Acesso em: 23 set. 2026.}
 
-\bibitem[{LCSC ELECTRONICS} {[2026?]}]{lcsc_tmb12a03}
-\abntrefinfo{{LCSC ELECTRONICS}}{{LCSC ELECTRONICS}}{{[2026?]}}
+\bibitem[{LCSC ELECTRONICS} {[2026]}]{lcsc_tmb12a03}
+\abntrefinfo{{LCSC ELECTRONICS}}{{LCSC ELECTRONICS}}{{[2026]}}
 {{LCSC ELECTRONICS}. \emph{Huaneng {TMB12A03}: \textit{buzzer} ativo de 12 mm,
-  3 {V}}. {[2026?]}.
+  3 {V}}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://www.lcsc.com/product-detail/C96222.html}.
   Acesso em: 5 out. 2026. Preço unitário de US\$ 0,1945 (1 unidade).}
 
@@ -746,21 +807,21 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://www.revistas.usp.br/rdg/article/view/165390}.
   Acesso em: 2 out. 2026.}
 
-\bibitem[{MERCADO LIVRE} 2025]{mercadolivre_esp8266}
-\abntrefinfo{{MERCADO LIVRE}}{{MERCADO LIVRE}}{2025}
-{{MERCADO LIVRE}. \emph{NodeMCU {V3} {ESP8266} {ESP-12E} {USB} Tipo {C} com
-  {Wi-Fi} integrado}. 2025.
-Dispon{\'\i}vel em:
-  \url{https://www.mercadolivre.com.br/nodemcu-v3-esp8266-esp12e-usbc-wifi-ch340/up/MLBU3800098454}.
-  Acesso em: 20 mar. 2026.}
-
-\bibitem[{MERCADO LIVRE} {[2026?]}]{mercadolivre_leds}
-\abntrefinfo{{MERCADO LIVRE}}{{MERCADO LIVRE}}{{[2026?]}}
+\bibitem[{MERCADO LIVRE} {[2026]}]{mercadolivre_leds}
+\abntrefinfo{{MERCADO LIVRE}}{{MERCADO LIVRE}}{{[2026]}a}
 {{MERCADO LIVRE}. \emph{50 {LEDs} Difuso {5mm} Cores Azul Amarelo Verde
-  Vermelho Branco}. {[2026?]}.
+  Vermelho Branco}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://www.mercadolivre.com.br/50-leds-difuso-5mm-cores-azul-amarelo-verde-vermelho-branco-25-vm-ama-vd-az-bco/p/MLB65390987}.
   Acesso em: 5 out. 2026.}
+
+\bibitem[{MERCADO LIVRE} {[2026]}]{mercadolivre_esp8266}
+\abntrefinfo{{MERCADO LIVRE}}{{MERCADO LIVRE}}{{[2026]}b}
+{{MERCADO LIVRE}. \emph{Módulo {Wi-Fi} {ESP8266} {NodeMCU} {ESP-12E} {V3}
+  {USB} tipo {C}}. {[2026]}.
+Dispon{\'\i}vel em:
+  \url{https://www.mercadolivre.com.br/modulo-wifi-esp8266-nodemcu-esp-12e-v3-usb-tipo-c/p/MLB2077193169}.
+  Acesso em: 22 out. 2026.}
 
 \bibitem[METRÓPOLES 2019]{metropoles2019laudos}
 \abntrefinfo{METRÓPOLES}{METRÓPOLES}{2019}
@@ -770,10 +831,10 @@ Dispon{\'\i}vel em:
   \url{https://www.metropoles.com/brasil/saiba-o-que-dizem-os-laudos-sobre-as-causas-do-rompimento-da-barragem-de-brumadinho}.
   Acesso em: 31 maio 2025.}
 
-\bibitem[{METSUL METEOROLOGIA} 2025]{metsul2025texas}
-\abntrefinfo{{METSUL METEOROLOGIA}}{{METSUL METEOROLOGIA}}{2025}
-{{METSUL METEOROLOGIA}. \emph{Governo local rejeitou sistema de alerta que
-  evitaria tragédia no Texas}. 2025.
+\bibitem[{METSUL} 2025]{metsul2025texas}
+\abntrefinfo{{METSUL}}{{METSUL}}{2025}
+{{METSUL}. \emph{Governo local rejeitou sistema de alerta que evitaria
+  tragédia no Texas}. 2025.
 Dispon{\'\i}vel em:
   \url{https://metsul.com/governo-local-rejeitou-sistema-de-alerta-que-evitaria-tragedia-no-texas/}.
   Acesso em: 26 mar. 2026.}
@@ -837,6 +898,22 @@ Dispon{\'\i}vel em:
   \url{https://e2e.ti.com/cfs-file/\_\_key/communityserver-discussions-components-files/196/Panasonic-NCR18650B-datasheet.pdf}.
   Acesso em: 1 out. 2026.}
 
+\bibitem[{PAULV} 2016]{paulv2016ups}
+\abntrefinfo{{PAULV}}{{PAULV}}{2016a}
+{{PAULV}. \emph{{Raspberry} {Pi} {UPS} with auto restart}. 2016. Raspberry Pi
+  Forums.
+Dispon{\'\i}vel em:
+  \url{https://forums.raspberrypi.com/viewtopic.php?t=150358}. Acesso em: 22
+  out. 2026. Mensagens de 4 a 17 jun. 2016.}
+
+\bibitem[{PAULV} 2016]{paulv2016onebutton}
+\abntrefinfo{{PAULV}}{{PAULV}}{2016b}
+{{PAULV}. \emph{{RPi} power supply w. {UPS}, one button control}. 2016.
+  Raspberry Pi Forums.
+Dispon{\'\i}vel em:
+  \url{https://forums.raspberrypi.com/viewtopic.php?t=145954}. Acesso em: 22
+  out. 2026. Mensagens de 26 abr. a 16 jun. 2016.}
+
 \bibitem[{PIRANOT} 2026]{piranot2026ptax}
 \abntrefinfo{{PIRANOT}}{{PIRANOT}}{2026}
 {{PIRANOT}. \emph{Dólar {PTAX} fecha em {R\$} 5,2238 nesta sexta-feira; veja a
@@ -845,6 +922,15 @@ Dispon{\'\i}vel em:
   \url{https://www.piranot.com.br/2026/10/02/noticias/economia/dolar-ptax-fecha-em-r-52238-nesta-sexta-feira-veja-a-cotacao-oficial/}.
   Acesso em: 4 out. 2026. Publicado em 2 out. 2026, com base no boletim do
   Banco Central do Brasil.}
+
+\bibitem[{PKCELL} 2021]{pkcell2021icr18650}
+\abntrefinfo{{PKCELL}}{{PKCELL}}{2021}
+{{PKCELL}. \emph{Li-ion battery technology specification}: {ICR18650} 10050
+  {mAh} 3.7 {V}, revisão {A1}. 2021. Shenzhen: PKCELL, 2021. Datasheet do
+  pacote Adafruit 5035.
+Dispon{\'\i}vel em:
+  \url{https://cdn-shop.adafruit.com/product-files/5035/5035\_10050mAh\_3.7V\_A1\_\_\_\_20210511.pdf}.
+  Acesso em: 22 out. 2026.}
 
 \bibitem[{QUICK-TECK} 2015]{quickteck_tmb12a03}
 \abntrefinfo{{QUICK-TECK}}{{QUICK-TECK}}{2015}
@@ -923,9 +1009,9 @@ Dispon{\'\i}vel em:
   \url{https://www.monografias.ufop.br/bitstream/35400000/1818/11/MONOGRAFIA\_SistemaMonitoramentoOnline.pdf}.
   Acesso em: 21 jun. 2025.}
 
-\bibitem[{SMART COMPONENTES} {[2026?]}]{smartcomponentes_buzzer}
-\abntrefinfo{{SMART COMPONENTES}}{{SMART COMPONENTES}}{{[2026?]}}
-{{SMART COMPONENTES}. \emph{Buzzer {12mm} {5V}}. {[2026?]}.
+\bibitem[{SMART COMPONENTES} {[2026]}]{smartcomponentes_buzzer}
+\abntrefinfo{{SMART COMPONENTES}}{{SMART COMPONENTES}}{{[2026]}}
+{{SMART COMPONENTES}. \emph{Buzzer {12mm} {5V}}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://www.smartcomponentes.com/produto/buzzer-12mm-5v.html}. Acesso
   em: 5 out. 2026.}
@@ -942,15 +1028,6 @@ Dispon{\'\i}vel em:
 \abntrefinfo{Sommerville}{SOMMERVILLE}{2011}
 {SOMMERVILLE, I. \emph{Engenharia de Software}. 9. ed. São Paulo: Pearson
   Prentice Hall, 2011.}
-
-\bibitem[{TAKLITE} {[2026?]}]{taklite_ncr18650b_pcb}
-\abntrefinfo{{TAKLITE}}{{TAKLITE}}{{[2026?]}}
-{{TAKLITE}. \emph{{NCR18650B} lithium-ion 3.7v 3400{mAh} battery ({PCB})}.
-  {[2026?]}.
-Dispon{\'\i}vel em:
-  \url{https://www.taklite.com/products/taklite-lithium-ion-3-7v-2600mah-high-performance-battery}.
-  Acesso em: 4 out. 2026. Célula Panasonic {NCR18650B} com circuito de
-  proteção e topo em botão. Preço unitário de US\$ 19,95.}
 
 \bibitem[{TECK RESOURCES LIMITED} 2019]{teck2019}
 \abntrefinfo{{TECK RESOURCES LIMITED}}{{TECK RESOURCES LIMITED}}{2019}
@@ -1010,39 +1087,31 @@ Dispon{\'\i}vel em:
   \url{https://www.usinainfo.com.br/leds-difuso/led-vermelho-5mm-difuso-kit-com-5-unidades-2984.html}.
   Acesso em: 3 out. 2026.}
 
-\bibitem[{USINAINFO} {[2026?]}]{usinainfo_led_azul}
-\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026?]}a}
+\bibitem[{USINAINFO} {[2026]}]{usinainfo_led_azul}
+\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026]}a}
 {{USINAINFO}. \emph{{LED} azul 5mm difuso -- modelo {LAD5M} -- kit com 5
-  unidades}. {[2026?]}.
+  unidades}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://www.usinainfo.com.br/leds-difuso/led-azul-5mm-difuso-kit-com-5-unidades-4404.html}.
   Acesso em: 3 out. 2026.}
 
-\bibitem[{USINAINFO} {[2026?]}]{usinainfo_higrometro}
-\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026?]}b}
+\bibitem[{USINAINFO} {[2026]}]{usinainfo_higrometro}
+\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026]}b}
 {{USINAINFO}. \emph{Módulo sensor de umidade do solo resistivo
-  {HL-69}/{HW-080}, saídas analógica e digital}. {[2026?]}.
+  {HL-69}/{HW-080}, saídas analógica e digital}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://www.usinainfo.com.br/sensor-de-solo/sensor-de-umidade-de-solo-hl-69-2311.html}.
   Acesso em: 5 out. 2026. Preço de R\$ 8,35; produto indisponível na data da
   consulta.}
 
-\bibitem[{USINAINFO} {[2026?]}]{usinainfo_nodemcu}
-\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026?]}c}
+\bibitem[{USINAINFO} {[2026]}]{usinainfo_nodemcu}
+\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026]}c}
 {{USINAINFO}. \emph{Placa {NodeMCU} {V3} {ESP8266} {ESP-12E} {CH340} com
-  {USB-C}}. {[2026?]}.
+  {USB-C}}. {[2026]}.
 Dispon{\'\i}vel em:
   \url{https://www.usinainfo.com.br/esp8266/nodemcu-v3-esp8266-esp-12e-iot-wifi-com-usb-c-8791.html}.
   Acesso em: 5 out. 2026. Preço de R\$ 35,60; produto indisponível na data da
   consulta.}
-
-\bibitem[{USINAINFO} {[2026?]}]{usinainfo_suporte_18650}
-\abntrefinfo{{USINAINFO}}{{USINAINFO}}{{[2026?]}d}
-{{USINAINFO}. \emph{Suporte para 1 bateria 18650 lítio}. {[2026?]}.
-Dispon{\'\i}vel em:
-  \url{https://www.usinainfo.com.br/suporte-para-pilhas/suporte-para-bateria-18650-li-ion-1-slot-4978.html}.
-  Acesso em: 4 out. 2026. Preço unitário de R\$ 4,73 (cartão) ou R\$ 4,49
-  (PIX).}
 
 \bibitem[{VALE} 2024]{vale2024}
 \abntrefinfo{{VALE}}{{VALE}}{2024}
@@ -1050,9 +1119,9 @@ Dispon{\'\i}vel em:
 Dispon{\'\i}vel em: \url{https://vale.com/pt/esg/sobre-barragens-e-rejeitos}.
   Acesso em: 19 maio 2025.}
 
-\bibitem[Vilaça 2021]{vilaca2021}
-\abntrefinfo{Vilaça}{VILAçA}{2021}
-{VILAçA, L.~A.
+\bibitem[Vila{\c{c}}a 2021]{vilaca2021}
+\abntrefinfo{Vila{\c{c}}a}{VILA{\c{C}}A}{2021}
+{VILA{\c{C}}A, L.~A.
 \emph{Avaliação de risco em taludes na mineração}.
 47~p. Disserta\c{c}\~{a}o (Trabalho de Conclusão de Curso (Graduação em
   Engenharia Ambiental e Sanitária)) --- Centro Federal de Educação
@@ -1077,27 +1146,27 @@ Dispon{\'\i}vel em:
   \url{https://link.springer.com/article/10.1007/s10346-020-01400-y}. Acesso
   em: 2 out. 2026.}
 
-\bibitem[{WOKWI} {[2026?]}]{wokwi_esp32wifi}
-\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026?]}a}
-{{WOKWI}. \emph{{ESP32} {WiFi} networking}. {[2026?]}.
+\bibitem[{WOKWI} {[2026]}]{wokwi_esp32wifi}
+\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026]}a}
+{{WOKWI}. \emph{{ESP32} {WiFi} networking}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://docs.wokwi.com/guides/esp32-wifi}. Acesso em:
   3 out. 2026.}
 
-\bibitem[{WOKWI} {[2026?]}]{wokwi_buzzer}
-\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026?]}b}
-{{WOKWI}. \emph{wokwi-buzzer reference}. {[2026?]}.
+\bibitem[{WOKWI} {[2026]}]{wokwi_buzzer}
+\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026]}b}
+{{WOKWI}. \emph{wokwi-buzzer reference}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-buzzer}. Acesso em:
   3 out. 2026.}
 
-\bibitem[{WOKWI} {[2026?]}]{wokwi_potentiometer}
-\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026?]}c}
-{{WOKWI}. \emph{wokwi-potentiometer reference}. {[2026?]}.
+\bibitem[{WOKWI} {[2026]}]{wokwi_potentiometer}
+\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026]}c}
+{{WOKWI}. \emph{wokwi-potentiometer reference}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-potentiometer}.
   Acesso em: 3 out. 2026.}
 
-\bibitem[{WOKWI} {[2026?]}]{wokwi_slideswitch}
-\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026?]}d}
-{{WOKWI}. \emph{wokwi-slide-switch reference}. {[2026?]}.
+\bibitem[{WOKWI} {[2026]}]{wokwi_slideswitch}
+\abntrefinfo{{WOKWI}}{{WOKWI}}{{[2026]}d}
+{{WOKWI}. \emph{wokwi-slide-switch reference}. {[2026]}.
 Dispon{\'\i}vel em: \url{https://docs.wokwi.com/parts/wokwi-slide-switch}.
   Acesso em: 1 out. 2026.}
 

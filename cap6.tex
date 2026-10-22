@@ -19,40 +19,49 @@ comprova.
 \hline
 \textbf{Obj.} & \textbf{Objetivo específico} & \textbf{Onde foi atendido} & \textbf{Comprovação} \\
 \hline
-a & Modelo de alerta com dois limiares, que combina $S$ e $P_{72}$ &
+a & Modelo de alerta com dois limiares e regras de contingência &
 \autoref{sec:modelo-risco}: \autoref{eq:saturacao} a \autoref{eq:nivel},
 \autoref{tab:limiares}, \autoref{tab:matriz} e \autoref{tab:contingencia} &
 Casos C01 a C09 (\autoref{tab:res-modelo}) e X01 a X09
-(\autoref{tab:res-contingencia}); APIs reais no caso X05
-(\autoref{fig:res-x05}) \\
+(\autoref{tab:res-contingencia}) \\
 \hline
-b & Protótipo físico com ESP8266 e simulação com ESP32, com alerta local
-por LEDs e \textit{buzzer} &
-\autoref{sec:hardware} e \autoref{subsec:wokwi} &
-Caso C09 na simulação (\autoref{fig:res-c09}); casos F01 a F08 no
-protótipo físico (\autoref{tab:res-fisico}), com o \textit{buzzer} no
-caso F03 (\autoref{fig:res-f03-serial}) \\
+b & $P_{72}$ obtido da BNDMET e do OpenWeatherMap &
+\autoref{sec:fontes-dados} &
+APIs reais nos casos X05 (\autoref{fig:res-x05}) e F07
+(\autoref{fig:res-f07}) \\
 \hline
-c & Bateria dimensionada por cálculo e demonstrada na simulação &
-\autoref{subsec:energia} (\autoref{eq:cap-carga} a
-\autoref{eq:tempo-carga}) e \autoref{subsec:bateria-carregador} &
-Autonomia calculada (\autoref{tab:autonomia}); casos E01 a E04
-(\autoref{tab:res-energia}), com a falta de rede no caso E02
-(\autoref{fig:res-e02}) \\
-\hline
-d & Plataforma \textit{web} com página inicial, cadastro de moradores,
-painel e e-mail de alerta &
-\autoref{sec:software} e \autoref{qua:mensagens-alerta} &
-Página inicial e cadastro (\autoref{fig:res-w01} e
-\autoref{fig:res-w02b}); envio a 5 de 5 moradores
-(\autoref{fig:res-w17b}) e e-mail recebido (\autoref{fig:res-w19}) \\
-\hline
-e & Fluxogramas e diagramas de casos de uso e de sequência &
+c & Fluxogramas e diagramas de casos de uso e de sequência &
 \autoref{subsec:diagramas} &
 \autoref{fig:f1-geral} a \autoref{fig:f4-email}, \autoref{fig:casos-uso},
 \autoref{fig:sequencia-1} e \autoref{fig:sequencia-2} \\
 \hline
-f & Validação por cenários de saturação, chuva e energia &
+d & Bateria dimensionada por cálculo; carregador e detecção da rede
+especificados &
+\autoref{subsec:bateria-carregador} e \autoref{subsec:energia}
+(\autoref{eq:cap-carga} a \autoref{eq:tempo-carga}) &
+Autonomia calculada (\autoref{tab:autonomia}); casos E01 a E04
+(\autoref{tab:res-energia}), com a falta de rede no caso E02
+(\autoref{fig:res-e02}) \\
+\hline
+e & Protótipo virtual no Wokwi, com alerta local, supervisão de energia e
+funcionamento da bateria &
+\autoref{subsec:wokwi} &
+Casos C00 a C09 e X01 a X09 na simulação, com o \textit{buzzer} no caso
+C09 (\autoref{fig:res-c09}) \\
+\hline
+f & Protótipo físico com ESP8266 e setagem do higrômetro &
+\autoref{subsec:circuito} e \autoref{subsec:specs-custos} &
+Setagem (\autoref{fig:res-f00}); casos F01 a F08
+(\autoref{tab:res-fisico}), com o \textit{buzzer} no caso F03
+(\autoref{fig:res-f03-serial}) \\
+\hline
+g & Plataforma \textit{web}, e-mail de alerta e guarda das leituras &
+\autoref{sec:software} e \autoref{qua:mensagens-alerta} &
+Cadastro (\autoref{fig:res-w02b}); envio a 5 de 5 moradores
+(\autoref{fig:res-w17b}); e-mail recebido (\autoref{fig:res-w19});
+eventos registrados (\autoref{fig:res-w18}) \\
+\hline
+h & Validação por cenários de saturação, chuva, energia e falta de dados &
 \autoref{sec:testes-validacao} (\autoref{tab:casos-modelo} a
 \autoref{tab:casos-fisico}) &
 31 casos executados, todos conformes (\autoref{tab:res-sintese}) \\
@@ -61,13 +70,13 @@ f & Validação por cenários de saturação, chuva e energia &
 \fonte{Autora, 2026.}
 \end{table}
 
-Como mostra a \autoref{tab:cobertura_objetivos}, os seis objetivos
+Como mostra a \autoref{tab:cobertura_objetivos}, os oito objetivos
 específicos foram atendidos. Nos 31 casos executados, a saída observada
 foi igual à saída esperada (\autoref{tab:res-sintese}).
 
 Esses casos verificam a lógica de decisão do sistema, a supervisão de
 energia e o fluxo da plataforma. Eles não avaliam o comportamento de uma
-barragem real, como se discute na \autoref{sec:limitacoes}.
+barragem real, como discutido na \autoref{sec:limitacoes}.
 
 % =============================================================
 \section{Modelo de Alerta}
@@ -101,7 +110,7 @@ entre os três municípios estudados por
 \citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
 
 Adotar o par mais baixo antecipa o alerta, o que favorece a segurança da
-população a jusante. A mesma lógica de causa e gatilho aparece no estudo
+população que mora e/ou circula próxima à barragem. A mesma lógica de causa e gatilho aparece no estudo
 brasileiro: os níveis de atenção e de alerta exigem que a chuva e a
 umidade crítica do solo sejam atingidas em conjunto
 \cite[p.~74, Tabela~3]{mendes2020proposicao}.
@@ -126,25 +135,28 @@ $S$ e $P_{72}$, exibidos no painel.
 
 Nos casos C01 a C09, o nível seguiu a \autoref{tab:matriz} em todas as
 combinações (\autoref{tab:res-modelo}). Apenas o caso C09, com
-$S = 0{,}95$ e $P_{72} = 120$\,mm, chegou a VERMELHO, pois foi o único em
+$S = 0{,}93$ e $P_{72} = 120$\,mm, chegou a VERMELHO, pois foi o único em
 que a causa e o gatilho estavam acima dos limiares de alerta.
 
 Os casos C03 e C07 mostram o papel de cada variável. No caso C03, a
 chuva de 120\,mm, acima de $P_2$, não elevou o nível, porque o solo
-estava seco ($S = 0{,}18$). No caso C07, o solo próximo da saturação
+estava seco ($S = 0{,}22$). No caso C07, o solo próximo da saturação
 ($S = 0{,}93$) também não elevou o nível, porque a chuva foi de
-19,1\,mm, abaixo de $P_1$.
+30\,mm, abaixo de $P_1$.
 
 Os casos C06 e C09 receberam a mesma chuva, de 120\,mm, e resultaram em
-AMARELO e VERMELHO. A diferença veio apenas de $S$: 0,79 no caso C06 e
-0,95 no caso C09. Já nos casos C05 e C08, com 80\,mm, o nível ficou em
+AMARELO e VERMELHO. A diferença veio apenas de $S$: 0,70 no caso C06 e
+0,93 no caso C09. Já nos casos C05 e C08, com 80\,mm, o nível ficou em
 AMARELO mesmo com o solo próximo da saturação, pois a chuva não atingiu
 $P_2$.
 
 No protótipo físico, com o higrômetro real, os casos F01 a F04
-reproduziram o mesmo comportamento (\autoref{tab:res-fisico}). Em todos
-os casos, os valores de $S$ e de $P_{72}$ ficaram longe dos limiares, de
-modo que o comportamento exatamente sobre os limiares não foi explorado.
+reproduziram o mesmo comportamento, com a sonda em areia seca e
+saturada (\autoref{tab:res-fisico}). No caso F03, a leitura oscilou
+junto ao limiar $S_2$: com $S = 0{,}87$, o nível foi VERMELHO e, no
+ciclo seguinte, com $S = 0{,}855$, passou a AMARELO. Perto de um limiar,
+uma variação de poucas unidades na leitura do sensor muda o nível de
+alerta.
 
 \paragraph*{Falta do higrômetro}
 
@@ -160,8 +172,8 @@ o caso C03 mostrou ser VERDE quando $S$ é conhecido.
 \paragraph*{Falta dos dados de chuva}
 
 Nos casos X03 e X04, sem dados de chuva, o nível dependeu apenas de $S$.
-Com $S = 0{,}96$, o sistema sinalizou AMARELO (caso especial); com
-$S = 0{,}72$, permaneceu em VERDE, com o aviso ``sem dados de chuva''.
+Com $S = 0{,}97$, o sistema sinalizou AMARELO (caso especial); com
+$S = 0{,}79$, permaneceu em VERDE, com o aviso ``sem dados de chuva''.
 O caso F06 confirmou o caso especial no protótipo físico.
 
 O resultado mostra os dois lados da regra. Com o solo saturado, o
@@ -172,15 +184,16 @@ sobe para VERMELHO, pois o gatilho não pode ser confirmado
 \paragraph*{Dados de chuva incompletos}
 
 Nos casos X07 e X08, o mínimo garantido de $P_{72}$ bastou para
-classificar o nível: VERMELHO com 120\,mm e $S = 0{,}96$, e AMARELO com
-80\,mm e $S = 0{,}76$. Como a chuva não assume valores negativos, o
+classificar o nível: VERMELHO com 120\,mm e $S = 0{,}97$, e AMARELO com
+80\,mm e $S = 0{,}82$. Como a chuva não assume valores negativos, o
 nível real é igual ou maior que o obtido.
 
 No caso X09, o mínimo de 30\,mm ficou abaixo de $P_1$ e foi tratado como
-falta de dados de chuva: VERDE com $S = 0{,}76$ e AMARELO com
-$S = 0{,}96$. O caso F07 mostrou que essa situação ocorre na prática: a
-estação da BNDMET não registrou o total de 3 de outubro de 2026, e o
-mínimo foi de 1,3\,mm (\autoref{fig:res-f07}).
+falta de dados de chuva, e o nível foi AMARELO, com $S = 0{,}97$. O caso
+X05 mostrou que essa situação ocorre na prática: a estação da BNDMET
+não registrou o total de 18 de outubro de 2026, e o mínimo foi de
+1,0\,mm. Com $S = 0{,}16$, abaixo de $S_2$, o nível foi VERDE
+(\autoref{fig:res-x05}).
 
 \paragraph*{Falta simultânea de higrômetro e de chuva}
 
@@ -198,11 +211,15 @@ desconhecido não recebem o mesmo tratamento.
 
 \paragraph*{Integração com as APIs}
 
-No caso X05, com as APIs reais, o sistema obteve
-$P_{48} = 4{,}0$\,mm, $P_{24} = 6{,}9$\,mm e $P_{72} = 10{,}9$\,mm, e o
-painel exibiu os mesmos valores (\autoref{fig:res-x05} e
-\autoref{fig:res-w24}). Com os casos X07 a X09 e F07, ele mostra que o
-sistema trata tanto os dados completos quanto os incompletos.
+Os casos X05 e F07 usaram as APIs reais. No caso X05, o sistema
+identificou o dia sem registro na estação e somou o que foi obtido como
+mínimo garantido. No caso F07, com os dois dias registrados, o sistema
+somou $P_{48} = 0{,}0$\,mm e $P_{24} = 3{,}3$\,mm e obteve
+$P_{72} = 3{,}3$\,mm. Nos dois casos, o painel exibiu os mesmos valores
+do monitor serial (\autoref{fig:res-w24} e
+\autoref{fig:res-painel-f07}). Com os casos X07 a X09, esses
+resultados mostram que o sistema trata tanto os dados completos quanto
+os incompletos.
 
 % =============================================================
 \section{Alimentação Redundante}
@@ -224,21 +241,23 @@ nem do \textit{backend}.
 O requisito adotado foi de 24 horas de supervisão e 15 minutos de alarme
 \cite[item~5.3]{cbmmg2017it14}. Com a margem de 20\% para o envelhecimento
 \cite{hammerberg2021calculation}, a capacidade necessária na bateria é de
-7816\,mAh (\autoref{eq:cap-celula}).
+7605\,mAh (\autoref{eq:cap-celula}).
 
-Uma única célula NCR18650B, de 3200\,mAh \cite{panasonic_ncr18650b},
-cobre cerca de 41\% desse valor. Com a corrente de 268,0\,mA na bateria
-em supervisão (\autoref{tab:autonomia}), ela duraria cerca de 12\,h
-($3200/268{,}0$), menos da metade das 24 horas exigidas.
+O pacote de 6600\,mAh do mesmo fabricante \cite{adafruit_353} cobriria o
+requisito sem a margem, mas consumiria 96\% da sua capacidade
+(6338\,mAh), sem reserva para o envelhecimento. Por isso, foi adotado o
+pacote de 10050\,mAh, com 9500\,mAh mínimos \cite{adafruit_5035}: o
+requisito consome 67\% da capacidade, e a autonomia teórica em
+supervisão, sem a margem, é de cerca de 36\,h (\autoref{tab:autonomia}).
 
-Duas células, com 6400\,mAh, também não atendem: ficariam abaixo dos
-6513\,mAh consumidos em 24 horas de supervisão e 15 minutos de alarme,
-mesmo sem a margem (\autoref{tab:autonomia}). Por isso, foram adotadas
-três células em paralelo, com 9600\,mAh.
-
-Com três células, o requisito consome 68\% da capacidade, e a autonomia
-teórica em supervisão, sem a margem, é de cerca de 36\,h
-(\autoref{tab:autonomia}).
+Os valores do fabricante do módulo foram conferidos em uso real. Em
+ensaio de bancada, \citeonline{paulv2016ups} mediu que o PowerBoost 1000C
+fornece até 1,0\,A contínuo pela fonte externa e pouco mais de 1,2\,A
+com a bateria complementando; acima disso, o módulo desliga. Os 202\,mA
+do sistema em alarme ficam muito abaixo desse limite. No mesmo ensaio, a
+recarga de uma célula 18650 de 2400\,mAh com 1\,A levou cerca de 4\,h,
+o que é coerente com o tempo estimado de recarga
+(\autoref{eq:tempo-carga}).
 
 A bateria alcalina de 9\,V também não atende. Ligada à entrada da placa,
 ela precisaria fornecer 4870,2\,mAh (\autoref{eq:cap-carga}). A
@@ -251,9 +270,9 @@ o requisito ($4870{,}2/600 \approx 8{,}1$). Como a capacidade diminui com
 o aumento da corrente \cite{energizer522}, esses valores são limites
 superiores.
 
-Os avisos de energia dão tempo para a manutenção. Pela curva do
-fabricante, a bateria baixa (3,3\,V) deixa cerca de 5\,h de operação, e a
-bateria crítica (3,0\,V), cerca de 1,4\,h (\autoref{tab:autonomia}).
+Os avisos de energia dão tempo para a manutenção. Pela curva da
+célula de referência, a bateria baixa (3,3\,V) deixa cerca de 5\,h de operação, e a
+bateria crítica (3,0\,V), cerca de 1,5\,h (\autoref{tab:autonomia}).
 
 Nos casos E03 e E04, esses estados e a falha de recarga apareceram no
 monitor serial e no painel (\autoref{tab:res-energia}), e cada mudança
@@ -274,14 +293,14 @@ E02 não representa essa situação.
 \label{sec:disc-precedentes}
 % =============================================================
 
-O custo dos componentes do protótipo físico é de R\$\,50,09
+O custo dos componentes do protótipo físico é de R\$\,59,18
 (\autoref{tab:custos}). Instrumentos geotécnicos profissionais, como
 piezômetros elétricos automatizados e inclinômetros de corda vibrante,
 podem superar dezenas de milhares de reais por ponto de monitoramento
 \cite{quispe2018instrumentacao}.
 
 Com os itens da alimentação redundante, o custo total passa a
-R\$\,582,49 (\autoref{tab:custos}).
+R\$\,421,20 (\autoref{tab:custos}).
 
 Componentes de baixo custo, quando integrados, produzem um fluxo contínuo
 de dados do solo e da chuva, sem depender de leitura manual, que
@@ -310,9 +329,9 @@ rejeitos, já é usada em outras estruturas.
 \label{sec:limitacoes}
 % =============================================================
 
-Oito limitações precisam ser registradas. Elas envolvem a medição no
+Nove limitações precisam ser registradas. Elas envolvem a medição no
 local, os limiares, os dados de chuva, as regras de contingência, a
-energia e a forma de teste.
+energia, o meio de envio do alerta e a forma de teste.
 
 \paragraph*{Ponto único de medição}
 
@@ -332,24 +351,25 @@ centenas de instrumentos ao longo da mesma estrutura
 
 O higrômetro FC-28 fornece uma leitura elétrica, e não a umidade
 volumétrica (\autoref{subsec:higrometro}). Por isso, $S$ é uma saturação
-relativa à calibração do sensor, e não a razão entre a umidade
+relativa à setagem do sensor (\autoref{sec:res-fisico}), e não a razão entre a umidade
 volumétrica e a porosidade usada por
 \citeonline[p.~5]{mirus2018developing}, escala em que os limiares $S_1$
 e $S_2$ foram obtidos.
 
 A equivalência entre as duas escalas não foi verificada. Além disso, a
-calibração e os casos do protótipo físico foram feitos com a sonda fora
-da água e imersa em água, e não em solo ou em rejeito
+setagem e os casos do protótipo físico foram feitos com a sonda em
+areia seca e saturada, em recipientes, e não em solo compactado ou em
+rejeito
 (\autoref{sec:res-fisico}). A durabilidade da sonda em solo
 permanentemente úmido também não foi avaliada.
 
-\paragraph*{Limiares de referência, não calibrados}
+\paragraph*{Limiares de referência, não ajustados ao local}
 
 Os limiares de saturação vêm de Seattle, nos Estados Unidos
 \cite[p.~9, Tabela~1]{mirus2018developing}, e os de chuva, de Campos do
 Jordão, em São Paulo \cite[p.~74, Tabela~3]{mendes2020proposicao}. Os
 dois estudos tratam de deslizamentos em encostas naturais, e nenhum
-deles foi calibrado para Brumadinho nem para rejeito de minério de
+deles foi ajustado para Brumadinho nem para rejeito de minério de
 ferro.
 
 Os dois pares não foram obtidos em conjunto: em Seattle, o limiar de
@@ -365,20 +385,32 @@ erro da previsão meteorológica.
 \paragraph*{Bateria apenas especificada e simulada}
 
 A bateria, o carregador e a detecção da rede foram especificados, mas
-não montados no protótipo físico. A supervisão de energia foi
-implementada apenas na simulação, pois a única entrada analógica do
-ESP8266 já é usada pelo higrômetro (\autoref{subsec:bateria-carregador}).
+não montados no protótipo físico, e a supervisão de energia foi
+implementada apenas na simulação (\autoref{subsec:bateria-carregador}).
+No protótipo físico, a leitura da tensão da bateria exigiria uma entrada
+analógica adicional.
 
 A autonomia é teórica: foi calculada a partir dos \textit{datasheets}, e
 não medida (\autoref{tab:autonomia}). A corrente de 80\,mA do ESP8266 é
 um valor médio declarado pelo fabricante \cite{espressif_esp8266ex}, e o
 simulador não reproduz o consumo.
 
-Os limiares de tensão foram lidos na curva de 0,2\,C do fabricante
-\cite{panasonic_ncr18650b}, maior que a corrente por célula do sistema, e
-o tempo $T_{\mathrm{carga}}$ supõe que o tempo de carga é inversamente
-proporcional à corrente (\autoref{eq:tempo-carga}). Esses valores
-precisam de ensaio com a bateria real.
+Os limiares de tensão foram lidos na curva de uma célula de referência
+\cite{panasonic_ncr18650b}, pois o fabricante do pacote não publica curva
+de descarga, e o tempo de recarga supõe que o tempo de carga é
+inversamente proporcional à corrente (\autoref{eq:tempo-carga}). Esses
+valores precisam de ensaio com a bateria real.
+
+A página do pacote informa corte de descarga em 3,0\,V
+\cite{adafruit_5035}, e o \textit{datasheet} informa 2,5\,V
+\cite{pkcell2021icr18650}; foi considerado o valor do
+\textit{datasheet}. Se o corte ocorrer em 3,0\,V, o aviso de bateria
+crítica coincidirá com o desligamento, e o aviso de bateria baixa
+(3,3\,V) manterá cerca de 5\,h de antecedência.
+
+O módulo não funciona sem bateria \cite{adafruit_2465_produto}, o que cria
+um ponto único de falha: sem a bateria ligada, o sistema também deixa
+de ser alimentado pela rede.
 
 \paragraph*{Dados de chuva incompletos}
 
@@ -391,15 +423,15 @@ pode ficar abaixo do real, por exemplo AMARELO quando seria VERMELHO.
 
 $P_{48,\mathrm{obs}}$ é a soma dos totais diários de dois dias do
 calendário, e não de uma janela móvel de 48 horas
-(\autoref{subsec:bndmet}). No caso X05, a consulta de 4 de outubro
-retornou os totais de 2 e 3 de outubro (\autoref{fig:res-x05}).
+(\autoref{subsec:bndmet}). No caso F07, a consulta de 21 de outubro
+retornou os totais de 19 e 20 de outubro (\autoref{fig:res-f07}).
 
 Assim, a chuva do dia corrente, até o instante da análise, não entra em
 $P_{48,\mathrm{obs}}$. Durante uma chuva em curso, $P_{72}$ pode ficar
 abaixo da janela de $t-48$\,h a $t+24$\,h definida por
 \citeonline[p.~5]{mirus2018developing}.
 
-\paragraph*{Regras de contingência sem calibração}
+\paragraph*{Regras de contingência sem ajuste}
 
 As regras de contingência (\autoref{tab:contingencia}) são regras de
 projeto, adotadas por precaução: o uso da chuva sem o higrômetro, o
@@ -407,9 +439,24 @@ AMARELO com $S \geq 0{,}86$ sem dados de chuva, o AMARELO sem os dois
 dados e o uso do mínimo garantido.
 
 Elas se apoiam em \citeonline{mendes2020proposicao} e em
-\citeonline{bogaard2018hydrological}, mas não foram calibradas. A
+\citeonline{bogaard2018hydrological}, mas não foram ajustadas a dados de campo. A
 frequência de falsos alarmes e de alertas perdidos que elas produzem não
 foi avaliada.
+
+\paragraph*{Alerta remoto apenas por e-mail}
+
+O alerta remoto aos moradores é enviado apenas por e-mail. O e-mail não
+tem custo por mensagem, comporta a orientação completa de cada nível e
+deixa registro do envio (\autoref{fig:res-w18}). Ele depende, porém, de
+acesso à internet no celular e de o morador abrir a caixa de entrada.
+Em uma emergência, essas condições podem falhar.
+
+O SMS chega ao celular pela rede de telefonia, sem acesso à internet. A
+Defesa Civil já usa esse meio: o morador cadastra o CEP pelo número
+40199 e recebe gratuitamente os alertas da sua região
+\cite{agenciaminas2023alertas}. O envio por SMS a partir do sistema
+exigiria a contratação de um serviço de mensagens, com custo por envio,
+e foi deixado para trabalho futuro.
 
 \paragraph*{Simulação acelerada}
 
@@ -423,4 +470,4 @@ Não foram reproduzidos, por exemplo, a evolução da chuva e da umidade do
 solo ao longo de horas, a descarga da bateria ao longo do tempo e o
 comportamento do Wi-Fi e das APIs em ciclos de 60 minutos. Na maior
 parte dos casos, $P_{72}$ foi informado por comando, e não acumulado ao
-longo do tempo.
+longo do tempo.

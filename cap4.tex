@@ -2,41 +2,63 @@
 \label{cap:materiais-metodos}
 
 Este capítulo descreve os materiais e métodos empregados no
-desenvolvimento do sistema proposto. A exposição segue quatro eixos:
-o modelo de alerta hidrometeorológico, que define o que é monitorado e
-como o nível de alerta é determinado; as fontes externas de dados
-meteorológicos que alimentam esse modelo; a plataforma de
-\textit{software} que implementa o modelo e disponibiliza seus
-resultados; e o protótipo de \textit{hardware} embarcado, responsável
-pela coleta dos dados em campo.
+desenvolvimento do sistema, na ordem dos objetivos específicos
+(\autoref{cap:objetivos}): o modelo de alerta hidrometeorológico
+(\autoref{sec:modelo-risco}); as fontes de dados meteorológicos que
+fornecem $P_{72}$ (\autoref{sec:fontes-dados}); a arquitetura e os
+diagramas do sistema (\autoref{sec:arquitetura-diagramas}); o protótipo
+de \textit{hardware} embarcado, com a alimentação redundante, o protótipo
+virtual e o protótipo físico (\autoref{sec:hardware}); e a plataforma
+\textit{web} (\autoref{sec:software}).
 
-Ao final, descreve-se a metodologia dos testes de validação, cujos
+Ao final, é descrita a metodologia dos testes de validação, cujos
 resultados são apresentados no \autoref{cap:resultados}.
 
-Conforme orientação da Coordenação de Aperfeiçoamento de Pessoal de
-Nível Superior (CAPES) quanto à transparência no uso de ferramentas de
-inteligência artificial em trabalhos acadêmicos, registra-se que a
-ferramenta de inteligência artificial generativa Claude, desenvolvida
-pela Anthropic, foi utilizada como recurso auxiliar neste trabalho.
+\paragraph*{Declaração de uso de inteligência artificial}
 
-O uso ocorreu em quatro frentes: (i) depuração do código-fonte, incluindo auxílio na 
-análise de trechos de código, identificação de inconsistências, 
-elaboração e revisão de funções e estruturas utilizadas no \textit{firmware} embarcado, 
-no \textit{backend} e no \textit{frontend} do sistema; (ii) elaboração e revisão
-do código dos diagramas do sistema; (iii) apoio à busca e à
-conferência de referências bibliográficas; e (iv) revisão textual
-deste documento, quanto a clareza, coesão, linguagem acadêmica e
-formatação.
+O uso de ferramentas de inteligência artificial generativa (IAG) é
+declarado conforme a Portaria CNPq n.º~2.664/2026, que institui a
+Política de Integridade na Atividade Científica do CNPq. A portaria
+determina declarar o uso de IAG em qualquer fase da pesquisa,
+especificando a ferramenta utilizada e a finalidade
+\cite[art.~9º, I, c]{cnpq2026portaria2664}. Também veda a submissão de
+conteúdo gerado por IAG como se fosse de autoria humana e atribui aos
+autores a responsabilidade integral pelo conteúdo final, inclusive por
+plágios ou imprecisões geradas pela IAG
+\cite[art.~9º, I, d, f]{cnpq2026portaria2664}. A Portaria CAPES
+n.º~363/2025 instituiu um grupo de trabalho para propor a regulamentação
+do uso de IA nas atividades da Coordenação de Aperfeiçoamento de Pessoal
+de Nível Superior (CAPES) e determinou que as instituições de ensino
+superior regulamentem internamente as orientações específicas sobre o
+tema \cite[art.~1º e art.~3º, parágrafo único]{capes2025portaria363}.
+A declaração a seguir atende a esses itens.
 
-As sugestões geradas foram analisadas, testadas e, quando pertinentes,
-adaptadas pela autora. As informações extraídas das referências foram
-conferidas nas fontes originais. A ferramenta não substituiu a
-análise, a validação dos resultados nem as decisões técnicas.
+\textbf{Qual IA foi usada.} Claude Opus~5.5 (identificador \texttt{claude-opus-5-5}),
+da Anthropic PBC (São Francisco, EUA), por meio do aplicativo Claude e da
+ferramenta Claude Code.
 
-A escolha do modelo de alerta e dos limiares, a partir da literatura
-citada, as decisões de arquitetura e implementação, a execução dos
-testes, a interpretação dos resultados e as conclusões são de
-responsabilidade e autoria da autora.
+\textbf{Onde foi usada.} No \autoref{cap:materiais-metodos}, na
+programação do \textit{firmware}, do \textit{backend} e do
+\textit{frontend} (\autoref{sec:software} e \autoref{sec:hardware}), na
+geração do código-fonte dos fluxogramas e diagramas
+(\autoref{subsec:diagramas}), na montagem da figura da alimentação
+redundante (\autoref{fig:montagem-energia}) e na conferência dos
+cálculos do dimensionamento da bateria (\autoref{subsec:energia}); em todos os
+capítulos, na busca e conferência de referências e na revisão textual.
+
+\textbf{Para que foi usada.} Geração e depuração de código, geração do
+código dos diagramas e da montagem da figura da alimentação redundante, busca e conferência de referências, conferência de
+cálculos e refinamento textual (clareza, coesão e formatação).
+
+\textbf{Nível de supervisão humana.} A IA foi apenas suporte. Todas as
+sugestões foram analisadas, testadas e, quando pertinentes, adaptadas
+pela autora, e as informações das referências foram conferidas nas
+fontes originais. A escolha do modelo de alerta e dos limiares, as
+decisões de arquitetura e implementação, a execução dos testes, a
+interpretação dos resultados e as conclusões são de responsabilidade e
+autoria da autora. Como recomenda a portaria, o código-fonte, produto da
+pesquisa, foi depositado em repositórios públicos
+(\autoref{apendice:geral}) \cite[art.~9º, I, g]{cnpq2026portaria2664}.
 
 % =============================================================
 \section{Modelo de Alerta Hidrometeorológico}
@@ -74,8 +96,10 @@ A saturação relativa do solo é obtida pela normalização mínimo--máximo
 da leitura do higrômetro, adaptada de \citeonline{wicki2020assessing},
 conforme a \autoref{eq:saturacao}. Nesses autores, o valor máximo
 corresponde ao percentil de 99,9\% da série de umidade; neste
-trabalho, ele foi substituído pela leitura de calibração com o solo
-saturado.
+trabalho, ele foi substituído pela leitura de referência com o solo
+saturado, registrada na setagem (\textit{set-point}) do sensor. O termo
+setagem designa apenas o registro dessas leituras de referência, e não
+uma calibração metrológica do instrumento.
 
 \begin{equation}
 \label{eq:saturacao}
@@ -90,9 +114,9 @@ Cada variável da \autoref{eq:saturacao} é descrita a seguir:
   \item $L$: leitura atual do conversor analógico-digital (ADC) do
         higrômetro;
   \item $L_{\mathrm{seco}}$: leitura do ADC com o sensor em solo seco,
-        registrada na calibração;
+        registrada na setagem;
   \item $L_{\mathrm{sat}}$: leitura do ADC com o sensor em solo
-        saturado, registrada na calibração.
+        saturado, registrada na setagem.
 \end{itemize}
 
 A escala de 0 a 1 segue a definição de saturação de
@@ -103,7 +127,7 @@ por ruído de leitura, são limitados a 0 ou a 1.
 
 O higrômetro resistivo (\autoref{subsec:higrometro}) fornece uma
 leitura elétrica, e não a umidade volumétrica. Por isso, $S$ é uma
-saturação relativa à calibração do sensor. A expressão vale tanto
+saturação relativa à setagem do sensor. A expressão vale tanto
 para leituras que aumentam quanto para as que diminuem com a umidade,
 pois numerador e denominador mudam de sinal juntos.
 
@@ -178,7 +202,7 @@ Cada variável da \autoref{eq:nivel} é descrita a seguir:
 \end{itemize}
 
 Os valores de $S_1$, $S_2$, $P_1$ e $P_2$ estão na
-\autoref{tab:limiares}. Com dois limiares, formam-se três zonas, que
+\autoref{tab:limiares}. Com dois limiares, são formadas três zonas, que
 correspondem ao sistema de alerta duplo descrito por
 \citeonline[p.~14]{mirus2018developing} para indicar quando os
 escorregamentos são improváveis, possíveis ou prováveis. Neste
@@ -221,22 +245,20 @@ de atenção e de 0,3 a 2,0\,m no nível de alerta, em Campos do Jordão
 \cite[p.~74, Tabela~3]{mendes2020proposicao}. Ou seja, chuva e
 umidade do solo são avaliadas em conjunto, como na \autoref{eq:nivel}.
 
-Na ausência de limiar calibrado para Brumadinho, adotou-se o par mais
+Na ausência de limiar ajustado para Brumadinho, foi escolhido o par mais
 baixo (60 e 100\,mm), que antecipa o alerta. No estudo de origem, os
 acumulados de 72 horas são de chuva observada. Aqui, eles são usados
 como referência de magnitude para a janela de
 \citeonline{mirus2018developing}, que soma chuva observada e prevista.
 
 Os limiares de saturação e de chuva vêm de estudos diferentes e não
-formam um par calibrado em conjunto. Em Seattle, por exemplo, o limiar
+formam um par ajustado em conjunto. Em Seattle, por exemplo, o limiar
 de saturação de 0,86 foi obtido junto com um limiar de chuva de
 27,1\,mm \cite[p.~9]{mirus2018developing}. Além disso, os dois estudos
 tratam de deslizamentos em encostas naturais, e não de barragens de
 rejeitos de minério de ferro.
 
-Trata-se, portanto, de valores de referência da literatura. A
-calibração dos limiares para o local monitorado é indicada como
-trabalho futuro.
+Trata-se, portanto, de valores de referência da literatura.
 
 \begin{table}[H]
 \centering
@@ -465,14 +487,14 @@ documentação não informa o \textit{datum} geodésico dessas
 coordenadas.
 
 % =============================================================
-\section{Plataforma de \textit{Software}}
-\label{sec:software}
+\section{Arquitetura e Diagramas do Sistema}
+\label{sec:arquitetura-diagramas}
 % =============================================================
 
-A plataforma de \textit{software} reúne o \textit{firmware} do
-dispositivo, o \textit{backend} com o banco de dados e a interface
-\textit{web}. Esta seção apresenta as tecnologias utilizadas, a
-arquitetura do sistema e os diagramas que representam a sua lógica.
+Esta seção apresenta as tecnologias utilizadas, a arquitetura do sistema
+e os diagramas que representam a sua lógica. O código-fonte completo está
+nos \autoref{apendice:firmware-fisico} a \autoref{apendice:frontend}, e
+os endereços dos repositórios, no \autoref{apendice:geral}.
 
 % -------------------------------------------------------------
 \subsection{Tecnologias Utilizadas}
@@ -486,23 +508,27 @@ As tecnologias utilizadas em cada camada estão listadas na
 \centering
 \caption{Tecnologias utilizadas na plataforma}
 \label{tab:tecnologias}
-\begin{tabular}{p{2.4cm}p{5.2cm}p{6.4cm}}
+\small
+\begin{tabular}{p{1.7cm}p{3.4cm}p{4.6cm}p{4.3cm}}
 \hline
-\textbf{Camada} & \textbf{Tecnologia} & \textbf{Função} \\
+\textbf{Camada} & \textbf{Tecnologia} & \textbf{Desenvolvedor} & \textbf{Função} \\
 \hline
-\textit{Firmware} & C++ (Arduino) e Arduino IDE & Programação do ESP8266 (protótipo físico) \\
-\textit{Firmware} & C++ (Arduino) e Wokwi & Programação e simulação do ESP32 \\
-\textit{Firmware} & ArduinoJson 7 & Montagem do JSON e leitura das respostas das APIs \\
-\textit{Backend} & Node.js 20 e TypeScript & Servidor da aplicação \\
-\textit{Backend} & Express 4 & Rotas HTTP da API \\
-\textit{Backend} & Prisma 5 & Acesso ao banco de dados \\
-\textit{Backend} & PostgreSQL 15 & Banco de dados \\
-\textit{Backend} & Nodemailer & Envio de e-mails \\
-\textit{Backend} & JWT e bcrypt & Login do administrador \\
-\textit{Backend} & Docker Compose & Execução do banco e da API em contêineres \\
-\textit{Frontend} & Next.js 14 e React 18 & Interface \textit{web} \\
-\textit{Frontend} & Recharts & Gráficos do histórico \\
-Diagramas & draw.io (diagrams.net) & Elaboração dos fluxogramas e diagramas UML \\
+\textit{Firmware} & C++ e Arduino IDE 2.3.10 & Arduino SA, Chiasso, Suíça & Programação do ESP8266 (protótipo físico) \\
+\textit{Firmware} & Wokwi, extensão para o Visual Studio Code, versão 4.0.1 & Wokwi B.V., Amstelveen, Países Baixos; Microsoft Corporation, Redmond, EUA & Programação e simulação do ESP32 \\
+\textit{Firmware} & ArduinoJson 7 & Benoît Blanchon (código aberto) & Montagem do JSON e leitura das respostas das APIs \\
+\textit{Backend} & Node.js 20 & OpenJS Foundation, São Francisco, EUA & Servidor da aplicação \\
+\textit{Backend} & TypeScript 5 & Microsoft Corporation, Redmond, EUA & Linguagem do servidor \\
+\textit{Backend} & Express 4 & OpenJS Foundation, São Francisco, EUA & Rotas HTTP da API \\
+\textit{Backend} & Prisma 5 & Prisma Data (código aberto) & Acesso ao banco de dados \\
+\textit{Backend} & PostgreSQL 15 & PostgreSQL Global Development Group (código aberto) & Banco de dados \\
+\textit{Backend} & Nodemailer 6, JWT e bcrypt & Bibliotecas de código aberto & Envio de e-mails e \textit{login} do administrador \\
+\textit{Backend} & Docker Compose & Docker Inc., Palo Alto, EUA & Execução do banco e da API em contêineres \\
+\textit{Frontend} & Next.js 14.2 e React 18 & Vercel Inc., São Francisco, EUA; Meta Platforms, Menlo Park, EUA & Interface \textit{web} \\
+\textit{Frontend} & Recharts 2.12 & Biblioteca de código aberto & Gráficos do histórico no painel \\
+Diagramas & draw.io (diagrams.net), versão \textit{on-line} & JGraph Ltd, Northampton, Reino Unido & Fluxogramas e diagramas UML \\
+Circuito & Fritzing 1.0.6 & Interaction Design Lab, FH Potsdam, Potsdam, Alemanha & Diagrama de montagem do protótipo \\
+Circuito & Python 3 e Matplotlib & Python Software Foundation, EUA; Matplotlib Development Team (código aberto) & Esquemático elétrico do protótipo \\
+Circuito & Python 3 e Pillow & Python Software Foundation, EUA; Pillow (código aberto) & Montagem da alimentação redundante \\
 \hline
 \end{tabular}
 \fonte{Autora, 2026.}
@@ -534,45 +560,6 @@ alerta: um para o ESP8266 do protótipo físico (\autoref{sec:hardware})
 e outro para o ESP32 da simulação (\autoref{subsec:wokwi}). Apenas o
 \textit{firmware} da simulação inclui a supervisão de energia.
 
-O \textit{backend} recebe as leituras pela rota \texttt{POST
-/leituras}, grava cada leitura no banco de dados e registra os eventos
-do sistema. O \textit{backend} não recalcula o nível de alerta: ele
-armazena o nível enviado pelo dispositivo.
-
-Quando o nível sobe, ou quando muda a condição da rede elétrica ou da
-bateria, o \textit{backend} envia um e-mail automático aos
-administradores. O banco de dados possui quatro tabelas
-(\autoref{tab:tabelas-banco}).
-
-\begin{table}[H]
-\centering
-\caption{Tabelas do banco de dados}
-\label{tab:tabelas-banco}
-\begin{tabular}{p{3.8cm}p{10.8cm}}
-\hline
-\textbf{Tabela} & \textbf{Conteúdo} \\
-\hline
-\texttt{leituras} & Dados enviados pelo dispositivo: nível, $S$, $P_{48}$, $P_{24}$, $P_{72}$ ou o seu mínimo garantido, dias sem registro na estação, rede elétrica, tensão e estado da bateria e avisos de dado incompleto ou indisponível \\
-\texttt{eventos} & Subida de nível, mudanças de energia e envios de alerta aos moradores, com data, nível, administrador e número de destinatários \\
-\texttt{usuarios\_basicos} & Moradores cadastrados para receber alertas \\
-\texttt{administradores} & Contas de acesso ao painel \\
-\hline
-\end{tabular}
-\fonte{Autora, 2026.}
-\end{table}
-
-A interface \textit{web} possui três telas. A página inicial, pública,
-apresenta o projeto e o cadastro do morador. A segunda tela é o acesso
-do administrador. A terceira é um painel com o nível atual, os valores
-de $S$, $P_{48}$, $P_{24}$ e $P_{72}$, a condição de energia, o
-histórico e o envio do e-mail de alerta.
-
-O envio do alerta aos moradores é decidido pelo administrador, que
-escolhe o nível e revisa a mensagem-modelo antes do envio. Funções de
-gestão, como relatórios, perfis de acesso e recuperação de senha,
-ficaram fora do escopo, pois não interferem no cálculo do nível nem no
-envio do alerta.
-
 % -------------------------------------------------------------
 \subsection{Diagramas do Sistema}
 \label{subsec:diagramas}
@@ -582,7 +569,8 @@ Foram elaborados quatro fluxogramas, um diagrama de casos de uso e um
 diagrama de sequência, apresentado em duas partes, para representar a
 lógica do dispositivo, os atores e as interações entre os componentes
 \cite{sommerville2011engenharia,guedes2011uml}. Os diagramas foram
-elaborados no draw.io (diagrams.net).
+elaborados no draw.io, versão \textit{on-line} (JGraph Ltd, Northampton,
+Reino Unido).
 
 \paragraph*{Fluxograma geral}
 
@@ -598,7 +586,7 @@ diferente de VERDE, e 60 minutos nos demais casos
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image56_f1_fluxograma_geral.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image56_f1_fluxograma_geral.png}}
 \caption{Fluxograma geral do dispositivo}
 \label{fig:f1-geral}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -624,7 +612,7 @@ depende só de $S$; sem os dois, o nível é AMARELO, por precaução.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image57_f2_calculo_nivel.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image57_f2_calculo_nivel.png}}
 \caption{Fluxograma do cálculo do nível de alerta}
 \label{fig:f2-nivel}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -636,8 +624,8 @@ A \autoref{fig:f3-energia} apresenta a supervisão de energia, presente
 apenas na simulação. O dispositivo verifica a rede elétrica e a tensão
 da bateria e classifica a bateria nos estados da
 \autoref{tab:estados-energia}. A falha é indicada quando a rede está
-presente e a bateria não completa a carga no tempo da
-\autoref{eq:tempo-carga}.
+presente e a bateria não completa a carga no tempo máximo de recarga
+$T_{\mathrm{carga}}$ (\autoref{subsec:energia}).
 
 A cada mudança da rede ou do estado da bateria, o dispositivo envia a
 leitura ao \textit{backend}, que avisa os administradores por e-mail.
@@ -645,7 +633,7 @@ O cálculo do nível de alerta continua durante a operação na bateria.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image58_f3_energia.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image58_f3_energia.png}}
 \caption{Fluxograma da supervisão de energia}
 \label{fig:f3-energia}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -666,7 +654,7 @@ enviadas e quantas falharam.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image59_f4_envio_email.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image59_f4_envio_email.png}}
 \caption{Fluxograma do envio do e-mail de alerta}
 \label{fig:f4-email}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -690,7 +678,7 @@ como o morador no envio do alerta.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image60_casos_de_uso.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image60_casos_de_uso.png}}
 \caption{Diagrama de casos de uso}
 \label{fig:casos-uso}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -713,7 +701,7 @@ resposta ao dispositivo.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image61_sequencia_1.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image61_sequencia_1.png}}
 \caption{Diagrama de sequência --- parte 1: ciclo de leitura do dispositivo}
 \label{fig:sequencia-1}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -729,7 +717,7 @@ registra o envio, com o número de mensagens enviadas e de falhas.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{figures/image62_sequencia_2.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image62_sequencia_2.png}}
 \caption{Diagrama de sequência --- parte 2: painel e envio do alerta}
 \label{fig:sequencia-2}
 \fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
@@ -771,16 +759,16 @@ sinalizada e seguir as orientações da Defesa Civil. &
 \label{sec:hardware}
 % =============================================================
 
-O protótipo físico é composto por quatro categorias de componentes: o
+Esta seção apresenta, primeiro, os componentes do protótipo: o
 microcontrolador, o sensor de umidade, os indicadores visuais (LEDs) e o
-indicador sonoro (\textit{buzzer}). Esses componentes são descritos nas
-\autoref{subsec:esp8266} a \autoref{subsec:buzzer}.
-
-A alimentação redundante, exigida de um sistema de alerta, é composta por
-bateria, carregador e detecção da rede elétrica
-(\autoref{subsec:bateria-carregador}). Ela foi dimensionada por cálculo
-(\autoref{subsec:energia}) e representada na simulação
-(\autoref{subsec:wokwi}), sem ser montada no protótipo físico.
+indicador sonoro (\textit{buzzer}) (\autoref{subsec:esp8266} a
+\autoref{subsec:buzzer}). Em seguida, descreve a alimentação redundante, com a bateria, o
+carregador e a detecção da rede (\autoref{subsec:bateria-carregador}),
+dimensionada por cálculo (\autoref{subsec:energia}); o protótipo
+virtual, no Wokwi (\autoref{subsec:wokwi}); e o protótipo físico, com o
+circuito (\autoref{subsec:circuito}) e as especificações e os custos
+(\autoref{subsec:specs-custos}). A alimentação redundante foi
+representada no protótipo virtual, sem ser montada no protótipo físico.
 
 % -------------------------------------------------------------
 \subsection{ESP8266 NodeMCU V3}
@@ -803,8 +791,8 @@ identificação dos seus pinos.
 
 \begin{figure}[H]
     \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{figures/image63_esp8266_nodemcu.png}}
-    \caption{Placa ESP8266 NodeMCU V3, com o módulo ESP-12E à esquerda, os pinos digitais na parte inferior, o pino analógico A0 no canto superior direito e o conector USB-C à esquerda}
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image63_esp8266_nodemcu_usbc.png}}
+    \caption{Placa ESP8266 NodeMCU V3, com o módulo ESP-12E no canto superior direito, os pinos digitais D0 a D8 na fileira da direita, o pino analógico A0 no topo da fileira da esquerda e o conector USB-C no canto inferior esquerdo}
     \label{fig:esp8266}
     \fonte{\citeonline{mercadolivre_esp8266}}
 \end{figure}
@@ -839,8 +827,8 @@ ESP8266. A leitura do conversor é transformada na saturação relativa $S$,
 de 0 a 1, pela \autoref{eq:saturacao}.
 
 As leituras com o solo seco e com o solo saturado, usadas nessa equação,
-são obtidas por calibração e gravadas na memória EEPROM do
-microcontrolador. Assim, a calibração é mantida após uma reinicialização.
+são obtidas na setagem e gravadas na memória EEPROM do
+microcontrolador. Assim, a setagem é mantida após uma reinicialização.
 
 A leitura do sensor e o envio dos dados ao \textit{backend} seguem os
 intervalos de registro dos pluviômetros do Cemaden: 60 minutos sem chuva e
@@ -858,7 +846,7 @@ o LED do nível atual permanece aceso (\autoref{fig:leds}).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{figures/image64_leds.png}
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image64_leds.png}}
     \caption{LEDs indicadores de 5\,mm e o nível de alerta sinalizado por cada um}
     \label{fig:leds}
     \fonte{\citeonline{mercadolivre_leds}}
@@ -901,7 +889,7 @@ componente, com o terminal positivo ligado ao pino D4.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/image65_buzzer_tmb12a03.png}
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image65_buzzer_tmb12a03.png}}
     \caption{\textit{Buzzer} ativo TMB-12A03: vista superior e vista lateral, com as dimensões e os terminais}
     \label{fig:buzzer}
     \fonte{\citeonline{smartcomponentes_buzzer}.}
@@ -913,180 +901,137 @@ componente, com o terminal positivo ligado ao pino D4.
 % -------------------------------------------------------------
 
 Os componentes desta subseção foram especificados para a alimentação
-redundante e não foram montados no protótipo físico. A quantidade de
-células resulta do cálculo da \autoref{subsec:energia}.
+redundante e não foram montados no protótipo físico. A capacidade da
+bateria resulta do cálculo da \autoref{subsec:energia}.
 
-A bateria é formada por três células de íon-lítio Panasonic NCR18650B
-(\autoref{fig:celula_ncr18650b}) ligadas em paralelo, cada uma em um
-suporte individual (\autoref{fig:suporte_18650}). Cada célula tem
-capacidade nominal mínima de 3200\,mAh e tensão nominal de 3,6\,V
-\cite{panasonic_ncr18650b}.
+\paragraph*{Módulo carregador e elevador de tensão}
+
+Foi escolhido o módulo PowerBoost 1000C, da Adafruit
+(\autoref{fig:powerboost}). Ele reúne, na mesma placa, um carregador de
+bateria de íon-lítio, o MCP73871, e um conversor elevador de tensão, o
+TPS61090, com saída de 5,2\,V \cite{adafruit_2465_produto}.
+
+O fabricante garante as duas funções ao mesmo tempo. Com a fonte externa
+ligada, o módulo alimenta a placa pela fonte e usa o restante da
+corrente para carregar a bateria. Na falta da fonte, a saída passa para a
+bateria sem interrupção. Por isso, o fabricante indica o módulo como
+fonte de alimentação ininterrupta \cite{adafruit_2465_produto}. Esse
+funcionamento, chamado compartilhamento de carga, é descrito no
+\textit{datasheet} do carregador \cite{microchip_mcp73871}.
+
+O fabricante informa corrente de carga de até 1000\,mA, rendimento acima
+de 90\% na maioria dos casos e consumo próprio de 5\,mA com a saída
+ligada, e recomenda fonte de 5\,V e 2\,A. O módulo não funciona sem
+bateria, que deve permanecer sempre ligada
+\cite{adafruit_2465_produto}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{figures/image66_celula_ncr18650b.png}
-    \caption{Célula de íon-lítio Panasonic NCR18650B com circuito de proteção e terminal positivo em botão}
-    \label{fig:celula_ncr18650b}
-    \fonte{\citeonline{taklite_ncr18650b_pcb}.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.45\textwidth]{figures/image67_suporte_18650.png}
-    \caption{Suporte para uma célula 18650, com fios de ligação}
-    \label{fig:suporte_18650}
-    \fonte{\citeonline{usinainfo_suporte_18650}.}
-\end{figure}
-
-Foi especificada a versão da célula com circuito de proteção, que a
-desliga em 2,50\,V \cite{bto_ncr18650_pcm}. Essa proteção é necessária
-porque o módulo de alimentação não protege a célula contra descarga
-profunda.
-
-O módulo de referência para carregar a bateria e alimentar a placa é o
-PowerBoost 1000C (\autoref{fig:powerboost}). Ele combina um carregador com
-compartilhamento de carga, que alimenta o circuito e carrega a bateria ao
-mesmo tempo, e um conversor elevador com saída de 5,2\,V
-\cite{adafruit_powerboost1000c,microchip_mcp73871}.
- 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.55\textwidth]{figures/image68_powerboost_1000c.png}
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image68_powerboost_1000c.png}}
     \caption{Módulo carregador e elevador PowerBoost 1000C}
     \label{fig:powerboost}
     \fonte{\citeonline{adafruit_2465_produto}.}
 \end{figure}
 
-A presença da rede elétrica pode ser obtida do próprio carregador. A
-saída PG (\textit{power-good}) do MCP73871 fica em nível baixo sempre que
-uma fonte externa, e não a bateria, alimenta o circuito
-\cite[Seção~5.2.4]{microchip_mcp73871}.
+\paragraph*{Escolha do módulo integrado}
 
-A tensão da bateria exigiria uma entrada analógica. No ESP8266, a única
-entrada desse tipo já é usada pelo higrômetro (\autoref{subsec:esp8266}).
-Por isso, a supervisão de energia foi implementada apenas na simulação,
-em que uma chave representa a saída de rede presente e um potenciômetro
+Uma alternativa é usar dois módulos: um carregador e um conversor
+elevador separado. Nessa montagem, a bateria fica ligada à carga também
+durante a recarga. O fabricante do PowerBoost 1000C aponta que o
+compartilhamento de carga evita esse carregar e descarregar contínuo da
+bateria e é mais eficiente \cite{adafruit_2465_produto}.
+
+Esse ganho foi observado na prática. Em uma fonte ininterrupta para
+Raspberry Pi, a montagem com dois módulos, com a fonte externa e a
+bateria combinadas por diodos, não funcionou de forma confiável: a queda
+de tensão no diodo deixava a entrada do conversor abaixo do mínimo
+necessário. O autor a substituiu pelo PowerBoost 1000C e testou a nova
+montagem por cerca de um mês \cite{paulv2016onebutton}.
+
+\paragraph*{Bateria}
+
+Foi selecionado o pacote de íon-lítio de 3,7\,V da Adafruit, produto 5035
+(\autoref{fig:bateria5035}), montado de fábrica com células 18650 e circuito de proteção contra
+sobrecarga, descarga excessiva e curto-circuito. A capacidade é de
+10050\,mAh típica e 9500\,mAh mínima; a tensão de fim de carga é de
+4,2\,V, e a de corte de descarga, de 2,5\,V \cite{adafruit_5035}.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/image70_bateria_5035.jpg}}
+    \caption{Pacote de bateria de íon-lítio de 3,7\,V e 10050\,mAh (Adafruit 5035)}
+    \label{fig:bateria5035}
+    \fonte{\citeonline{adafruit_5035}.}
+\end{figure}
+
+O pacote de fábrica foi escolhido, em vez de células avulsas ligadas em
+paralelo, por recomendação do fabricante do módulo: os pacotes são
+montados com células selecionadas para carga e descarga iguais, e a
+ligação de células avulsas pode gerar desequilíbrio entre elas
+\cite{adafruit_forum_18650}.
+
+\paragraph*{Detecção da rede e da bateria baixa}
+
+O módulo tem dois terminais úteis à supervisão de energia
+\cite{adafruit_powerboost1000c}. O terminal USB só tem tensão quando a
+fonte externa está ligada. O terminal LBO vai a 0\,V quando a bateria cai
+abaixo de 3,2\,V e, fora disso, fica na tensão da bateria, de até
+4,2\,V.
+
+Como os pinos do ESP8266 aceitam até 3,6\,V
+\cite[Tabela~5-1]{espressif_esp8266ex}, os dois sinais seriam ligados a
+pinos digitais livres com redução de tensão: o USB por um divisor
+resistivo, de 5\,V para cerca de 3,3\,V, e o LBO por um adaptador de
+nível (\autoref{fig:montagem-energia}). Essa ligação foi usada por
+\citeonline{paulv2016ups} em uma fonte ininterrupta com o mesmo módulo.
+
+O sinal LBO indica apenas se a bateria está baixa, e não a sua tensão.
+Para medir a tensão no protótipo físico, seria necessária uma entrada
+analógica adicional, como a de um conversor analógico-digital externo,
+pois a única entrada desse tipo do ESP8266 é usada pelo higrômetro
+(\autoref{subsec:esp8266}).
+
+Neste trabalho, a alimentação redundante foi especificada e dimensionada
+por cálculo, e a supervisão de energia foi implementada e demonstrada na
+simulação, em que uma chave representa a rede e um potenciômetro
 representa a tensão da bateria (\autoref{subsec:wokwi}).
 
-% -------------------------------------------------------------
-\subsection{Diagrama de Circuito e Conexões}
-\label{subsec:circuito}
-% -------------------------------------------------------------
+\paragraph*{Montagem e funcionamento}
 
-A \autoref{fig:componentes_ligados} apresenta o diagrama de montagem do
-protótipo, elaborado no \textit{software} Fritzing, e a
-\autoref{fig:esquematico}, o esquemático elétrico correspondente, com os
-pinos e as ligações entre os componentes.
+A \autoref{fig:montagem-energia} mostra a montagem completa. À esquerda
+está o protótipo físico, com a NodeMCU, os LEDs, o \textit{buzzer} e o
+higrômetro; à direita, a alimentação redundante. A fonte de 5\,V é ligada
+ao micro-USB do PowerBoost 1000C, e a saída de 5,2\,V do módulo
+alimenta a NodeMCU pelo cabo USB. O pacote de bateria é ligado ao
+conector do módulo.
 
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]
-    {figures/image51_componentes_ligados_versao_3_bb.png}}
-\caption{Diagrama de montagem do protótipo embarcado}
-\label{fig:componentes_ligados}
-\fonte{Autora, 2026.}
+Uma protoboard de interface reúne o divisor resistivo de 10\,k$\Omega$
+e 20\,k$\Omega$, que leva o sinal do terminal USB ao pino D5, e o
+adaptador de nível BSS138, que leva o sinal LBO ao pino D6. O adaptador
+é alimentado pelos 3,3\,V da NodeMCU, de um lado, e pela bateria, do
+outro.
+
+O funcionamento da montagem é o seguinte:
+
+\begin{itemize}
+  \item com a rede presente, o módulo alimenta a NodeMCU pela fonte e
+        carrega a bateria ao mesmo tempo, e o pino D5 lê nível alto;
+  \item na falta da rede, a saída passa para a bateria sem interrupção,
+        com 5,2\,V, e o pino D5 lê nível baixo;
+  \item com a bateria abaixo de 3,2\,V, o sinal LBO vai a 0\,V, e o
+        pino D6 lê nível baixo;
+  \item o módulo só funciona com a bateria ligada.
+\end{itemize}
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax]{figures/image69_montagem_redundancia.png}}
+    \caption{Montagem completa do protótipo físico com a alimentação redundante proposta}
+    \label{fig:montagem-energia}
+    \fonte{Autora, 2026, com utilização da linguagem Python e da biblioteca Pillow, com base em \citeonline{adafruit_powerboost1000c}, \citeonline{adafruit_5035} e \citeonline{paulv2016ups}.}
 \end{figure}
-
-\begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=\textwidth]
-        {figures/image52_esquematico_versao_3.png}}
-    \caption{Esquemático elétrico do protótipo embarcado}
-    \label{fig:esquematico}
-    \fonte{Autora, 2026, com utilização da biblioteca Matplotlib (Python).}
-\end{figure}
-
-Na montagem, o LED azul indica o nível VERDE (\autoref{subsec:leds}), e a
-placa é alimentada por um carregador de 5\,V pela porta USB-C. A
-alimentação redundante não aparece na figura, pois não foi montada
-(\autoref{subsec:bateria-carregador}).
-
-A transmissão dos dados coletados por este circuito ao restante do
-sistema é descrita na \autoref{subsec:arquitetura}: o \textit{firmware}
-calcula o nível de alerta, monta um objeto JSON com o nível, os valores
-de $S$, $P_{48}$, $P_{24}$ e $P_{72}$ (ou o mínimo garantido de
-$P_{72}$, quando os dados de chuva estão incompletos) e os avisos de
-dado incompleto ou indisponível,
-e o envia ao \textit{backend} pela rota \texttt{POST /leituras}
-(\autoref{fig:sequencia-1}).
-
-% -------------------------------------------------------------
-\subsection{Especificações Técnicas e Custos}
-\label{subsec:specs-custos}
-% -------------------------------------------------------------
-
-A \autoref{tab:specs} consolida as principais especificações
-técnicas dos componentes utilizados.
-
-\begin{table}[H]
-\centering
-\caption{Especificações técnicas dos componentes do protótipo e da alimentação redundante}
-\label{tab:specs}
-\small
-\begin{tabular}{p{5.5cm}p{2.9cm}p{3.6cm}p{3.0cm}}
-\hline
-\textbf{Componente} & \textbf{Tensão (V)} & \textbf{Corrente} & \textbf{Interface} \\
-\hline
-ESP8266 NodeMCU V3 & 3,3 (lógico) & 80\,mA (média); 170\,mA (transmissão 802.11b) & Wi-Fi / GPIO / ADC \\
-Módulo higrômetro (comparador LM393) & 3,3 ou 5 & 35\,mA (módulo); LM393: até 1,0\,mA & Analógica (A0) \\
-LED azul 5\,mm (nível VERDE) & 3,0--3,3 & 20\,mA & GPIO digital \\
-LED amarelo 5\,mm & 2,0--2,2 & 20\,mA & GPIO digital \\
-LED vermelho 5\,mm & 1,8 & 15\,mA & GPIO digital \\
-\textit{Buzzer} ativo TMB-12A03 & 3 (faixa 2,5--4) & até 35\,mA & GPIO digital \\
-\hline
-\multicolumn{4}{l}{\textit{Alimentação redundante (especificada; não montada no protótipo físico)}} \\
-\hline
-Célula Li-ion NCR18650B (3 em paralelo) & 3,6 (nominal); 4,20 (carga); 2,50 (corte) & carga padrão: 1625\,mA por célula & -- \\
-Módulo carregador e elevador (referência PowerBoost 1000C) & 5,2 (saída) & carga: até 1000\,mA & USB \\
-\hline
-\end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{espressif_esp8266ex,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,panasonic_ncr18650b,adafruit_powerboost1000c}.}
-\end{table}
-
-Com os preços consultados em outubro de 2026, o custo dos componentes
-do protótipo físico é de R\$\,50,09. A \autoref{tab:custos} apresenta
-também os itens da alimentação redundante, especificados na
-\autoref{subsec:energia}, que não foram montados. Com eles, o custo
-total passa a R\$\,582,49.
-
-\begin{table}[H]
-\centering
-\caption{Componentes e custos do protótipo embarcado}
-\label{tab:custos}
-\begin{tabular}{p{11.0cm}cc}
-\hline
-\textbf{Componente} & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
-\hline
-ESP8266 NodeMCU V3 com USB-C e CH340$^{\mathrm{c}}$ & 1 & 35,60 \\
-Módulo higrômetro resistivo (sonda e placa comparadora)$^{\mathrm{c}}$ & 1 & 8,35 \\
-\textit{Buzzer} ativo TMB-12A03$^{\mathrm{b}}$ & 1 & 1,02 \\
-LEDs difusos de 5\,mm (kits com 5: azul, amarelo e vermelho) & 3 & 5,12 \\
-\hline
-\textbf{Subtotal do protótipo físico} & & \textbf{50,09} \\
-\hline
-Célula Li-ion Panasonic NCR18650B com proteção$^{\mathrm{a}}$ & 3 & 312,64 \\
-Suporte para uma célula 18650 (ligados em paralelo) & 3 & 14,19 \\
-Módulo carregador e elevador PowerBoost 1000C (MCP73871 + TPS61090) & 1 & 205,57 \\
-\hline
-\textbf{Subtotal da alimentação redundante} & & \textbf{532,40} \\
-\hline
-\textbf{Total} & & \textbf{582,49} \\
-\hline
-\end{tabular}
-\fonte{Autora, 2026, com preços consultados em 4 e 5 out. 2026, sem frete
-\cite{usinainfo_nodemcu,usinainfo_higrometro,lcsc_tmb12a03,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,taklite_ncr18650b_pcb,usinainfo_suporte_18650,amazon_powerboost1000c}.}
-\nota{$^{\mathrm{a}}$Preço unitário de US\$\,19,95 e $^{\mathrm{b}}$preço
-unitário de US\$\,0,1945, convertidos pela taxa PTAX de venda de 2 out.
-2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem impostos de importação.
-$^{\mathrm{c}}$Preço exibido na página da loja, com o produto indisponível
-na data da consulta; o higrômetro cotado é um módulo resistivo equivalente
-(HL-69).}
-\end{table}
-
-O protótipo físico é alimentado por fonte externa de 5\,V, pela porta
-USB-C. A alimentação redundante por bateria, exigida de um sistema de
-alerta, foi dimensionada por cálculo e demonstrada na simulação, conforme
-a \autoref{subsec:energia}.
+\end{landscape}
 
 % -------------------------------------------------------------
 \subsection{Alimentação Redundante e Supervisão de Energia}
@@ -1118,7 +1063,7 @@ de alerta \cite{brasil2010pnsb,brasil2020lei14066}.
 \paragraph*{Requisito de autonomia}
 
 Não foi encontrada norma de autonomia específica para dispositivos de
-monitoramento de barragens. Adotou-se, por analogia, o requisito das
+monitoramento de barragens. Foi utilizado, por analogia, o requisito das
 normas de sistemas de alarme, que tratam de equipamentos que também
 precisam sinalizar durante a falta de energia.
 
@@ -1129,7 +1074,7 @@ de Goiás traz o mesmo requisito \cite[item~5.3]{cbmgo2022nt19}.
 
 A NFPA~72 exige 24 horas de supervisão seguidas de 5 minutos de alarme,
 ou 15 minutos em sistemas com voz
-\cite{hammerberg2021calculation,reiswig2023nfpa72}. Adotou-se o requisito
+\cite{hammerberg2021calculation,reiswig2023nfpa72}. Foi considerado o requisito
 mais exigente: 24 horas de supervisão e 15 minutos de alarme.
 
 \paragraph*{Consumo por componente}
@@ -1139,8 +1084,8 @@ entrada de 5\,V da placa, em dois regimes. Em supervisão, o nível é VERDE
 ou AMARELO, com um LED aceso. Em alarme, o nível é VERMELHO, com o LED
 vermelho e o \textit{buzzer} ativos.
 
-Adotou-se o valor máximo informado no \textit{datasheet}; quando há
-apenas valor médio, usou-se o médio. Como o regulador de 3,3\,V da placa é
+Foi empregado o valor máximo informado no \textit{datasheet}; quando há
+apenas valor médio, foi usado o médio. Como o regulador de 3,3\,V da placa é
 linear, a corrente na entrada de 5\,V é a soma das correntes da carga com
 a corrente de repouso do regulador \cite{ams1117_datasheet}.
 
@@ -1208,7 +1153,7 @@ Com esses valores,
 $C_{\mathrm{carga}} = (167 \times 24 + 202 \times 0{,}25) \times 1{,}20
 = 4870{,}2$\,mAh.
 
-Essa capacidade está referida à tensão da placa. A célula, de 3,6\,V,
+Essa capacidade está referida à tensão da placa. A bateria, de 3,7\,V,
 alimenta a placa por um conversor elevador de tensão com saída de 5,2\,V
 \cite{adafruit_powerboost1000c}. Pelo balanço de potência no conversor
 elevador, a potência de entrada é igual à potência de saída dividida pelo
@@ -1230,7 +1175,7 @@ dimensionamento da capacidade.
 
 Como a capacidade é o produto da corrente pelo tempo \cite{bu402_crate},
 a mesma relação vale para as capacidades, e a capacidade necessária na
-célula é dada pela \autoref{eq:cap-celula}.
+bateria é dada pela \autoref{eq:cap-celula}.
 
 \begin{equation}
 \label{eq:cap-celula}
@@ -1246,63 +1191,35 @@ Cada variável da \autoref{eq:cap-celula} é descrita a seguir:
         (\autoref{eq:cap-carga});
   \item $V_{\mathrm{sai}}$: tensão de saída do conversor, 5,2\,V
         \cite{adafruit_powerboost1000c};
-  \item $V_{\mathrm{nom}}$: tensão nominal da célula, 3,6\,V
-        \cite{panasonic_ncr18650b};
+  \item $V_{\mathrm{nom}}$: tensão nominal da bateria, 3,7\,V
+        \cite{adafruit_5035};
   \item $\eta$: rendimento do conversor, 0,90, valor declarado pelo
         fabricante do módulo (``90\%+'') \cite{adafruit_powerboost1000c}.
 \end{itemize}
 
 Com esses valores,
-$C_{\mathrm{bat}} = 4870{,}2 \times 5{,}2 / (3{,}6 \times 0{,}90)
-\approx 7816$\,mAh.
+$C_{\mathrm{bat}} = 4870{,}2 \times 5{,}2 / (3{,}7 \times 0{,}90)
+\approx 7605$\,mAh.
 
 \paragraph*{Escolha da bateria}
 
-Adotou-se a célula de íon-lítio Panasonic NCR18650B, com capacidade
-nominal mínima de 3200\,mAh a 20\,$^\circ$C, tensão nominal de 3,6\,V e carga
-CC-CV padrão de 1625\,mA até 4,20\,V, em 4,0\,h
-\cite{panasonic_ncr18650b}.
+O fabricante do módulo oferece pacotes de íon-lítio de 3,7\,V com
+6600\,mAh (produto 353) e com 10050\,mAh (produto 5035)
+\cite{adafruit_353,adafruit_5035}. O pacote de 6600\,mAh não atende aos
+7605\,mAh necessários. Foi escolhido, então, o de 10050\,mAh, cuja capacidade
+mínima, de 9500\,mAh, atende ao requisito \cite{adafruit_5035}.
 
-Células iguais ligadas em paralelo mantêm a tensão e somam a capacidade
-\cite{bu302_serieparalelo}. Assim, $n$ células fornecem
-$n\,C_{\mathrm{nom}}$, e o menor número que atende à capacidade
-necessária é o menor inteiro maior ou igual a
-$C_{\mathrm{bat}}/C_{\mathrm{nom}}$, dado pela função teto
-\cite[Seção~3.1]{graham1994concrete}, conforme a
-\autoref{eq:num-celulas}.
+Sem a margem de 20\%, a autonomia teórica em supervisão seria de cerca
+de 36\,h, obtida pela divisão da capacidade pela corrente na bateria
+\cite{bu402_crate}: $9500/260{,}8 \approx 36{,}4$\,h. A corrente de
+260,8\,mA na bateria resulta da mesma relação da
+\autoref{eq:cap-celula}, aplicada a 167\,mA.
 
-\begin{equation}
-\label{eq:num-celulas}
-n = \left\lceil \frac{C_{\mathrm{bat}}}{C_{\mathrm{nom}}} \right\rceil
-\end{equation}
-
-Cada variável da \autoref{eq:num-celulas} é descrita a seguir:
-
-\begin{itemize}
-  \item $n$: número de células ligadas em paralelo, arredondado para o
-        inteiro superior;
-  \item $C_{\mathrm{bat}}$: capacidade necessária na bateria, em mAh
-        (\autoref{eq:cap-celula});
-  \item $C_{\mathrm{nom}}$: capacidade nominal mínima de uma célula,
-        3200\,mAh \cite{panasonic_ncr18650b}.
-\end{itemize}
-
-Resulta $n = \lceil 7816/3200 \rceil = \lceil 2{,}44 \rceil = 3$, ou seja,
-três células em paralelo, com 9600\,mAh, valor superior aos 7816\,mAh
-necessários. Sem a margem de 20\%, a autonomia teórica em supervisão seria
-de cerca de 36\,h, obtida pela divisão da capacidade pela corrente na
-bateria \cite{bu402_crate}: $9600/268 \approx 35{,}8$\,h.
-
-Esse valor resulta da corrente de 268\,mA na bateria, obtida pela mesma
-relação da \autoref{eq:cap-celula} aplicada a 167\,mA. Cada célula
-fornece cerca de 89\,mA, abaixo da menor taxa das curvas do fabricante
-(0,2\,C).
-
-O conversor não protege a célula contra descarga profunda. Por isso,
-especificou-se a versão da NCR18650B com circuito de proteção, que
-desliga a célula em 2,50\,V \cite{bto_ncr18650_pcm}. O módulo de
-referência alimenta a carga e carrega a bateria ao mesmo tempo, sem
-interromper a saída \cite{adafruit_powerboost1000c,microchip_mcp73871}.
+O consumo próprio do módulo, de 5\,mA \cite{adafruit_2465_produto}, não
+foi somado: representa cerca de 2\% da corrente na bateria e fica
+coberto pela margem de 20\%. A proteção contra descarga excessiva é do
+próprio pacote, que desliga em 2,5\,V, pois o conversor não protege a
+bateria \cite{adafruit_5035}.
 
 \paragraph*{Comparação com bateria de 9\,V}
 
@@ -1329,68 +1246,62 @@ supervisão e 15 minutos de alarme \cite[item~5.3]{cbmmg2017it14}.
 
 A bateria deve ser substituída quando não sustentar esse requisito, ou
 quando o sistema indicar falha de bateria, descrita a seguir. O
-\textit{datasheet} da célula não define prazo de substituição em
-calendário \cite{panasonic_ncr18650b}; por isso, nenhum prazo fixo foi
-adotado.
+fabricante do pacote não define prazo de substituição em calendário
+\cite{adafruit_5035}; por isso, nenhum prazo fixo foi adotado.
 
 \paragraph*{Supervisão de energia e alertas}
 
-Os limiares de tensão foram lidos na figura \textit{Discharge
-Characteristics (by rate of discharge)} do \textit{datasheet} da
-NCR18650B, na curva de 0,2\,C, a de menor corrente
-\cite{panasonic_ncr18650b}.
+O fabricante do pacote não publica curva de descarga. Os limiares de
+tensão foram lidos na figura \textit{Discharge Characteristics (by rate
+of discharge)} do \textit{datasheet} da Panasonic NCR18650B, célula 18650
+de íon-lítio usada como referência, na curva de 0,2\,C, a de menor
+corrente \cite{panasonic_ncr18650b}.
 
 Nessa curva, a tensão cai lentamente até cerca de 3,3\,V, ponto em que
 cerca de 86\% da capacidade foi descarregada. A partir daí, a queda se
 acentua: 3,0\,V corresponde a cerca de 96\% da capacidade, e a descarga
-termina em 2,50\,V, tensão de corte usada pelo fabricante.
+termina em 2,50\,V, mesma tensão de corte do pacote adotado
+\cite{adafruit_5035}.
 
-Com a corrente de 268\,mA em supervisão, os 14\% restantes em 3,3\,V
+Com a corrente de 260,8\,mA em supervisão, os 14\% restantes em 3,3\,V
 correspondem a cerca de 5\,h de operação, e os 4\% restantes em 3,0\,V, a
-cerca de 1,4\,h. São estimativas obtidas da curva típica, e não medições.
+cerca de 1,5\,h. São estimativas obtidas da curva típica, e não medições.
 
-A falha de bateria é detectada durante a recarga. No \textit{datasheet}, a
-carga CC-CV padrão de uma célula termina em 4,20\,V, com 1625\,mA, em
-4,0\,h \cite{panasonic_ncr18650b}. Para três células e o carregador de
-referência, o tempo foi estimado em duas etapas.
-
-A primeira divide a capacidade pela corrente, como na definição da taxa C
-\cite{bu402_crate}. A segunda multiplica o resultado pela razão entre o
-tempo da carga padrão e o tempo ``capacidade dividida pela corrente'' da
-mesma carga, de cerca de 2,0 ($4{,}0 \times 1625 / 3200$), para incluir a
-etapa de tensão constante. Simplificada, a estimativa é dada pela
+A falha de bateria é detectada durante a recarga. O fabricante do pacote
+informa carga padrão de cerca de 8\,h com corrente de 0,2\,C
+\cite{adafruit_5035}, ou seja, 2010\,mA para a capacidade típica de
+10050\,mAh. Com a corrente menor do módulo, o tempo de carga foi estimado
+pela proporção inversa da corrente, conforme a
 \autoref{eq:tempo-carga}.
 
 \begin{equation}
 \label{eq:tempo-carga}
-T_{\mathrm{carga}} = t_{\mathrm{pad}}\,
-\frac{n\, I_{\mathrm{pad}}}{I_{\mathrm{carr}}}
+T_{\mathrm{est}} = t_{\mathrm{pad}}\,
+\frac{I_{\mathrm{pad}}}{I_{\mathrm{carr}}}
 \end{equation}
 
 Cada variável da \autoref{eq:tempo-carga} é descrita a seguir:
 
 \begin{itemize}
-  \item $T_{\mathrm{carga}}$: tempo máximo de recarga adotado no critério
-        de falha, em h;
-  \item $t_{\mathrm{pad}}$: tempo de carga padrão de uma célula, 4,0\,h
-        \cite{panasonic_ncr18650b};
-  \item $n$: número de células em paralelo, 3
-        (\autoref{eq:num-celulas});
-  \item $I_{\mathrm{pad}}$: corrente de carga padrão de uma célula,
-        1625\,mA \cite{panasonic_ncr18650b};
-  \item $I_{\mathrm{carr}}$: corrente máxima do carregador de referência,
-        1000\,mA \cite{adafruit_powerboost1000c}.
+  \item $T_{\mathrm{est}}$: tempo estimado de recarga completa, em h;
+  \item $t_{\mathrm{pad}}$: tempo da carga padrão do pacote, 8\,h
+        \cite{adafruit_5035};
+  \item $I_{\mathrm{pad}}$: corrente da carga padrão, 0,2\,C, ou
+        2010\,mA \cite{adafruit_5035};
+  \item $I_{\mathrm{carr}}$: corrente máxima de carga do módulo,
+        1000\,mA \cite{adafruit_2465_produto}.
 \end{itemize}
 
-Resulta $T_{\mathrm{carga}} = 4{,}0 \times 3 \times 1625 / 1000 = 19{,}5$\,h.
-A estimativa é uma aproximação: na carga CC-CV, o tempo total não é
-inversamente proporcional à corrente, pois a etapa de saturação varia com
-ela \cite{bu409_charging}.
+Resulta $T_{\mathrm{est}} = 8 \times 2010 / 1000 \approx 16{,}1$\,h. O
+valor é coerente com o ensaio de bancada de \citeonline{paulv2016ups}, no
+qual o mesmo módulo, com corrente de 1\,A, carregou uma célula 18650 de
+2400\,mAh em cerca de 4\,h; na mesma proporção, 10050\,mAh levariam cerca
+de 16,8\,h.
 
-Com 1000\,mA para três células, cerca de 0,1\,C por célula, abaixo dos
-0,5\,C da carga padrão, a etapa de saturação tende a ser relativamente
-mais curta. Assim, 19,5\,h tende a superestimar o tempo real, o que evita
-falso alarme de falha de bateria, mas atrasa a sua detecção.
+O tempo máximo de recarga foi definido em $T_{\mathrm{carga}} = 19{,}5$\,h,
+cerca de 20\% acima da estimativa e acima do valor proporcional ao
+ensaio. A folga evita o falso alarme de falha durante uma recarga normal,
+mas atrasa a detecção de uma bateria com defeito.
 
 Com esses valores, foram definidos os estados de energia da
 \autoref{tab:estados-energia}. Na simulação, uma chave representa a rede
@@ -1416,6 +1327,15 @@ Falha de bateria & Rede presente e tensão $< 4{,}20$\,V após $T_{\mathrm{carga
 \end{tabular}
 \fonte{Autora, 2026, com base em \citeonline{panasonic_ncr18650b}.}
 \end{table}
+
+Cada mudança de estado da \autoref{tab:estados-energia} gera um e-mail
+automático aos administradores e um aviso no painel
+(\autoref{subsec:arquitetura}). O aviso de bateria baixa chega com cerca
+de 5\,h de autonomia restante, e o de bateria crítica, com cerca de
+1,5\,h. Esses intervalos são o tempo disponível para o deslocamento até o
+dispositivo e para o restabelecimento da rede ou a troca da bateria.
+O aviso de falta de rede chega ainda antes, no início da operação pela
+bateria, com até cerca de 36\,h de autonomia.
 
 \paragraph*{Frequência de leitura e envio}
 
@@ -1445,12 +1365,13 @@ entre os envios, em que o ESP8266 consome 15\,mA
 seu ganho depende do tempo de cada envio, que não foi determinado.
 
 % -------------------------------------------------------------
-\subsection{Emulação em Ambiente Virtual (Wokwi)}
+\subsection{Protótipo Virtual (Wokwi)}
 \label{subsec:wokwi}
 % -------------------------------------------------------------
 
-O sistema também foi reproduzido na plataforma de simulação Wokwi, usada
-pela extensão oficial para o Visual Studio Code. O Wokwi oferece uma rede
+O sistema também foi reproduzido na plataforma de simulação Wokwi (Wokwi
+B.V., Amstelveen, Países Baixos), usada pela extensão oficial para o
+Visual Studio Code (Microsoft Corporation, Redmond, EUA). O Wokwi oferece uma rede
 Wi-Fi virtual, \texttt{Wokwi-GUEST}, com acesso à internet
 \cite{wokwi_esp32wifi}.
 
@@ -1474,7 +1395,7 @@ representa.
 
 \begin{figure}[H]
 \centering
-\fbox{\includegraphics[width=0.9\textwidth]{figures/cap4_wokwi_circuito_v3.png}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/cap4_wokwi_circuito_v3.png}}
 \caption{Circuito do ambiente de simulação Wokwi}
 \label{fig:wokwi_diagrama}
 \fonte{Autora, 2026.}
@@ -1493,7 +1414,7 @@ ESP32 DevKit C V4 & 1 & -- & ESP8266 NodeMCU do protótipo físico \\
 Potenciômetro (solo) & 1 & GPIO34 & Higrômetro; a leitura do conversor entra na \autoref{eq:saturacao} \\
 LED verde, amarelo e vermelho & 3 & GPIO18, 14, 27 & LEDs de nível de alerta (no protótipo físico, o nível VERDE usa LED azul) \\
 \textit{Buzzer} & 1 & GPIO26 & \textit{Buzzer} ativo TMB-12A03, acionado no VERMELHO \\
-Chave deslizante & 1 & GPIO32 & Presença da rede elétrica: nível alto, rede presente; nível baixo, falta de rede. No circuito real, a saída PG do carregador é ativa em nível baixo e seria lida de forma invertida \\
+Chave deslizante & 1 & GPIO32 & Presença da rede elétrica: nível alto, rede presente; nível baixo, falta de rede. No circuito real, a rede seria lida no terminal USB do módulo, por divisor resistivo (\autoref{subsec:bateria-carregador}) \\
 Potenciômetro (bateria) & 1 & GPIO35 & Tensão da bateria, de 2,50 a 4,20\,V \\
 LED REDE (azul) & 1 & GPIO25 & Alimentação pela rede elétrica \\
 LED BACKUP (branco) & 1 & GPIO22 & Alimentação pela bateria \\
@@ -1506,7 +1427,7 @@ Resistor de 220\,$\Omega$ & 6 & -- & Limitação de corrente dos LEDs virtuais \
 
 O potenciômetro do solo fornece ao conversor de 12 \textit{bits} do ESP32
 valores de 0 a 4095 \cite{espressif_esp32}. Esse valor substitui a leitura
-do higrômetro na \autoref{eq:saturacao}, com a mesma calibração por solo
+do higrômetro na \autoref{eq:saturacao}, com a mesma setagem por solo
 seco e solo saturado.
 
 As leituras nos extremos da escala (0 ou 4095) são tratadas como falha do
@@ -1516,7 +1437,7 @@ testadas.
 
 O potenciômetro da bateria é convertido linearmente em tensão, de 2,50\,V
 no início do curso a 4,20\,V no fim. Esses extremos são a tensão de corte
-e a tensão de fim de carga da NCR18650B \cite{panasonic_ncr18650b}. A
+e a tensão de fim de carga do pacote adotado \cite{adafruit_5035}. A
 chave e o potenciômetro alimentam os estados da \autoref{tab:estados-energia}.
 
 O \textit{buzzer} do Wokwi é piezoelétrico e emite som apenas com sinal
@@ -1543,7 +1464,245 @@ um dos dias de $P_{48,\mathrm{obs}}$ fica sem registro, e o valor
 informado passa a ser o mínimo garantido de $P_{72}$
 (\autoref{subsec:contingencia}). Os
 comandos \texttt{status} e \texttt{calibrar} mostram as leituras e gravam
-a calibração do solo.
+a setagem do solo.
+
+% -------------------------------------------------------------
+\subsection{Protótipo Físico: Circuito e Conexões}
+\label{subsec:circuito}
+% -------------------------------------------------------------
+
+A \autoref{fig:componentes_ligados} apresenta o diagrama de montagem do
+protótipo, elaborado no \textit{software} Fritzing 1.0.6
+(Interaction Design Lab, FH Potsdam, Potsdam, Alemanha), e a
+\autoref{fig:esquematico}, o esquemático elétrico correspondente, com os
+pinos e as ligações entre os componentes.
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax]
+    {figures/image51_componentes_ligados_versao_3_bb.png}}
+\caption{Diagrama de montagem do protótipo embarcado}
+\label{fig:componentes_ligados}
+\fonte{Autora, 2026.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax]
+        {figures/image52_esquematico_versao_3.png}}
+    \caption{Esquemático elétrico do protótipo embarcado}
+    \label{fig:esquematico}
+    \fonte{Autora, 2026, com utilização da biblioteca Matplotlib (Matplotlib Development Team) e da linguagem Python (Python Software Foundation, EUA).}
+\end{figure}
+
+Na montagem, o LED azul indica o nível VERDE (\autoref{subsec:leds}), e a
+placa é alimentada por um carregador de 5\,V pela porta USB-C. A
+alimentação redundante não aparece na figura, pois não foi montada
+(\autoref{subsec:bateria-carregador}).
+
+A transmissão dos dados coletados por este circuito ao restante do
+sistema é descrita na \autoref{subsec:arquitetura}: o \textit{firmware}
+calcula o nível de alerta, monta um objeto JSON com o nível, os valores
+de $S$, $P_{48}$, $P_{24}$ e $P_{72}$ (ou o mínimo garantido de
+$P_{72}$, quando os dados de chuva estão incompletos) e os avisos de
+dado incompleto ou indisponível,
+e o envia ao \textit{backend} pela rota \texttt{POST /leituras}
+(\autoref{fig:sequencia-1}).
+
+% -------------------------------------------------------------
+\subsection{Especificações Técnicas e Custos}
+\label{subsec:specs-custos}
+% -------------------------------------------------------------
+
+A \autoref{tab:specs} consolida as principais especificações
+técnicas dos componentes utilizados.
+
+\begin{table}[H]
+\centering
+\caption{Especificações técnicas dos componentes do protótipo e da alimentação redundante}
+\label{tab:specs}
+\small
+\begin{tabular}{p{5.5cm}p{2.9cm}p{3.6cm}p{3.0cm}}
+\hline
+\textbf{Componente} & \textbf{Tensão (V)} & \textbf{Corrente} & \textbf{Interface} \\
+\hline
+ESP8266 NodeMCU V3 & 3,3 (lógico) & 80\,mA (média); 170\,mA (transmissão 802.11b) & Wi-Fi / GPIO / ADC \\
+Módulo higrômetro (comparador LM393) & 3,3 ou 5 & 35\,mA (módulo); LM393: até 1,0\,mA & Analógica (A0) \\
+LED azul 5\,mm (nível VERDE) & 3,0--3,3 & 20\,mA & GPIO digital \\
+LED amarelo 5\,mm & 2,0--2,2 & 20\,mA & GPIO digital \\
+LED vermelho 5\,mm & 1,8 & 15\,mA & GPIO digital \\
+\textit{Buzzer} ativo TMB-12A03 & 3 (faixa 2,5--4) & até 35\,mA & GPIO digital \\
+\hline
+\multicolumn{4}{l}{\textit{Alimentação redundante (especificada; não montada no protótipo físico)}} \\
+\hline
+Pacote de íon-lítio Adafruit 5035 (células 18650, 9500\,mAh mínimos) & 3,7 (nominal); 4,2 (carga); 2,5 (corte) & carga padrão: 0,2\,C (2010\,mA) & -- \\
+Módulo carregador e elevador PowerBoost 1000C & 5,2 (saída) & carga: até 1000\,mA; consumo próprio: 5\,mA & USB \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026, com base em \citeonline{espressif_esp8266ex,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,adafruit_5035,adafruit_2465_produto}.}
+\end{table}
+
+Com os preços consultados em outubro de 2026, o custo dos componentes
+do protótipo físico, incluindo a protoboard e os cabos, é de R\$\,59,18. A \autoref{tab:custos} apresenta
+também os itens da alimentação redundante, especificados na
+\autoref{subsec:energia}, que não foram montados. Com eles, o custo
+total passa a R\$\,421,20.
+
+\begin{table}[H]
+\centering
+\caption{Componentes e custos do protótipo embarcado}
+\label{tab:custos}
+\begin{tabular}{p{11.0cm}cc}
+\hline
+\textbf{Componente} & \textbf{Qtd.} & \textbf{Custo (R\$)} \\
+\hline
+ESP8266 NodeMCU V3 com USB-C e CH340$^{\mathrm{c}}$ & 1 & 35,60 \\
+Módulo higrômetro resistivo (sonda e placa comparadora)$^{\mathrm{c}}$ & 1 & 8,35 \\
+\textit{Buzzer} ativo TMB-12A03$^{\mathrm{b}}$ & 1 & 1,02 \\
+LEDs difusos de 5\,mm (kits com 5: azul, amarelo e vermelho) & 3 & 5,12 \\
+\textit{Protoboard} mini de 170 pontos KS214 (35 $\times$ 47 $\times$ 8,5\,mm), azul & 1 & 4,99 \\
+Cabo \textit{jumper} de 20\,cm fêmea-fêmea$^{\mathrm{d}}$ & 2 & 0,63 \\
+Cabo \textit{jumper} de 20\,cm fêmea-macho$^{\mathrm{d}}$ & 3 & 0,95 \\
+Cabo \textit{jumper} de 20\,cm macho-macho$^{\mathrm{d}}$ & 8 & 2,52 \\
+\hline
+\textbf{Subtotal do protótipo físico} & & \textbf{59,18} \\
+\hline
+Pacote de íon-lítio de 3,7\,V e 10050\,mAh, com proteção (Adafruit 5035)$^{\mathrm{a}}$ & 1 & 156,45 \\
+Módulo carregador e elevador PowerBoost 1000C (MCP73871 + TPS61090) & 1 & 205,57 \\
+\hline
+\textbf{Subtotal da alimentação redundante} & & \textbf{362,02} \\
+\hline
+\textbf{Total} & & \textbf{421,20} \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026, com preços consultados em 4, 5 e 22 out. 2026, sem frete
+\cite{usinainfo_nodemcu,usinainfo_higrometro,lcsc_tmb12a03,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,adafruit_5035,amazon_powerboost1000c,eletrodex_protoboard_ks214,eletrodex_jumper}.}
+\nota{$^{\mathrm{a}}$Preço unitário de US\$\,29,95 e $^{\mathrm{b}}$preço
+unitário de US\$\,0,1945, convertidos pela taxa PTAX de venda de 2 out.
+2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem impostos de importação.
+$^{\mathrm{c}}$Preço exibido na página da loja, com o produto indisponível
+na data da consulta; o higrômetro cotado é um módulo resistivo equivalente
+(HL-69). $^{\mathrm{d}}$Valor proporcional ao preço do cabo de 40 vias
+(R\$\,12,60), do qual os \textit{jumpers} são destacados.}
+\end{table}
+
+O protótipo físico é alimentado por fonte externa de 5\,V, pela porta
+USB-C. A alimentação redundante por bateria, exigida de um sistema de
+alerta, foi dimensionada por cálculo e demonstrada na simulação, conforme
+a \autoref{subsec:energia}.
+
+% =============================================================
+\section{Plataforma \textit{Web}}
+\label{sec:software}
+% =============================================================
+
+A plataforma \textit{web} reúne o \textit{backend}, com o banco de dados,
+e a interface \textit{web}. As tecnologias de cada camada estão na
+\autoref{tab:tecnologias}, e a arquitetura, na
+\autoref{subsec:arquitetura}. As telas descritas nesta seção são
+apresentadas no \autoref{cap:resultados}.
+
+% -------------------------------------------------------------
+\subsection{\textit{Backend} e Banco de Dados}
+\label{subsec:backend}
+% -------------------------------------------------------------
+
+O \textit{backend} recebe as leituras pela rota \texttt{POST
+/leituras}, grava cada leitura no banco de dados e registra os eventos
+do sistema. O \textit{backend} não recalcula o nível de alerta: ele
+armazena o nível enviado pelo dispositivo.
+
+Quando o nível sobe, ou quando muda a condição da rede elétrica ou da
+bateria, o \textit{backend} envia um e-mail automático aos
+administradores. O banco de dados possui quatro tabelas
+(\autoref{tab:tabelas-banco}).
+
+\begin{table}[H]
+\centering
+\caption{Tabelas do banco de dados}
+\label{tab:tabelas-banco}
+\begin{tabular}{p{3.8cm}p{10.8cm}}
+\hline
+\textbf{Tabela} & \textbf{Conteúdo} \\
+\hline
+\texttt{leituras} & Dados enviados pelo dispositivo: nível, $S$, $P_{48}$, $P_{24}$, $P_{72}$ ou o seu mínimo garantido, dias sem registro na estação, rede elétrica, tensão e estado da bateria e avisos de dado incompleto ou indisponível \\
+\texttt{eventos} & Subida de nível, mudanças de energia e envios de alerta aos moradores, com data, nível, administrador e número de destinatários \\
+\texttt{usuarios\_basicos} & Moradores cadastrados para receber alertas \\
+\texttt{administradores} & Contas de acesso ao painel \\
+\hline
+\end{tabular}
+\fonte{Autora, 2026.}
+\end{table}
+
+Os dados ficam no banco PostgreSQL do \textit{backend}, executado em
+contêiner Docker (\autoref{tab:tecnologias}). O sistema não apaga
+leituras nem eventos: a guarda é permanente. Cada leitura e cada evento
+recebem data e hora, e a tabela \texttt{eventos} registra qual
+administrador enviou cada alerta e quantos moradores o receberam.
+
+Esse histórico permite reconstituir, depois de um incidente, o nível
+calculado, os dados de entrada e os alertas enviados. Por isso, pode ser
+fornecido a órgãos de fiscalização e investigação, como a Defesa Civil,
+o Ministério Público e a Polícia. Em operação, o servidor deve ter cópias
+de segurança periódicas, e os dados pessoais dos moradores (nome, e-mail
+e telefone) devem ser tratados conforme a Lei Geral de Proteção de Dados
+Pessoais \cite{brasil2018lgpd}.
+
+% -------------------------------------------------------------
+\subsection{Página Inicial e Cadastro do Morador}
+\label{subsec:landing}
+% -------------------------------------------------------------
+
+A página inicial é pública. Ela apresenta o que o sistema acompanha
+(saturação do solo, chuva das últimas 48~h e previsão para 24~h),
+explica os três níveis de alerta, cada um com a sua cor e a sua
+orientação, e traz o botão ``Quero receber alertas''.
+
+O morador se cadastra por um formulário da própria página, com nome,
+e-mail, telefone e localidade. Ao final, a página confirma o cadastro e
+informa o e-mail que receberá os avisos. O morador não precisa de senha:
+o cadastro serve apenas para o recebimento dos alertas.
+
+% -------------------------------------------------------------
+\subsection{Acesso do Administrador e Painel}
+\label{subsec:painel}
+% -------------------------------------------------------------
+
+O administrador acessa o painel com e-mail e senha. A senha é armazenada
+de forma cifrada (bcrypt), e cada sessão é identificada por um
+\textit{token} JWT (\autoref{tab:tecnologias}).
+
+O painel reúne, em uma única página:
+
+\begin{itemize}
+  \item o nível de alerta atual e a orientação à população;
+  \item a condição da rede elétrica e da bateria;
+  \item os valores de $S$, $P_{48}$, $P_{24}$ e $P_{72}$ da última
+  leitura, com a posição em relação aos limiares;
+  \item os avisos de dado indisponível ou incompleto;
+  \item o histórico das leituras;
+  \item o envio do e-mail de alerta;
+  \item a lista de moradores cadastrados;
+  \item o registro dos envios e eventos.
+\end{itemize}
+
+Em tela de celular, os blocos são exibidos em uma coluna.
+
+% -------------------------------------------------------------
+\subsection{Envio do E-mail de Alerta}
+\label{subsec:envio}
+% -------------------------------------------------------------
+
+O envio do alerta aos moradores é decidido pelo administrador. Ao
+escolher o nível, o painel preenche o assunto e a mensagem-modelo do
+nível (\autoref{qua:mensagens-alerta}) com os dados da última leitura.
+O administrador revisa a mensagem e confirma o envio. Ao final, o painel
+informa quantos moradores receberam o e-mail, e o envio é registrado na
+lista de eventos.
+
+A mensagem leva um rodapé que informa que as cores do sistema não
+correspondem aos níveis oficiais de emergência da Agência Nacional de
+Mineração.
 
 % =============================================================
 \section{Testes de Validação}
@@ -1637,13 +1796,13 @@ abaixo de $P_1$ é tratado como falta de dados de chuva.
 \hline
 X01 & Higrômetro indisponível; $P_{72} = 80$\,mm & AMARELO, pela chuva; aviso de higrômetro indisponível \\
 X02 & Higrômetro indisponível; $P_{72} = 120$\,mm & VERMELHO, pela chuva; \textit{buzzer} acionado; aviso de higrômetro indisponível \\
-X03 & $S = 0{,}95$; sem dados de chuva & AMARELO (caso especial); aviso ``sem dados de chuva'' \\
-X04 & $S = 0{,}75$; sem dados de chuva & VERDE; aviso ``sem dados de chuva'' \\
+X03 & $S \geq S_2$; sem dados de chuva & AMARELO (caso especial); aviso ``sem dados de chuva'' \\
+X04 & $S_1 \leq S < S_2$; sem dados de chuva & VERDE; aviso ``sem dados de chuva'' \\
 X05 & APIs reais (BNDMET e OpenWeatherMap) & $P_{48}$, $P_{24}$ e $P_{72}$ do dia da consulta; com dados incompletos, aviso ``dados de chuva incompletos'' e nível avaliado com o mínimo garantido de $P_{72}$; sem nenhuma parcela, aviso ``sem dados de chuva'' \\
 X06 & Higrômetro indisponível; sem dados de chuva & AMARELO (regra de precaução); avisos de higrômetro indisponível e ``sem dados de chuva'' \\
-X07 & $S = 0{,}95$; dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; \textit{buzzer} acionado; aviso ``dados de chuva incompletos'' \\
-X08 & $S = 0{,}75$; dados de chuva incompletos, mínimo garantido de 80\,mm & AMARELO, avaliado com o mínimo garantido; aviso ``dados de chuva incompletos'' \\
-X09 & $S = 0{,}95$; dados de chuva incompletos, mínimo garantido de 30\,mm & AMARELO (caso especial), pois o mínimo é menor que $P_1$; aviso ``dados de chuva incompletos'' \\
+X07 & $S \geq S_2$; dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; \textit{buzzer} acionado; aviso ``dados de chuva incompletos'' \\
+X08 & $S_1 \leq S < S_2$; dados de chuva incompletos, mínimo garantido de 80\,mm & AMARELO, avaliado com o mínimo garantido; aviso ``dados de chuva incompletos'' \\
+X09 & $S \geq S_2$; dados de chuva incompletos, mínimo garantido de 30\,mm & AMARELO (caso especial), pois o mínimo é menor que $P_1$; aviso ``dados de chuva incompletos'' \\
 \hline
 \end{tabular}
 \fonte{Autora, 2026, com base na \autoref{tab:contingencia}.}
@@ -1652,8 +1811,8 @@ X09 & $S = 0{,}95$; dados de chuva incompletos, mínimo garantido de 30\,mm & AM
 \paragraph*{Casos de energia}
 
 Os casos de energia usaram a chave da rede e o potenciômetro da bateria,
-com o nível de alerta fixo em VERDE ($S = 0{,}40$ e $P_{72} = 30$\,mm). As
-tensões de 3,15\,V e 2,80\,V foram escolhidas dentro das faixas de bateria
+com o nível de alerta fixo em VERDE ($S < S_1$ e $P_{72} = 30$\,mm). As
+tensões de 3,06\,V e 2,68\,V foram escolhidas dentro das faixas de bateria
 baixa e crítica da \autoref{tab:estados-energia}.
 
 No caso E04, a bateria foi mantida abaixo de 4,20\,V com a rede presente
@@ -1671,8 +1830,8 @@ de demonstração.
 \hline
 E01 & Rede presente; bateria em 4,20\,V & LED REDE aceso; estado da bateria normal \\
 E02 & Rede ausente; bateria em 4,20\,V & LED BACKUP aceso; aviso de falta de rede; nível de alerta mantido \\
-E03 & Rede ausente; bateria em 3,15\,V e depois em 2,80\,V & LED ATENÇÃO piscando; bateria baixa e, depois, bateria crítica \\
-E04 & Rede presente; bateria em 3,80\,V até o fim de $T_{\mathrm{carga}}$ & Durante a recarga, estado normal, com indicação de recarga; após $T_{\mathrm{carga}}$, LED ATENÇÃO aceso e falha de bateria, sem a indicação de recarga \\
+E03 & Rede ausente; bateria em 3,06\,V e depois em 2,68\,V & LED ATENÇÃO piscando; bateria baixa e, depois, bateria crítica \\
+E04 & Rede presente; bateria em 3,57\,V até o fim de $T_{\mathrm{carga}}$ & Durante a recarga, estado normal, com indicação de recarga; após $T_{\mathrm{carga}}$, LED ATENÇÃO aceso e falha de bateria, sem a indicação de recarga \\
 \hline
 \end{tabular}
 \fonte{Autora, 2026, com base na \autoref{tab:estados-energia}.}
@@ -1691,12 +1850,14 @@ higrômetro real no lugar do potenciômetro e sem a supervisão de energia
 verificam a leitura do higrômetro, a decisão do nível e o acionamento dos
 LEDs e do \textit{buzzer} reais.
 
-Antes dos casos, o higrômetro foi calibrado com a sonda em solo seco e com
-a sonda imersa em água, pelo comando \texttt{calibrar}. A saturação $S$ de
-cada caso foi obtida variando a umidade do solo em torno da sonda, e
-$P_{72}$ foi informado pelo comando \texttt{chuva <mm>}, como na simulação.
+Os casos foram executados com a sonda em dois recipientes com areia:
+um com areia seca e outro com areia saturada de água. Antes dos casos,
+foi feita a setagem do higrômetro, com a sonda na areia seca e na areia
+saturada, pelo comando \texttt{calibrar}. A saturação $S$ de cada caso
+foi obtida pela posição da sonda na areia, e $P_{72}$ foi informado pelo
+comando \texttt{chuva <mm>}, como na simulação.
 
-Como a umidade do solo não pode ser ajustada com precisão, a saída
+Como a umidade da areia não pode ser ajustada com precisão, a saída
 esperada de cada caso é definida pela faixa de $S$ efetivamente lida
 (\autoref{tab:limiares}), e não por um valor fixo.
 
@@ -1709,14 +1870,14 @@ esperada de cada caso é definida pela faixa de $S$ efetivamente lida
 \hline
 \textbf{Caso} & \textbf{Condição de entrada} & \textbf{Saída esperada} \\
 \hline
-F01 & Sonda em solo seco ($S < S_1$); $P_{72} = 120$\,mm & VERDE; LED azul; \textit{buzzer} desligado \\
-F02 & Sonda em solo úmido ($S_1 \leq S < S_2$); $P_{72} = 80$\,mm & AMARELO; LED amarelo; \textit{buzzer} desligado \\
-F03 & Sonda em solo saturado ($S \geq S_2$); $P_{72} = 120$\,mm & VERMELHO; LED vermelho; \textit{buzzer} acionado \\
-F04 & Sonda em solo saturado ($S \geq S_2$); $P_{72} = 30$\,mm & VERDE; LED azul; \textit{buzzer} desligado \\
+F01 & Sonda na areia seca ($S < S_1$); $P_{72} = 120$\,mm & VERDE; LED azul; \textit{buzzer} desligado \\
+F02 & Sonda parcialmente inserida na areia saturada ($S_1 \leq S < S_2$); $P_{72} = 80$\,mm & AMARELO; LED amarelo; \textit{buzzer} desligado \\
+F03 & Sonda na areia saturada ($S \geq S_2$); $P_{72} = 120$\,mm & VERMELHO; LED vermelho; \textit{buzzer} acionado \\
+F04 & Sonda na areia saturada ($S \geq S_2$); $P_{72} = 30$\,mm & VERDE; LED azul; \textit{buzzer} desligado \\
 F05 & Sonda desconectada do módulo; $P_{72} = 80$\,mm & AMARELO, pela chuva; aviso de higrômetro indisponível \\
-F06 & Sonda em solo saturado ($S \geq S_2$); sem dados de chuva & AMARELO (caso especial); aviso ``sem dados de chuva'' \\
+F06 & Sonda na areia saturada ($S \geq S_2$); sem dados de chuva & AMARELO (caso especial); aviso ``sem dados de chuva'' \\
 F07 & APIs reais (BNDMET e OpenWeatherMap) & $P_{48}$, $P_{24}$ e $P_{72}$ do dia da consulta; com dados incompletos, aviso ``dados de chuva incompletos'' e nível avaliado com o mínimo garantido; sem nenhuma parcela, aviso ``sem dados de chuva'' \\
-F08 & Sonda em solo saturado ($S \geq S_2$); dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; LED vermelho; \textit{buzzer} acionado \\
+F08 & Sonda na areia saturada ($S \geq S_2$); dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; LED vermelho; \textit{buzzer} acionado \\
 \hline
 \end{tabular}
 \fonte{Autora, 2026, com base nas \autoref{tab:matriz} e \autoref{tab:contingencia}.}
