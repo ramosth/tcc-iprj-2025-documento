@@ -133,3 +133,11 @@ Trabalho de conclusão de curso apresentado como pré-requisito para obtenção 
 
 \orientador{Prof. Dr. Edgard Poiate Júnior}
 \tipotrabalho{monografia}
+% Remissões com inicial maiúscula (Seção, Subseção)
+\AtBeginDocument{%
+  \renewcommand{\sectionautorefname}{Se{\c c}\~ao}%
+  \renewcommand{\subsectionautorefname}{Subse{\c c}\~ao}%
+  \renewcommand{\subsubsectionautorefname}{Subse{\c c}\~ao}%
+  \renewcommand{\paragraphautorefname}{Subse{\c c}\~ao}%
+  \renewcommand{\chapterautorefname}{Se{\c c}\~ao}%
+}

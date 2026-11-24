@@ -12,41 +12,47 @@
 \vspace{1.4cm}
 
 A mineração é uma das atividades estratégicas da economia brasileira.
-Em 2024, o setor faturou R\$~270,8 bilhões, respondeu por 47\% do saldo
-da balança comercial e mantinha mais de 221 mil empregos diretos, com
-Minas Gerais e Pará como principais estados produtores
-\cite{ibram2024}. Isoladamente, a mineração respondia por cerca de
-1,2\% do PIB nacional \cite{apc2024}.
+Em 2024, o setor faturou R\$~270,8 bilhões, correspondendo a 47\% do saldo da balança comercial e mantendo mais de 221 mil empregos diretos, com
+Minas Gerais e Pará como principais estados produtores~\cite{ibram2024}. Isoladamente, a mineração respondia por cerca de
+1,2\% do PIB nacional~\cite{apc2024}.
 
-A atividade minerária inclui a gestão dos resíduos \cite{brasil2018},
-e a lavra é a fase de maior geração de efluentes sólidos, líquidos e
+A atividade minerária inclui a gestão dos resíduos~\cite{brasil2018}, sendo a lavra a fase de maior geração de efluentes sólidos, líquidos e
 gasosos. Os principais resíduos sólidos são o estéril, depositado em
 pilhas, e o rejeito do beneficiamento, disposto por empilhamento a
 seco, como pasta espessada ou em barragens, que exigem monitoramento
-contínuo \cite{carvalho2018, freire2020}. A má gestão dos rejeitos pode
-levar a desastres \cite{ipea2017boletim}.
+contínuo~\cite{carvalho2018, freire2020}. A má gestão dos rejeitos pode
+levar a desastres~\cite{ipea2017boletim}.
 
 As barragens de rejeitos são construídas por alteamentos sucessivos,
 pelos métodos a montante, a jusante e de linha de centro, ou em etapa
-única \cite{araujo2006, ibram2016, vale2024}. O método a montante tem
-vulnerabilidades estruturais e foi proibido no Chile e no Peru
-\cite{thome2018} e, no Brasil, pela Lei n.º~14.066/2020
-\cite{brasil2020lei14066}. Em 2025, a etapa única predominava entre
-as barragens de mineração do país (53,9\%) \cite{anmsistema2020}.
+única~\cite{araujo2006, ibram2016, vale2024}. O método a montante tem
+vulnerabilidades estruturais e foi proibido no Chile e no Peru~\cite{thome2018} e, no Brasil, pela Lei n.º~14.066/2020~\cite{brasil2020lei14066}. Em 2025, a etapa única predominava entre
+as barragens de mineração do país (53,9\%)~\cite{anmsistema2020}.
 
 Os rompimentos das barragens do Fundão, em Mariana (2015), e B-I, em
 Brumadinho (2019), ambas alteadas a montante, causaram 19 e 272 mortes,
-respectivamente \cite{estadominas2016irregular, brasil2024timeline,
+respectivamente~\cite{estadominas2016irregular, brasil2024timeline,
 guitarrara2026rompimento}. Em Brumadinho, a sirene de alerta foi
-engolida pela lama nos primeiros instantes do colapso e não soou
-\cite{taliberti2025tragedia, metropoles2019laudos}.
+engolida pela lama nos primeiros instantes do colapso e não soou~\cite{taliberti2025tragedia, metropoles2019laudos}.
 
 Motivado por esses acidentes, este trabalho desenvolveu um sistema de
 segurança para barragens de rejeitos, baseado em Internet das Coisas
 (IoT). O sistema combina a saturação do solo, obtida por um higrômetro,
-com a chuva observada, do Banco Nacional de Dados Meteorológicos (BNDMET) \cite{decea_bndmet}, e a prevista, do
-OpenWeatherMap \cite{openweathermap_forecast5}, e emite alertas locais
+com a chuva observada, do Banco Nacional de Dados Meteorológicos (BNDMET)~\cite{decea_bndmet}, e a prevista, do
+OpenWeatherMap~\cite{openweathermap_forecast5}, e emite alertas locais
 e remotos em três níveis, com alimentação redundante por bateria.
 
+Este trabalho está organizado da seguinte forma. A \autoref{cap1Revisao}
+apresenta a revisão bibliográfica sobre a atividade de mineração, os tipos e a
+classificação de risco das barragens de rejeitos, a legislação, os
+acidentes de Mariana e Brumadinho e os sistemas de alerta. A
+\autoref{cap:objetivos} define os objetivos. A \autoref{cap:materiais-metodos}
+descreve o material e os métodos, que incluem o modelo de alerta, as fontes de dados
+de chuva, a arquitetura, os protótipos virtual e físico, a plataforma
+\textit{web} e os testes de validação. A \autoref{cap:resultados}
+apresenta os resultados, e a \autoref{cap:discussoes} os discute, junto
+com as limitações do sistema. Por fim, são apresentadas as conclusões e
+as propostas de trabalhos futuros.
 
-\vspace{10mm} %5mm vertical space
+
+\vspace{10mm} %5mm vertical space

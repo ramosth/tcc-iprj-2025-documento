@@ -11,46 +11,48 @@ rejeitos de mineração, baseado em Internet das Coisas (IoT), que
 combine a saturação do solo, obtida no local, com a chuva observada e
 prevista, e emita alertas em três níveis, de forma local e remota, com
 alimentação redundante por bateria, como apoio ao aviso antecipado à
-população que mora e/ou circula próxima a barragens de rejeitos.
+população que mora e/ou circula próxima às barragens de rejeitos.
 
 % -------------------------------------------------------------
 \section{Objetivos Específicos}
 \label{sec:objetivos-especificos}
 % -------------------------------------------------------------
 
-Para alcançar o objetivo geral, foram estabelecidos os objetivos específicos:
+Para alcançar o objetivo geral, foram estabelecidos os seguintes
+objetivos específicos:
 
 \begin{enumerate}[label=\alph*)]
 
-    \item Definir um modelo de alerta com dois limiares, que combine a
+    \item Definir um modelo de alerta com dois limiares, que combinem a
     saturação relativa do solo ($S$), obtida pelo higrômetro, e a chuva
-    de 72~h ($P_{72}$) \cite{mirus2018developing}, e definir regras de
+    de 72~h ($P_{72}$)~\cite{mirus2018developing}, para definir regras de
     contingência para a falta do higrômetro ou dos dados de chuva;
 
-    \item Obter $P_{72}$ de fontes públicas: 48~h de chuva observada,
-    da BNDMET, e 24~h de chuva prevista, do OpenWeatherMap;
+    \item Obter $P_{72}$ de fontes públicas, isto é, 48~h de chuva
+    observada da BNDMET e 24~h de chuva prevista do OpenWeatherMap;
 
     \item Elaborar os fluxogramas e os diagramas de casos de uso e de
     sequência do sistema;
 
-    \item Dimensionar por cálculo a bateria de redundância de energia e
-    especificar o carregador e a detecção da falta de rede elétrica;
+    \item Dimensionar, através de cálculos, a bateria de redundância de
+    energia e especificar o carregador e a detecção da falta de rede
+    elétrica;
 
-    \item Construir o protótipo virtual no Wokwi com ESP32, com alerta
-    local por LEDs e \textit{buzzer} e supervisão de energia, e
-    demonstrar nele o funcionamento da bateria;
+    \item Construir, no Wokwi, o protótipo virtual com ESP32, com alerta
+    local por LEDs e \textit{buzzer}, além da supervisão de energia,
+    demonstrando nele o funcionamento da bateria;
 
     \item Construir o protótipo físico com ESP8266 NodeMCU, com alerta
-    local por LEDs e \textit{buzzer}, e realizar a setagem do
+    local por LEDs e \textit{buzzer}, além de realizar a setagem do
     higrômetro;
 
     \item Desenvolver a plataforma \textit{web}, com página inicial
     (\textit{landing page}), cadastro de moradores, painel do
     administrador, envio de e-mail de alerta (verde, amarelo ou
-    vermelho) sobre a necessidade de deslocamento e guarda permanente
-    das leituras e dos eventos;
+    vermelho) sobre a necessidade ou não de deslocamento e armazenamento
+    permanente das leituras e dos eventos;
 
     \item Validar o sistema por cenários de teste que combinem níveis
-    de saturação, de chuva e de energia e a falta de dados.
+    de saturação, de chuva e de energia, além da falta de dados.
 
 \end{enumerate}

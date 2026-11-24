@@ -1,7 +1,7 @@
 \chapter{MATERIAL E MÉTODOS}
 \label{cap:materiais-metodos}
 
-Este capítulo descreve os materiais e métodos empregados no
+Esta seção descreve os materiais e métodos empregados no
 desenvolvimento do sistema, na ordem dos objetivos específicos
 (\autoref{cap:objetivos}): o modelo de alerta hidrometeorológico
 (\autoref{sec:modelo-risco}); as fontes de dados meteorológicos que
@@ -10,7 +10,6 @@ diagramas do sistema (\autoref{sec:arquitetura-diagramas}); o protótipo
 de \textit{hardware} embarcado, com a alimentação redundante, o protótipo
 virtual e o protótipo físico (\autoref{sec:hardware}); e a plataforma
 \textit{web} (\autoref{sec:software}).
-
 Ao final, é descrita a metodologia dos testes de validação, cujos
 resultados são apresentados no \autoref{cap:resultados}.
 
@@ -20,17 +19,15 @@ O uso de ferramentas de inteligência artificial generativa (IAG) é
 declarado conforme a Portaria CNPq n.º~2.664/2026, que institui a
 Política de Integridade na Atividade Científica do CNPq. A portaria
 determina declarar o uso de IAG em qualquer fase da pesquisa,
-especificando a ferramenta utilizada e a finalidade
-\cite[art.~9º, I, c]{cnpq2026portaria2664}. Também veda a submissão de
+especificando a ferramenta utilizada e a finalidade~\cite[art.~9º, I, c]{cnpq2026portaria2664}. Também veda a submissão de
 conteúdo gerado por IAG como se fosse de autoria humana e atribui aos
 autores a responsabilidade integral pelo conteúdo final, inclusive por
-plágios ou imprecisões geradas pela IAG
-\cite[art.~9º, I, d, f]{cnpq2026portaria2664}. A Portaria CAPES
+plágios ou imprecisões geradas pela IAG~\cite[art.~9º, I, d, f]{cnpq2026portaria2664}. A Portaria CAPES
 n.º~363/2025 instituiu um grupo de trabalho para propor a regulamentação
 do uso de IA nas atividades da Coordenação de Aperfeiçoamento de Pessoal
 de Nível Superior (CAPES) e determinou que as instituições de ensino
 superior regulamentem internamente as orientações específicas sobre o
-tema \cite[art.~1º e art.~3º, parágrafo único]{capes2025portaria363}.
+tema~\cite[art.~1º e art.~3º, parágrafo único]{capes2025portaria363}.
 A declaração a seguir atende a esses itens.
 
 \textbf{Qual IA foi usada.} Claude Opus~5.5 (identificador \texttt{claude-opus-5-5}),
@@ -43,8 +40,8 @@ programação do \textit{firmware}, do \textit{backend} e do
 geração do código-fonte dos fluxogramas e diagramas
 (\autoref{subsec:diagramas}), na montagem da figura da alimentação
 redundante (\autoref{fig:montagem-energia}) e na conferência dos
-cálculos do dimensionamento da bateria (\autoref{subsec:energia}); em todos os
-capítulos, na busca e conferência de referências e na revisão textual.
+cálculos do dimensionamento da bateria (\autoref{subsec:energia}); em todas as
+seções, na busca e conferência de referências e na revisão textual.
 
 \textbf{Para que foi usada.} Geração e depuração de código, geração do
 código dos diagramas e da montagem da figura da alimentação redundante, busca e conferência de referências, conferência de
@@ -58,7 +55,7 @@ decisões de arquitetura e implementação, a execução dos testes, a
 interpretação dos resultados e as conclusões são de responsabilidade e
 autoria da autora. Como recomenda a portaria, o código-fonte, produto da
 pesquisa, foi depositado em repositórios públicos
-(\autoref{apendice:geral}) \cite[art.~9º, I, g]{cnpq2026portaria2664}.
+(\autoref{apendice:geral})~\cite[art.~9º, I, g]{cnpq2026portaria2664}.
 
 % =============================================================
 \section{Modelo de Alerta Hidrometeorológico}
@@ -66,17 +63,15 @@ pesquisa, foi depositado em repositórios públicos
 % =============================================================
 
 Em barragens de rejeitos, a ruptura pode resultar da combinação de
-fatores. No levantamento de 147 casos feito por
-\citeonline[p.~848]{rico2008mine}, isso ocorreu em 39\% das rupturas.
+fatores. No levantamento de 147 casos feito por~\citeonline[p.~848]{rico2008mine}, isso ocorreu em 39\% das rupturas.
 As causas meteorológicas, como
 eventos ou períodos de chuva incomum, responderam por 25\% dos casos
 no mundo e por 35\% na Europa.
 
-Para escorregamentos induzidos por chuva,
-\citeonline{bogaard2018hydrological} propõem separar dois fatores com
+Para escorregamentos induzidos por chuva,~\citeonline{bogaard2018hydrological} propõem separar dois fatores com
 escalas de tempo distintas: a umidade antecedente do terreno, que atua
 como causa, e a chuva de curto prazo, que atua como gatilho. Com base
-nessa ideia, \citeonline{mirus2018developing} desenvolveram limiares
+nessa ideia,~\citeonline{mirus2018developing} desenvolveram limiares
 hidrometeorológicos que combinam a saturação do solo medida em campo
 com a chuva acumulada em uma janela que inclui as 24 horas seguintes.
 
@@ -93,7 +88,7 @@ condição da estrutura em três níveis: VERDE, AMARELO e VERMELHO.
 % -------------------------------------------------------------
 
 A saturação relativa do solo é obtida pela normalização mínimo--máximo
-da leitura do higrômetro, adaptada de \citeonline{wicki2020assessing},
+da leitura do higrômetro, adaptada de~\citeonline{wicki2020assessing},
 conforme a \autoref{eq:saturacao}. Nesses autores, o valor máximo
 corresponde ao percentil de 99,9\% da série de umidade; neste
 trabalho, ele foi substituído pela leitura de referência com o solo
@@ -119,12 +114,10 @@ Cada variável da \autoref{eq:saturacao} é descrita a seguir:
         saturado, registrada na setagem.
 \end{itemize}
 
-A escala de 0 a 1 segue a definição de saturação de
-\citeonline[p.~5]{mirus2018developing}, que dividem a umidade
+A escala de 0 a 1 segue a definição de saturação de~\citeonline[p.~5]{mirus2018developing}, que dividem a umidade
 volumétrica medida pela porosidade, tomada como a máxima umidade
 observada no local. Valores calculados fora desse intervalo, causados
 por ruído de leitura, são limitados a 0 ou a 1.
-
 O higrômetro resistivo (\autoref{subsec:higrometro}) fornece uma
 leitura elétrica, e não a umidade volumétrica. Por isso, $S$ é uma
 saturação relativa à setagem do sensor. A expressão vale tanto
@@ -138,8 +131,7 @@ pois numerador e denominador mudam de sinal juntos.
 
 A variável meteorológica do modelo é a chuva acumulada em uma janela
 de 72 horas, que vai de 48 horas antes até 24 horas depois do instante
-de análise. Essa janela foi definida por
-\citeonline[p.~5]{mirus2018developing}, que calculam a chuva acumulada
+de análise. Essa janela foi definida por~\citeonline[p.~5]{mirus2018developing}, que calculam a chuva acumulada
 de $t-48$\,h até $t+24$\,h. O valor é obtido pela \autoref{eq:p72}.
 
 \begin{equation}
@@ -159,7 +151,7 @@ Cada variável da \autoref{eq:p72} é descrita a seguir:
         (\autoref{subsec:owm}).
 \end{itemize}
 
-Na formulação original, \citeonline[p.~5]{mirus2018developing} usaram
+Na formulação original,~\citeonline[p.~5]{mirus2018developing} usaram
 a chuva medida após o evento como substituta de uma previsão exata.
 Neste trabalho, a parcela futura vem de uma previsão real e, por isso,
 carrega o erro próprio da previsão meteorológica.
@@ -173,7 +165,7 @@ O nível de alerta é definido por dois pares de limiares, cada um com
 um valor de saturação e um valor de chuva. O nível só sobe quando a
 saturação e a chuva acumulada ultrapassam, ao mesmo tempo, os limiares
 correspondentes. Essa estrutura segue os limiares hidrometeorológicos
-de \citeonline{mirus2018developing}, nos quais o valor de chuva e o de
+de~\citeonline{mirus2018developing}, nos quais o valor de chuva e o de
 saturação devem ser superados juntos. A regra é dada pela
 \autoref{eq:nivel}.
 
@@ -203,12 +195,10 @@ Cada variável da \autoref{eq:nivel} é descrita a seguir:
 
 Os valores de $S_1$, $S_2$, $P_1$ e $P_2$ estão na
 \autoref{tab:limiares}. Com dois limiares, são formadas três zonas, que
-correspondem ao sistema de alerta duplo descrito por
-\citeonline[p.~14]{mirus2018developing} para indicar quando os
+correspondem ao sistema de alerta duplo descrito por~\citeonline[p.~14]{mirus2018developing} para indicar quando os
 escorregamentos são improváveis, possíveis ou prováveis. Neste
 trabalho, essas zonas correspondem aos níveis VERDE, AMARELO e
 VERMELHO.
-
 Cada nível acende o LED da cor correspondente. No nível VERMELHO, o
 \textit{buzzer} também é acionado (\autoref{sec:hardware}).
 
@@ -217,47 +207,39 @@ Cada nível acende o LED da cor correspondente. No nível VERMELHO, o
 \label{subsec:limiares}
 % -------------------------------------------------------------
 
-Os limiares de saturação vêm de
-\citeonline[p.~9, Tabela~1]{mirus2018developing}. Para a região de
+Os limiares de saturação vêm de~\citeonline[p.~9, Tabela~1]{mirus2018developing}. Para a região de
 Seattle, os autores obtiveram limiares de saturação entre 0,64,
 otimizado pelo ponto ótimo com saturação média de 9 dias, e 0,86,
 otimizado pelo \textit{threat score} com saturação média de 1 dia. O
 valor inferior foi adotado como limiar de atenção ($S_1$) e o
 superior, como limiar de alerta ($S_2$).
-
 Em Portland, os mesmos autores obtiveram 0,70 (ponto ótimo) e 0,75
-(\textit{threat score}) \cite[p.~11, Tabela~2]{mirus2018developing},
-valores dentro da faixa adotada. Além disso,
-\citeonline[p.~74]{mendes2020proposicao} observaram que os valores
+(\textit{threat score})~\cite[p.~11, Tabela~2]{mirus2018developing},
+valores dentro da faixa adotada. Além disso,~\citeonline[p.~74]{mendes2020proposicao} observaram que os valores
 críticos de umidade, nos três perfis de solo monitorados, ficaram
 entre 38,5\% e 46\%, próximos da saturação do solo.
 
-Os limiares de chuva vêm de
-\citeonline[p.~74, Tabela~3]{mendes2020proposicao}, que propuseram
+Os limiares de chuva vêm de~\citeonline[p.~74, Tabela~3]{mendes2020proposicao}, que propuseram
 limiares críticos para sistemas de alerta de deslizamentos em três
 municípios paulistas. Para a janela de 72 horas, os valores foram de
 60\,mm (atenção) e 100\,mm (alerta) em Campos do Jordão; de 80 e
 120\,mm em São José dos Campos; e de 100 e 130\,mm em Ubatuba.
-
 Nesse estudo, os níveis também exigem que a umidade crítica seja
-atingida no perfil de solo: de 0,3 a 1,5\,m de profundidade no nível
-de atenção e de 0,3 a 2,0\,m no nível de alerta, em Campos do Jordão
-\cite[p.~74, Tabela~3]{mendes2020proposicao}. Ou seja, chuva e
+atingida no perfil de solo, isto é, de 0,3 a 1,5\,m de profundidade no nível
+de atenção e de 0,3 a 2,0\,m no nível de alerta, em Campos do Jordão~\cite[p.~74, Tabela~3]{mendes2020proposicao}. Ou seja, chuva e
 umidade do solo são avaliadas em conjunto, como na \autoref{eq:nivel}.
 
 Na ausência de limiar ajustado para Brumadinho, foi escolhido o par mais
 baixo (60 e 100\,mm), que antecipa o alerta. No estudo de origem, os
 acumulados de 72 horas são de chuva observada. Aqui, eles são usados
-como referência de magnitude para a janela de
-\citeonline{mirus2018developing}, que soma chuva observada e prevista.
+como referência de magnitude para a janela de~\citeonline{mirus2018developing}, que soma chuva observada e prevista.
 
 Os limiares de saturação e de chuva vêm de estudos diferentes e não
 formam um par ajustado em conjunto. Em Seattle, por exemplo, o limiar
 de saturação de 0,86 foi obtido junto com um limiar de chuva de
-27,1\,mm \cite[p.~9]{mirus2018developing}. Além disso, os dois estudos
+27,1\,mm~\cite[p.~9]{mirus2018developing}. Além disso, os dois estudos
 tratam de deslizamentos em encostas naturais, e não de barragens de
 rejeitos de minério de ferro.
-
 Trata-se, portanto, de valores de referência da literatura.
 
 \begin{table}[H]
@@ -268,14 +250,14 @@ Trata-se, portanto, de valores de referência da literatura.
 \hline
 \textbf{Símbolo} & \textbf{Descrição} & \textbf{Valor} & \textbf{Fonte} \\
 \hline
-$S_1$ & Saturação relativa -- atenção    & 0,64     & \citeonline[p.~9, Tabela~1]{mirus2018developing} \\
-$S_2$ & Saturação relativa -- alerta     & 0,86     & \citeonline[p.~9, Tabela~1]{mirus2018developing} \\
-$P_1$ & Chuva em 72 horas -- atenção     & 60\,mm   & \citeonline[p.~74, Tabela~3]{mendes2020proposicao} \\
-$P_2$ & Chuva em 72 horas -- alerta      & 100\,mm  & \citeonline[p.~74, Tabela~3]{mendes2020proposicao} \\
+$S_1$ & Saturação relativa -- atenção    & 0,64     &~\citeonline[p.~9, Tabela~1]{mirus2018developing} \\
+$S_2$ & Saturação relativa -- alerta     & 0,86     &~\citeonline[p.~9, Tabela~1]{mirus2018developing} \\
+$P_1$ & Chuva em 72 horas -- atenção     & 60\,mm   &~\citeonline[p.~74, Tabela~3]{mendes2020proposicao} \\
+$P_2$ & Chuva em 72 horas -- alerta      & 100\,mm  &~\citeonline[p.~74, Tabela~3]{mendes2020proposicao} \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{mirus2018developing}
-e \citeonline{mendes2020proposicao}.}
+\fonte{elaborada pela própria autora, com base em~\citeonline{mirus2018developing}
+e~\citeonline{mendes2020proposicao}.}
 \end{table}
 
 % -------------------------------------------------------------
@@ -300,14 +282,14 @@ $0{,}64 \leq S < 0{,}86$ & VERDE & AMARELO & AMARELO  \\
 $S \geq 0{,}86$          & VERDE & AMARELO & VERMELHO \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, a partir da \autoref{eq:nivel} e da
+\fonte{elaborada pela própria autora, a partir da \autoref{eq:nivel} e da
 \autoref{tab:limiares}.}
 \end{table}
 
 O nível VERMELHO exige, ao mesmo tempo, solo próximo da saturação e
 chuva acima do limiar de alerta. Solo úmido com pouca chuva, ou muita
 chuva com solo seco, não elevam o nível, pois falta o gatilho ou a
-causa \cite{bogaard2018hydrological}.
+causa~\cite{bogaard2018hydrological}.
 
 % -------------------------------------------------------------
 \subsection{Regras de Contingência}
@@ -322,11 +304,8 @@ exibido também no painel.
 
 \paragraph*{Falha do higrômetro}
 
-Quando a leitura do higrômetro é inválida, o nível é definido apenas
-pela chuva: AMARELO se $P_{72} \geq 60$\,mm e VERMELHO se
-$P_{72} \geq 100$\,mm. Esses são os acumulados de 72 horas de
-\citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
-
+Quando a leitura do higrômetro é inválida, o nível é definido apenas pela chuva, sendo AMARELO se $P_{72} \geq 60$\,mm e VERMELHO se
+$P_{72} \geq 100$\,mm. Esses são os acumulados de 72 horas de~\citeonline[p.~74, Tabela~3]{mendes2020proposicao}.
 Nesse estudo, os acumulados são aplicados junto com a umidade crítica
 do solo. O uso isolado é, portanto, uma regra de projeto adotada a
 favor da segurança. O sistema exibe o aviso ``sem dados do sensor de
@@ -345,7 +324,6 @@ Com dados incompletos, a soma do que foi obtido é usada como limite
 inferior de $P_{72}$, já que a chuva não assume valores negativos. Se
 esse mínimo atinge $P_1$ ou $P_2$, a \autoref{eq:nivel} é aplicada com
 ele, pois o valor real de $P_{72}$ é igual ou maior.
-
 O nível obtido é o mínimo garantido, e o sistema exibe o aviso ``dados
 de chuva incompletos''. O mesmo limite inferior vale na falha do
 higrômetro, para a regra baseada apenas na chuva.
@@ -358,15 +336,11 @@ nível é VERDE.
 Com $S \geq 0{,}86$, o nível é AMARELO, como caso especial. Sem
 $P_{72}$, a \autoref{eq:nivel} não pode ser avaliada; porém, o solo
 está acima do limiar superior de saturação, condição próxima da
-umidade crítica que \citeonline[p.~74]{mendes2020proposicao}
+umidade crítica que~\citeonline[p.~74]{mendes2020proposicao}
 associaram aos deslizamentos. Por precaução, o sistema não permanece
 em VERDE.
-
-O nível não sobe para VERMELHO porque o gatilho, a chuva, não pode ser
-confirmado: há indício da causa, mas não do gatilho
-\cite{bogaard2018hydrological}. Trata-se de uma regra de projeto
+O nível não sobe para VERMELHO porque o gatilho, a chuva, não pode ser confirmado, pois há indício da causa, mas não do gatilho~\cite{bogaard2018hydrological}. Trata-se de uma regra de projeto
 adotada por precaução, apoiada nessas duas fontes.
-
 Essa regra difere da célula correspondente da \autoref{tab:matriz}
 ($S \geq 0{,}86$ e $P_{72} < 60$\,mm, VERDE) porque, na matriz, a
 chuva baixa foi confirmada; aqui, ela é desconhecida.
@@ -376,9 +350,8 @@ chuva baixa foi confirmada; aqui, ela é desconhecida.
 Na falta simultânea da leitura do higrômetro e dos dados de chuva,
 inclusive quando o mínimo garantido fica abaixo de $P_1$, a
 \autoref{eq:nivel} não pode ser avaliada. Por precaução, o sistema
-sinaliza AMARELO e informa que os dois dados estão indisponíveis. A
-base é a mesma do caso especial: sem a confirmação da causa e do
-gatilho \cite{bogaard2018hydrological}, o sistema não permanece em
+sinaliza AMARELO e informa que os dois dados estão indisponíveis. A base é a mesma do caso especial, ou seja, sem a confirmação da causa e do
+gatilho~\cite{bogaard2018hydrological}, o sistema não permanece em
 VERDE. Trata-se de uma regra de projeto adotada por precaução.
 
 \begin{table}[H]
@@ -390,21 +363,21 @@ VERDE. Trata-se de uma regra de projeto adotada por precaução.
 \hline
 \textbf{Situação} & \textbf{Condição} & \textbf{Nível} & \textbf{Aviso} & \textbf{Base} \\
 \hline
-Higrômetro em falha & $P_{72} \geq 100$\,mm          & VERMELHO & Sem dados do sensor de solo & \citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
-                    & $60 \leq P_{72} < 100$\,mm     & AMARELO  & Sem dados do sensor de solo & \citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
-                    & $P_{72} < 60$\,mm              & VERDE    & Sem dados do sensor de solo & \citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
+Higrômetro em falha & $P_{72} \geq 100$\,mm          & VERMELHO & Sem dados do sensor de solo &~\citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
+                    & $60 \leq P_{72} < 100$\,mm     & AMARELO  & Sem dados do sensor de solo &~\citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
+                    & $P_{72} < 60$\,mm              & VERDE    & Sem dados do sensor de solo &~\citeonline[Tabela~3]{mendes2020proposicao}; regra de projeto \\
 \hline
-Dados de chuva incompletos (parcela não obtida ou dia sem registro) & Mínimo garantido $\geq P_1$ & \autoref{eq:nivel} com o mínimo garantido & Dados de chuva incompletos & \citeonline{mirus2018developing}; regra de projeto \\
+Dados de chuva incompletos (parcela não obtida ou dia sem registro) & Mínimo garantido $\geq P_1$ & \autoref{eq:nivel} com o mínimo garantido & Dados de chuva incompletos &~\citeonline{mirus2018developing}; regra de projeto \\
                     & Mínimo garantido $< P_1$       & Como em dados indisponíveis & Sem dados de chuva & Regra de projeto \\
 \hline
-Dados de chuva indisponíveis & $S \geq 0{,}86$       & AMARELO  & Sem dados de chuva & \citeonline[p.~74]{mendes2020proposicao}; \citeonline{bogaard2018hydrological}; regra de projeto \\
+Dados de chuva indisponíveis & $S \geq 0{,}86$       & AMARELO  & Sem dados de chuva &~\citeonline[p.~74]{mendes2020proposicao};~\citeonline{bogaard2018hydrological}; regra de projeto \\
                     & $S < 0{,}86$                   & VERDE    & Sem dados de chuva & Regra de projeto \\
 \hline
-Higrômetro e chuva indisponíveis & Inclui mínimo garantido $< P_1$ & AMARELO & Sem dados & \citeonline{bogaard2018hydrological}; regra de projeto \\
+Higrômetro e chuva indisponíveis & Inclui mínimo garantido $< P_1$ & AMARELO & Sem dados &~\citeonline{bogaard2018hydrological}; regra de projeto \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{mendes2020proposicao}
-e \citeonline{bogaard2018hydrological}.}
+\fonte{elaborada pela própria autora, com base em~\citeonline{mendes2020proposicao}
+e~\citeonline{bogaard2018hydrological}.}
 \end{table}
 
 % =============================================================
@@ -429,8 +402,7 @@ uso dos dados em pesquisa científica.
 
 A estação selecionada para o estudo foi a D6594 (Alberto Flores), na
 região de Brumadinho (MG), onde ocorreu o rompimento de barragem de
-rejeitos com maior número de vítimas no país, com 272 mortes
-\cite{minasgerais2024historico}. O acesso se dá pelo
+rejeitos com maior número de vítimas no país, com 272 mortes~\cite{minasgerais2024historico}. O acesso se dá pelo
 \textit{endpoint} \path{/v1/estacoes/D6594/fenomenos/{codigo}},
 com autenticação por chave estática (\textit{API key}) transmitida
 no cabeçalho \texttt{x-api-key}.
@@ -438,7 +410,6 @@ no cabeçalho \texttt{x-api-key}.
 Foi utilizado o fenômeno I006 da estação, que fornece a precipitação total
 diária, em mm. A consulta abrange os dois dias mais recentes, e
 $P_{48,\mathrm{obs}}$ é a soma dos dois totais diários retornados.
-
 Por usar totais diários, a parcela observada corresponde aos dois últimos
 dias do calendário, e não a uma janela móvel de exatamente 48 horas.
 
@@ -446,22 +417,17 @@ A série da estação contém dias sem valor, retornados pela API como
 \texttt{null}. O \texttt{null} indica que a estação não registrou o total
 daquele dia; a consulta, porém, foi atendida. Essa situação difere da
 falha da fonte, em que a API não responde ou retorna erro.
-
 O dia sem registro é tratado como dado ausente e não entra na soma.
 Como a chuva não assume valores negativos, a soma dos dias com valor é
 um limite inferior de $P_{48,\mathrm{obs}}$. Nesse caso, os dados de
 chuva são considerados incompletos e seguem as regras da
 \autoref{subsec:contingencia}.
-
 Na série de janeiro de 2026 da estação D6594, 3 dos 30 dias
 retornaram \texttt{null} (\autoref{anexo:bndmet}).
 
 A escolha do BNDMET em detrimento da API HidroWebService da Agência
-Nacional de Águas (ANA) foi motivada por uma restrição operacional: o
-campo \texttt{tokenautenticacao}, obrigatório nas requisições da ANA,
-tem validade de 60 minutos e precisa ser renovado
-\cite[p.~4]{ana_hidrowebservice}.
-
+Nacional de Águas (ANA) foi motivada por uma restrição operacional, já que o campo \texttt{tokenautenticacao}, obrigatório nas requisições da ANA,
+tem validade de 60 minutos e precisa ser renovado~\cite[p.~4]{ana_hidrowebservice}.
 Isso é incompatível com a operação autônoma e contínua do ESP8266, que
 precisa de uma autenticação estável e simples. Como a estação D6594
 já estava disponível no BNDMET com chave estática, a integração foi
@@ -475,14 +441,11 @@ $P_{24,\mathrm{prev}}$. O \textit{endpoint} \texttt{/forecast} fornece a
 previsão em blocos de 3 horas; a consulta solicita oito blocos
 (\texttt{cnt=8}), e a soma da chuva prevista nesses blocos corresponde às
 próximas 24 horas.
-
 O \textit{endpoint} é acessado por HTTPS, com autenticação por chave de
-API transmitida como parâmetro da consulta
-\cite{openweathermap_forecast5}.
+API transmitida como parâmetro da consulta~\cite{openweathermap_forecast5}.
 
 As coordenadas da região de Córrego do Feijão, em Brumadinho, foram
-obtidas pelo serviço de geocodificação da própria OpenWeatherMap:
-latitude $-20{,}1433$ e longitude $-44{,}1997$, em graus decimais. A
+obtidas pelo serviço de geocodificação da própria OpenWeatherMap, com latitude $-20{,}1433$ e longitude $-44{,}1997$, em graus decimais. A
 documentação não informa o \textit{datum} geodésico dessas
 coordenadas.
 
@@ -531,7 +494,7 @@ Circuito & Python 3 e Matplotlib & Python Software Foundation, EUA; Matplotlib D
 Circuito & Python 3 e Pillow & Python Software Foundation, EUA; Pillow (código aberto) & Montagem da alimentação redundante \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026.}
+\fonte{elaborada pela própria autora.}
 \end{table}
 
 % -------------------------------------------------------------
@@ -549,14 +512,11 @@ $S$ (\autoref{eq:saturacao}), obtém as duas parcelas de $P_{72}$
 (\autoref{eq:p72}) das APIs descritas na \autoref{sec:fontes-dados} e
 define o nível pela \autoref{eq:nivel} e pelas regras da
 \autoref{tab:contingencia}.
-
 Em seguida, o dispositivo aciona os LEDs e o \textit{buzzer} e envia o
 resultado ao \textit{backend}. O intervalo entre ciclos é de 60 minutos
-sem chuva e de 10 minutos com chuva ou com alerta
-\cite[p.~3]{freitas2021analise}, conforme a \autoref{subsec:energia}.
+sem chuva e de 10 minutos com chuva ou com alerta~\cite[p.~3]{freitas2021analise}, conforme a \autoref{subsec:energia}.
 
-Foram desenvolvidos dois \textit{firmwares} com a mesma lógica de
-alerta: um para o ESP8266 do protótipo físico (\autoref{sec:hardware})
+Foram desenvolvidos dois \textit{firmwares} com a mesma lógica de alerta, sendo um para o ESP8266 do protótipo físico (\autoref{sec:hardware})
 e outro para o ESP32 da simulação (\autoref{subsec:wokwi}). Apenas o
 \textit{firmware} da simulação inclui a supervisão de energia.
 
@@ -567,8 +527,7 @@ e outro para o ESP32 da simulação (\autoref{subsec:wokwi}). Apenas o
 
 Foram elaborados quatro fluxogramas, um diagrama de casos de uso e um
 diagrama de sequência, apresentado em duas partes, para representar a
-lógica do dispositivo, os atores e as interações entre os componentes
-\cite{sommerville2011engenharia,guedes2011uml}. Os diagramas foram
+lógica do dispositivo, os atores e as interações entre os componentes~\cite{sommerville2011engenharia,guedes2011uml}. Os diagramas foram
 elaborados no draw.io, versão \textit{on-line} (JGraph Ltd, Northampton,
 Reino Unido).
 
@@ -578,18 +537,15 @@ A \autoref{fig:f1-geral} apresenta o fluxograma geral do dispositivo.
 Após a inicialização, o \textit{loop} principal supervisiona a energia
 e, quando chega a hora do ciclo, calcula o nível, aciona o alerta local
 e envia a leitura ao \textit{backend}.
-
-Ao final de cada ciclo, o dispositivo define o próximo intervalo: 10
-minutos se houver chuva observada ou prevista, ou se o nível for
-diferente de VERDE, e 60 minutos nos demais casos
-\cite[p.~3]{freitas2021analise}.
+Ao final de cada ciclo, o dispositivo define o próximo intervalo, que é de 10 minutos se houver chuva observada ou prevista, ou se o nível for
+diferente de VERDE, e 60 minutos nos demais casos~\cite[p.~3]{freitas2021analise}.
 
 \begin{figure}[H]
 \centering
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image56_f1_fluxograma_geral.png}}
 \caption{Fluxograma geral do dispositivo}
 \label{fig:f1-geral}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma do cálculo do nível}
@@ -606,7 +562,6 @@ parcela não obtida ou por dia sem registro na estação, o nível usa o
 mínimo garantido de $P_{72}$, desde que ele atinja $P_1$; abaixo disso,
 os dados são tratados como indisponíveis e o fluxo segue pelo
 conector B.
-
 Sem o higrômetro, o nível depende só da chuva; sem os dados de chuva,
 depende só de $S$; sem os dois, o nível é AMARELO, por precaução.
 
@@ -615,7 +570,7 @@ depende só de $S$; sem os dois, o nível é AMARELO, por precaução.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image57_f2_calculo_nivel.png}}
 \caption{Fluxograma do cálculo do nível de alerta}
 \label{fig:f2-nivel}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma da supervisão de energia}
@@ -626,7 +581,6 @@ da bateria e classifica a bateria nos estados da
 \autoref{tab:estados-energia}. A falha é indicada quando a rede está
 presente e a bateria não completa a carga no tempo máximo de recarga
 $T_{\mathrm{carga}}$ (\autoref{subsec:energia}).
-
 A cada mudança da rede ou do estado da bateria, o dispositivo envia a
 leitura ao \textit{backend}, que avisa os administradores por e-mail.
 O cálculo do nível de alerta continua durante a operação na bateria.
@@ -636,7 +590,7 @@ O cálculo do nível de alerta continua durante a operação na bateria.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image58_f3_energia.png}}
 \caption{Fluxograma da supervisão de energia}
 \label{fig:f3-energia}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Fluxograma do envio de e-mail de alerta}
@@ -646,7 +600,6 @@ administrador, após o \textit{login}. O administrador escolhe o nível,
 e o sistema preenche a mensagem-modelo do nível
 (\autoref{qua:mensagens-alerta}) com os dados da última leitura. O
 texto pode ser editado antes do envio.
-
 O envio exige pelo menos um morador cadastrado e a confirmação do
 administrador. O sistema registra o envio, envia o e-mail aos
 moradores ativos e informa ao administrador quantas mensagens foram
@@ -657,17 +610,16 @@ enviadas e quantas falharam.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image59_f4_envio_email.png}}
 \caption{Fluxograma do envio do e-mail de alerta}
 \label{fig:f4-email}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Diagrama de casos de uso}
 
 O diagrama de casos de uso representa o que o sistema faz do ponto de
-vista de quem interage com ele \cite{guedes2011uml}. A
+vista de quem interage com ele~\cite{guedes2011uml}. A
 \autoref{fig:casos-uso} apresenta cinco atores: o usuário básico
 (morador), o administrador, o dispositivo e as APIs BNDMET e
 OpenWeatherMap.
-
 O dispositivo mede a saturação, consulta as APIs, calcula o nível,
 aciona o alerta local e envia a leitura. O morador consulta a página
 inicial e se cadastra para receber alertas. O administrador acompanha
@@ -681,20 +633,19 @@ como o morador no envio do alerta.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image60_casos_de_uso.png}}
 \caption{Diagrama de casos de uso}
 \label{fig:casos-uso}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 \paragraph*{Diagrama de sequência}
 
 O diagrama de sequência representa a ordem das mensagens trocadas
-entre os componentes ao longo do tempo \cite{guedes2011uml}. Para
+entre os componentes ao longo do tempo~\cite{guedes2011uml}. Para
 manter a legibilidade, ele foi dividido em duas partes, com numeração
 contínua das mensagens.
 
 A primeira parte (\autoref{fig:sequencia-1}) mostra o ciclo de leitura
 do dispositivo. O dispositivo consulta as duas APIs, calcula o nível e
 envia a leitura ao \textit{backend}, que a grava no banco de dados.
-
 Se o nível subiu ou houve mudança de energia, o \textit{backend}
 registra o evento e envia o e-mail aos administradores sem atrasar a
 resposta ao dispositivo.
@@ -704,13 +655,12 @@ resposta ao dispositivo.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image61_sequencia_1.png}}
 \caption{Diagrama de sequência --- parte 1: ciclo de leitura do dispositivo}
 \label{fig:sequencia-1}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 A segunda parte (\autoref{fig:sequencia-2}) mostra o uso do painel:
 o \textit{login} do administrador, a atualização automática dos dados
 e o envio do alerta aos moradores.
-
 No envio do alerta, o administrador escolhe o nível e confirma a
 mensagem. O \textit{backend} envia o e-mail aos moradores ativos e
 registra o envio, com o número de mensagens enviadas e de falhas.
@@ -720,16 +670,16 @@ registra o envio, com o número de mensagens enviadas e de falhas.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/image62_sequencia_2.png}}
 \caption{Diagrama de sequência --- parte 2: painel e envio do alerta}
 \label{fig:sequencia-2}
-\fonte{Autora, 2026, com utilização do draw.io (diagrams.net).}
+\fonte{elaborada pela própria autora, com utilização do draw.io (diagrams.net).}
 \end{figure}
 
 O conteúdo das mensagens segue o Plano de Ação de Emergência previsto na Política
 Nacional de Segurança de Barragens, que inclui o planejamento de rotas de fuga e
-pontos de encontro, com a respectiva sinalização \cite{brasil2010pnsb,brasil2020lei14066}.
+pontos de encontro, com a respectiva sinalização~\cite{brasil2010pnsb,brasil2020lei14066}.
 A mensagem do nível vermelho orienta o deslocamento, de forma análoga ao nível de
-resposta vermelho do guia da \citeonline{ana2016manualpae}, em que o alerta à
+resposta vermelho do guia da~\citeonline{ana2016manualpae}, em que o alerta à
 população visa à evacuação. As cores do sistema não correspondem aos níveis de
-emergência definidos pela \citeonline{anm2022resolucao95}.
+emergência definidos pela~\citeonline{anm2022resolucao95}.
 
 \begin{quadro}[H]
 \centering
@@ -740,18 +690,14 @@ emergência definidos pela \citeonline{anm2022resolucao95}.
 \textbf{Nível} & \textbf{Orientação ao morador} & \textbf{Base} \\
 \hline
 Verde & Não há necessidade de deslocamento. Conhecer a rota de fuga e o ponto de
-encontro sinalizados e participar dos simulados. &
-\citeonline{brasil2010pnsb}, art. 12, IV e XIII \\
+encontro sinalizados e participar dos simulados. &~\citeonline{brasil2010pnsb}, art. 12, IV e XIII \\
 Amarelo & Atenção. Confirmar a rota de fuga e o ponto de encontro; acompanhar novos
-avisos e a Defesa Civil; seguir as orientações oficiais se a sirene tocar. &
-\citeonline{ana2016manualpae}; \citeonline{brasil2010pnsb}, art. 12, XII e XIII \\
+avisos e a Defesa Civil; seguir as orientações oficiais se a sirene tocar. &~\citeonline{ana2016manualpae};~\citeonline{brasil2010pnsb}, art. 12, XII e XIII \\
 Vermelho & Deslocar-se imediatamente ao ponto de encontro pela rota de fuga
-sinalizada e seguir as orientações da Defesa Civil. &
-\citeonline{ana2016manualpae}; \citeonline{anm2022resolucao95}, art. 42 \\
+sinalizada e seguir as orientações da Defesa Civil. &~\citeonline{ana2016manualpae};~\citeonline{anm2022resolucao95}, art. 42 \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{brasil2010pnsb},
-\citeonline{ana2016manualpae} e \citeonline{anm2022resolucao95}.}
+\fonte{elaborado pela própria autora, com base em~\citeonline{brasil2010pnsb},~\citeonline{ana2016manualpae} e~\citeonline{anm2022resolucao95}.}
 \end{quadro}
 
 % =============================================================
@@ -776,14 +722,12 @@ representada no protótipo virtual, sem ser montada no protótipo físico.
 % -------------------------------------------------------------
 
 O ESP8266 NodeMCU V3 é uma placa de desenvolvimento baseada no módulo
-ESP-12E, que tem 4\,MB de memória \textit{flash} \cite{aithinker_esp12e}.
+ESP-12E, que tem 4\,MB de memória \textit{flash}~\cite{aithinker_esp12e}.
 O microcontrolador ESP8266EX tem processador de 32 \textit{bits}, com
 \textit{clock} de até 160\,MHz, 17 pinos GPIO, conversor ADC de 10
-\textit{bits} e Wi-Fi 802.11 b/g/n em 2,4\,GHz \cite{espressif_esp8266ex}.
-
+\textit{bits} e Wi-Fi 802.11 b/g/n em 2,4\,GHz~\cite{espressif_esp8266ex}.
 A placa opera em 3,3\,V nos pinos, é alimentada por 5\,V pela porta
-USB-C e usa o conversor USB-serial CH340
-\cite{mercadolivre_esp8266, wch_ch340}. No protótipo, o ESP8266 lê o
+USB-C e usa o conversor USB-serial CH340~\cite{mercadolivre_esp8266, wch_ch340}. No protótipo, o ESP8266 lê o
 sensor de umidade, consulta as APIs meteorológicas por HTTPS, calcula o
 nível de alerta, aciona os LEDs e o \textit{buzzer} e envia os dados ao
 \textit{backend}. A \autoref{fig:esp8266} mostra a placa e a
@@ -794,11 +738,11 @@ identificação dos seus pinos.
     \fbox{\includegraphics[width=0.5\textwidth]{figures/image63_esp8266_nodemcu_usbc.png}}
     \caption{Placa ESP8266 NodeMCU V3, com o módulo ESP-12E no canto superior direito, os pinos digitais D0 a D8 na fileira da direita, o pino analógico A0 no topo da fileira da esquerda e o conector USB-C no canto inferior esquerdo}
     \label{fig:esp8266}
-    \fonte{\citeonline{mercadolivre_esp8266}}
+    \fonte{\citeonline{mercadolivre_esp8266}.}
 \end{figure}
 
 O ESP8266EX possui um único conversor analógico-digital, de 10
-\textit{bits}, no pino TOUT \cite[Seção~4.9]{espressif_esp8266ex}. Na
+\textit{bits}, no pino TOUT~\cite[Seção~4.9]{espressif_esp8266ex}. Na
 placa, esse conversor corresponde ao pino A0, ocupado pelo higrômetro.
 
 % -------------------------------------------------------------
@@ -808,9 +752,8 @@ placa, esse conversor corresponde ao pino A0, ocupado pelo higrômetro.
 
 O módulo sensor de umidade de solo é composto por uma sonda resistiva
 FC-28 e por uma placa com o comparador LM393, com saída analógica (A0) e
-digital (D0) e tensão de operação entre 3,3\,V e 5\,V
-\cite{eletrogate_higrometro,dfrobot_sen0114}. A placa mede
-3$\times$1,5\,cm, e a sonda, 6$\times$2\,cm \cite{eletrogate_higrometro}.
+digital (D0) e tensão de operação entre 3,3\,V e 5\,V~\cite{eletrogate_higrometro,dfrobot_sen0114}. A placa mede
+3$\times$1,5\,cm, e a sonda, 6$\times$2\,cm~\cite{eletrogate_higrometro}.
 A \autoref{fig:higrometro} mostra a sonda, que é inserida no solo, e a
 placa com o comparador, ligadas por um cabo.
 
@@ -819,20 +762,19 @@ placa com o comparador, ligadas por um cabo.
     \fbox{\includegraphics[width=0.5\textwidth]{figures/image50_higrometro.png}}
     \caption{Módulo sensor de umidade de solo: sonda FC-28, à direita, e placa com o comparador LM393, à esquerda}
     \label{fig:higrometro}
-    \fonte{\citeonline{eletrogate_higrometro}}
+    \fonte{\citeonline{eletrogate_higrometro}.}
 \end{figure}
 
 No protótipo, apenas a saída analógica é utilizada, ligada ao pino A0 do
 ESP8266. A leitura do conversor é transformada na saturação relativa $S$,
 de 0 a 1, pela \autoref{eq:saturacao}.
-
 As leituras com o solo seco e com o solo saturado, usadas nessa equação,
 são obtidas na setagem e gravadas na memória EEPROM do
 microcontrolador. Assim, a setagem é mantida após uma reinicialização.
 
 A leitura do sensor e o envio dos dados ao \textit{backend} seguem os
-intervalos de registro dos pluviômetros do Cemaden: 60 minutos sem chuva e
-10 minutos com chuva \cite[p.~3]{freitas2021analise}. A regra adotada e
+intervalos de registro dos pluviômetros do Cemaden, isto é, 60 minutos sem chuva e
+10 minutos com chuva~\cite[p.~3]{freitas2021analise}. A regra adotada e
 seu efeito no consumo são descritos na \autoref{subsec:energia}.
 
 % -------------------------------------------------------------
@@ -849,23 +791,21 @@ o LED do nível atual permanece aceso (\autoref{fig:leds}).
     \fbox{\includegraphics[width=0.5\textwidth]{figures/image64_leds.png}}
     \caption{LEDs indicadores de 5\,mm e o nível de alerta sinalizado por cada um}
     \label{fig:leds}
-    \fonte{\citeonline{mercadolivre_leds}}
+    \fonte{\citeonline{mercadolivre_leds}.}
 \end{figure}
 
 No protótipo físico, o nível VERDE é indicado pelo LED azul, componente
-disponível na montagem. A cor não altera a lógica de alerta: o
+disponível na montagem. A cor não altera a lógica de alerta, pois o
 \textit{firmware} aciona o pino D1 no nível VERDE. Na simulação, esse
 nível é indicado por um LED verde (\autoref{subsec:wokwi}).
 
 O LED azul opera entre 3,0 e 3,3\,V, com corrente máxima de 20\,mA e
-ângulo de abertura de 60° \cite{usinainfo_led_azul}. O amarelo opera
+ângulo de abertura de 60°~\cite{usinainfo_led_azul}. O amarelo opera
 entre 2,0 e 2,2\,V, com 20\,mA, e o vermelho, a 1,8\,V, com 15\,mA;
-ambos têm ângulo de abertura de 120°
-\cite{usinainfo_led_amarelo,usinainfo_led_vermelho}.
-
+ambos têm ângulo de abertura de 120°~\cite{usinainfo_led_amarelo,usinainfo_led_vermelho}.
 Os LEDs foram ligados diretamente aos pinos, sem resistor em série. Por
 isso, a corrente de cada LED foi considerada igual ao limite de corrente do
-pino, de 12\,mA \cite[Tabela~5-1]{espressif_esp8266ex}, conforme a
+pino, de 12\,mA~\cite[Tabela~5-1]{espressif_esp8266ex}, conforme a
 \autoref{tab:consumo}.
 
 % -------------------------------------------------------------
@@ -875,16 +815,14 @@ pino, de 12\,mA \cite[Tabela~5-1]{espressif_esp8266ex}, conforme a
 
 O \textit{buzzer} ativo TMB-12A03 está ligado ao pino D4 do ESP8266. Por
 ser ativo, possui oscilador interno e emite som quando recebe nível
-lógico alto, sem controle de frequência por \textit{software}
-\cite{quickteck_tmb12a03}.
-
+lógico alto, sem controle de frequência por \textit{software}~\cite{quickteck_tmb12a03}.
 O \textit{buzzer} é acionado apenas no nível VERMELHO. Os níveis VERDE e
 AMARELO são indicados somente pelos LEDs.
 
 Segundo o fabricante, o TMB-12A03 tem tensão nominal de 3\,V (faixa de
 2,5 a 4\,V), corrente de até 35\,mA, nível sonoro mínimo de 82\,dB a
 10\,cm, frequência de ressonância de 2300\,$\pm$\,500\,Hz e diâmetro de
-12\,mm \cite{quickteck_tmb12a03}. A \autoref{fig:buzzer} mostra o
+12\,mm~\cite{quickteck_tmb12a03}. A \autoref{fig:buzzer} mostra o
 componente, com o terminal positivo ligado ao pino D4.
 
 \begin{figure}[H]
@@ -909,21 +847,19 @@ bateria resulta do cálculo da \autoref{subsec:energia}.
 Foi escolhido o módulo PowerBoost 1000C, da Adafruit
 (\autoref{fig:powerboost}). Ele reúne, na mesma placa, um carregador de
 bateria de íon-lítio, o MCP73871, e um conversor elevador de tensão, o
-TPS61090, com saída de 5,2\,V \cite{adafruit_2465_produto}.
-
+TPS61090, com saída de 5,2\,V~\cite{adafruit_2465_produto}.
 O fabricante garante as duas funções ao mesmo tempo. Com a fonte externa
 ligada, o módulo alimenta a placa pela fonte e usa o restante da
 corrente para carregar a bateria. Na falta da fonte, a saída passa para a
 bateria sem interrupção. Por isso, o fabricante indica o módulo como
-fonte de alimentação ininterrupta \cite{adafruit_2465_produto}. Esse
+fonte de alimentação ininterrupta~\cite{adafruit_2465_produto}. Esse
 funcionamento, chamado compartilhamento de carga, é descrito no
-\textit{datasheet} do carregador \cite{microchip_mcp73871}.
+\textit{datasheet} do carregador~\cite{microchip_mcp73871}.
 
 O fabricante informa corrente de carga de até 1000\,mA, rendimento acima
 de 90\% na maioria dos casos e consumo próprio de 5\,mA com a saída
 ligada, e recomenda fonte de 5\,V e 2\,A. O módulo não funciona sem
-bateria, que deve permanecer sempre ligada
-\cite{adafruit_2465_produto}.
+bateria, que deve permanecer sempre ligada~\cite{adafruit_2465_produto}.
 
 \begin{figure}[H]
     \centering
@@ -935,18 +871,16 @@ bateria, que deve permanecer sempre ligada
 
 \paragraph*{Escolha do módulo integrado}
 
-Uma alternativa é usar dois módulos: um carregador e um conversor
+Uma alternativa é usar dois módulos, isto é, um carregador e um conversor
 elevador separado. Nessa montagem, a bateria fica ligada à carga também
 durante a recarga. O fabricante do PowerBoost 1000C aponta que o
 compartilhamento de carga evita esse carregar e descarregar contínuo da
-bateria e é mais eficiente \cite{adafruit_2465_produto}.
-
+bateria e é mais eficiente~\cite{adafruit_2465_produto}.
 Esse ganho foi observado na prática. Em uma fonte ininterrupta para
 Raspberry Pi, a montagem com dois módulos, com a fonte externa e a
-bateria combinadas por diodos, não funcionou de forma confiável: a queda
-de tensão no diodo deixava a entrada do conversor abaixo do mínimo
+bateria combinadas por diodos, não funcionou de forma confiável, pois a queda de tensão no diodo deixava a entrada do conversor abaixo do mínimo
 necessário. O autor a substituiu pelo PowerBoost 1000C e testou a nova
-montagem por cerca de um mês \cite{paulv2016onebutton}.
+montagem por cerca de um mês~\cite{paulv2016onebutton}.
 
 \paragraph*{Bateria}
 
@@ -954,7 +888,7 @@ Foi selecionado o pacote de íon-lítio de 3,7\,V da Adafruit, produto 5035
 (\autoref{fig:bateria5035}), montado de fábrica com células 18650 e circuito de proteção contra
 sobrecarga, descarga excessiva e curto-circuito. A capacidade é de
 10050\,mAh típica e 9500\,mAh mínima; a tensão de fim de carga é de
-4,2\,V, e a de corte de descarga, de 2,5\,V \cite{adafruit_5035}.
+4,2\,V, e a de corte de descarga, de 2,5\,V~\cite{adafruit_5035}.
 
 \begin{figure}[H]
     \centering
@@ -965,25 +899,20 @@ sobrecarga, descarga excessiva e curto-circuito. A capacidade é de
 \end{figure}
 
 O pacote de fábrica foi escolhido, em vez de células avulsas ligadas em
-paralelo, por recomendação do fabricante do módulo: os pacotes são
+paralelo, por recomendação do fabricante do módulo, já que os pacotes são
 montados com células selecionadas para carga e descarga iguais, e a
-ligação de células avulsas pode gerar desequilíbrio entre elas
-\cite{adafruit_forum_18650}.
+ligação de células avulsas pode gerar desequilíbrio entre elas~\cite{adafruit_forum_18650}.
 
 \paragraph*{Detecção da rede e da bateria baixa}
 
-O módulo tem dois terminais úteis à supervisão de energia
-\cite{adafruit_powerboost1000c}. O terminal USB só tem tensão quando a
+O módulo tem dois terminais úteis à supervisão de energia~\cite{adafruit_powerboost1000c}. O terminal USB só tem tensão quando a
 fonte externa está ligada. O terminal LBO vai a 0\,V quando a bateria cai
 abaixo de 3,2\,V e, fora disso, fica na tensão da bateria, de até
 4,2\,V.
-
-Como os pinos do ESP8266 aceitam até 3,6\,V
-\cite[Tabela~5-1]{espressif_esp8266ex}, os dois sinais seriam ligados a
-pinos digitais livres com redução de tensão: o USB por um divisor
+Como os pinos do ESP8266 aceitam até 3,6\,V~\cite[Tabela~5-1]{espressif_esp8266ex}, os dois sinais seriam ligados a
+pinos digitais livres com redução de tensão, sendo o USB ligado por um divisor
 resistivo, de 5\,V para cerca de 3,3\,V, e o LBO por um adaptador de
-nível (\autoref{fig:montagem-energia}). Essa ligação foi usada por
-\citeonline{paulv2016ups} em uma fonte ininterrupta com o mesmo módulo.
+nível (\autoref{fig:montagem-energia}). Essa ligação foi usada por~\citeonline{paulv2016ups} em uma fonte ininterrupta com o mesmo módulo.
 
 O sinal LBO indica apenas se a bateria está baixa, e não a sua tensão.
 Para medir a tensão no protótipo físico, seria necessária uma entrada
@@ -1004,7 +933,6 @@ higrômetro; à direita, a alimentação redundante. A fonte de 5\,V é ligada
 ao micro-USB do PowerBoost 1000C, e a saída de 5,2\,V do módulo
 alimenta a NodeMCU pelo cabo USB. O pacote de bateria é ligado ao
 conector do módulo.
-
 Uma protoboard de interface reúne o divisor resistivo de 10\,k$\Omega$
 e 20\,k$\Omega$, que leva o sinal do terminal USB ao pino D5, e o
 adaptador de nível BSS138, que leva o sinal LBO ao pino D6. O adaptador
@@ -1026,10 +954,10 @@ O funcionamento da montagem é o seguinte:
 \begin{landscape}
 \begin{figure}[p]
     \centering
-    \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax]{figures/image69_montagem_redundancia.png}}
+    \fbox{\includegraphics[width=0.9\linewidth]{figures/image69_montagem_redundancia.png}}
     \caption{Montagem completa do protótipo físico com a alimentação redundante proposta}
     \label{fig:montagem-energia}
-    \fonte{Autora, 2026, com utilização da linguagem Python e da biblioteca Pillow, com base em \citeonline{adafruit_powerboost1000c}, \citeonline{adafruit_5035} e \citeonline{paulv2016ups}.}
+    \fonte{elaborada pela própria autora, com utilização da linguagem Python e da biblioteca Pillow, com base em~\citeonline{adafruit_powerboost1000c},~\citeonline{adafruit_5035} e~\citeonline{paulv2016ups}.}
 \end{figure}
 \end{landscape}
 
@@ -1048,9 +976,7 @@ o ESP32 e os componentes virtuais não reproduzem o consumo real.
 
 Um sistema de alerta precisa continuar operando quando a rede elétrica
 falha. Ventos fortes e tempestades podem derrubar galhos e árvores sobre
-as redes elétricas e causar interrupções de energia
-\cite[p.~10]{aneel2024nt90}.
-
+as redes elétricas e causar interrupções de energia~\cite[p.~10]{aneel2024nt90}.
 São justamente os períodos de chuva intensa que fornecem o gatilho do
 modelo de alerta (\autoref{sec:modelo-risco}). Sem reserva de energia, o
 dispositivo deixaria de medir, de calcular o nível e de alertar quando o
@@ -1058,7 +984,7 @@ risco é maior.
 
 A Política Nacional de Segurança de Barragens também prevê, no plano de
 emergência, um sistema sonoro ou outra solução tecnológica para situações
-de alerta \cite{brasil2010pnsb,brasil2020lei14066}.
+de alerta~\cite{brasil2010pnsb,brasil2020lei14066}.
 
 \paragraph*{Requisito de autonomia}
 
@@ -1066,16 +992,12 @@ Não foi encontrada norma de autonomia específica para dispositivos de
 monitoramento de barragens. Foi utilizado, por analogia, o requisito das
 normas de sistemas de alarme, que tratam de equipamentos que também
 precisam sinalizar durante a falta de energia.
-
 A IT~14 do Corpo de Bombeiros de Minas Gerais, estado da área de estudo,
 exige autonomia mínima de 24 horas em regime de supervisão e de 15
-minutos em regime de alarme \cite[item~5.3]{cbmmg2017it14}. A NT~19/2022
-de Goiás traz o mesmo requisito \cite[item~5.3]{cbmgo2022nt19}.
-
+minutos em regime de alarme~\cite[item~5.3]{cbmmg2017it14}. A NT~19/2022
+de Goiás traz o mesmo requisito~\cite[item~5.3]{cbmgo2022nt19}.
 A NFPA~72 exige 24 horas de supervisão seguidas de 5 minutos de alarme,
-ou 15 minutos em sistemas com voz
-\cite{hammerberg2021calculation,reiswig2023nfpa72}. Foi considerado o requisito
-mais exigente: 24 horas de supervisão e 15 minutos de alarme.
+ou 15 minutos em sistemas com voz~\cite{hammerberg2021calculation,reiswig2023nfpa72}. Foi considerado o requisito mais exigente, isto é, 24 horas de supervisão e 15 minutos de alarme.
 
 \paragraph*{Consumo por componente}
 
@@ -1083,11 +1005,10 @@ A \autoref{tab:consumo} apresenta a corrente de cada componente na
 entrada de 5\,V da placa, em dois regimes. Em supervisão, o nível é VERDE
 ou AMARELO, com um LED aceso. Em alarme, o nível é VERMELHO, com o LED
 vermelho e o \textit{buzzer} ativos.
-
 Foi empregado o valor máximo informado no \textit{datasheet}; quando há
 apenas valor médio, foi usado o médio. Como o regulador de 3,3\,V da placa é
 linear, a corrente na entrada de 5\,V é a soma das correntes da carga com
-a corrente de repouso do regulador \cite{ams1117_datasheet}.
+a corrente de repouso do regulador~\cite{ams1117_datasheet}.
 
 \begin{table}[H]
 \centering
@@ -1098,23 +1019,22 @@ a corrente de repouso do regulador \cite{ams1117_datasheet}.
 \hline
 \textbf{Componente} & \textbf{Supervisão (mA)} & \textbf{Alarme (mA)} & \textbf{Valor adotado e fonte} \\
 \hline
-ESP8266EX (Wi-Fi conectado) & 80 & 80 & Corrente média de operação \cite[Tabela~1-1]{espressif_esp8266ex} \\
-Módulo higrômetro & 35 & 35 & Corrente do módulo \cite{dfrobot_sen0114}; inclui o comparador LM393, de até 1,0\,mA \cite[Seção~5.8]{ti_lm393} \\
-LED de nível (um aceso) & 12 & 12 & Limite de corrente do pino, pois os LEDs não têm resistor em série \cite[Tabela~5-1]{espressif_esp8266ex} \\
-\textit{Buzzer} TMB-12A03 & 0 & 35 & Corrente nominal máxima \cite{quickteck_tmb12a03} \\
-Regulador de 3,3\,V (repouso) & 10 & 10 & Máximo do AMS1117-3.3 \cite{ams1117_datasheet} \\
-Conversor USB-serial CH340 & 30 & 30 & Máximo em operação \cite[Seção~6.2]{wch_ch340} \\
+ESP8266EX (Wi-Fi conectado) & 80 & 80 & Corrente média de operação~\cite[Tabela~1-1]{espressif_esp8266ex} \\
+Módulo higrômetro & 35 & 35 & Corrente do módulo~\cite{dfrobot_sen0114}; inclui o comparador LM393, de até 1,0\,mA~\cite[Seção~5.8]{ti_lm393} \\
+LED de nível (um aceso) & 12 & 12 & Limite de corrente do pino, pois os LEDs não têm resistor em série~\cite[Tabela~5-1]{espressif_esp8266ex} \\
+\textit{Buzzer} TMB-12A03 & 0 & 35 & Corrente nominal máxima~\cite{quickteck_tmb12a03} \\
+Regulador de 3,3\,V (repouso) & 10 & 10 & Máximo do AMS1117-3.3~\cite{ams1117_datasheet} \\
+Conversor USB-serial CH340 & 30 & 30 & Máximo em operação~\cite[Seção~6.2]{wch_ch340} \\
 \hline
 \textbf{Total} & \textbf{167} & \textbf{202} & \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base nos \textit{datasheets} citados.}
+\fonte{elaborada pela própria autora, com base nos \textit{datasheets} citados.}
 \end{table}
 
 O valor de 80\,mA é a média de operação declarada pelo fabricante. Picos
-de transmissão Wi-Fi, de até 170\,mA \cite[Tabela~5-3]{espressif_esp8266ex},
+de transmissão Wi-Fi, de até 170\,mA~\cite[Tabela~5-3]{espressif_esp8266ex},
 não são contínuos e estão representados por essa média.
-
 O regulador da placa foi considerado AMS1117-3.3, modelo usual em placas
 NodeMCU. O CH340 foi incluído porque a alimentação entra pela porta
 USB-C, que também o energiza.
@@ -1122,8 +1042,8 @@ USB-C, que também o energiza.
 \paragraph*{Capacidade necessária}
 
 A capacidade foi calculada pelo método de dimensionamento de baterias de
-sistemas de alarme descrito por \citeonline{hammerberg2021calculation},
-com o tempo de alarme da IT~14 \cite{cbmmg2017it14}, conforme a
+sistemas de alarme descrito por~\citeonline{hammerberg2021calculation},
+com o tempo de alarme da IT~14~\cite{cbmmg2017it14}, conforme a
 \autoref{eq:cap-carga}.
 
 \begin{equation}
@@ -1139,14 +1059,12 @@ Cada variável da \autoref{eq:cap-carga} é descrita a seguir:
         placa, em mAh;
   \item $I_{\mathrm{sup}}$: corrente em supervisão, 167\,mA
         (\autoref{tab:consumo});
-  \item $t_{\mathrm{sup}}$: tempo de supervisão, 24\,h
-        \cite[item~5.3]{cbmmg2017it14};
+  \item $t_{\mathrm{sup}}$: tempo de supervisão, 24\,h~\cite[item~5.3]{cbmmg2017it14};
   \item $I_{\mathrm{al}}$: corrente em alarme, 202\,mA
         (\autoref{tab:consumo});
-  \item $t_{\mathrm{al}}$: tempo de alarme, 0,25\,h (15\,min)
-        \cite[item~5.3]{cbmmg2017it14};
+  \item $t_{\mathrm{al}}$: tempo de alarme, 0,25\,h (15\,min)~\cite[item~5.3]{cbmmg2017it14};
   \item $m$: margem de segurança de 20\% (0,20), que compensa o
-        envelhecimento da bateria \cite{hammerberg2021calculation}.
+        envelhecimento da bateria~\cite{hammerberg2021calculation}.
 \end{itemize}
 
 Com esses valores,
@@ -1154,26 +1072,24 @@ $C_{\mathrm{carga}} = (167 \times 24 + 202 \times 0{,}25) \times 1{,}20
 = 4870{,}2$\,mAh.
 
 Essa capacidade está referida à tensão da placa. A bateria, de 3,7\,V,
-alimenta a placa por um conversor elevador de tensão com saída de 5,2\,V
-\cite{adafruit_powerboost1000c}. Pelo balanço de potência no conversor
+alimenta a placa por um conversor elevador de tensão com saída de 5,2\,V~\cite{adafruit_powerboost1000c}. Pelo balanço de potência no conversor
 elevador, a potência de entrada é igual à potência de saída dividida pelo
-rendimento \cite[p.~3, Eq.~1]{ti_snva731}. Como cada potência é o produto
+rendimento~\cite[p.~3, Eq.~1]{ti_snva731}. Como cada potência é o produto
 da tensão pela corrente, a corrente de entrada é a corrente de saída
 multiplicada pela razão entre as tensões de saída e de entrada e dividida
-pelo rendimento \cite[p.~3, Eq.~2]{ti_snva731}.
+pelo rendimento~\cite[p.~3, Eq.~2]{ti_snva731}.
 
 Essa equação do fabricante soma ainda a metade da ondulação triangular
-de corrente do indutor \cite[p.~3]{ti_snva731}. No conversor elevador, a
+de corrente do indutor~\cite[p.~3]{ti_snva731}. No conversor elevador, a
 corrente de entrada é a própria corrente do indutor e, em regime
 permanente, o aumento dessa corrente com a chave fechada é igual à sua
-redução com a chave aberta \cite[p.~1 e 5]{ti_slva061}.
-
-Assim, a ondulação oscila em torno do valor médio: a corrente máxima é a
-corrente média somada à metade da ondulação \cite[p.~3, Eq.~4]{ti_slva372}.
+redução com a chave aberta~\cite[p.~1 e 5]{ti_slva061}.
+Assim, a ondulação oscila em torno do valor médio, isto é, a corrente máxima é a
+corrente média somada à metade da ondulação~\cite[p.~3, Eq.~4]{ti_slva372}.
 Por isso, a ondulação não altera a corrente média, que é a usada no
 dimensionamento da capacidade.
 
-Como a capacidade é o produto da corrente pelo tempo \cite{bu402_crate},
+Como a capacidade é o produto da corrente pelo tempo~\cite{bu402_crate},
 a mesma relação vale para as capacidades, e a capacidade necessária na
 bateria é dada pela \autoref{eq:cap-celula}.
 
@@ -1189,12 +1105,10 @@ Cada variável da \autoref{eq:cap-celula} é descrita a seguir:
   \item $C_{\mathrm{bat}}$: capacidade necessária na bateria, em mAh;
   \item $C_{\mathrm{carga}}$: capacidade na entrada da placa, em mAh
         (\autoref{eq:cap-carga});
-  \item $V_{\mathrm{sai}}$: tensão de saída do conversor, 5,2\,V
-        \cite{adafruit_powerboost1000c};
-  \item $V_{\mathrm{nom}}$: tensão nominal da bateria, 3,7\,V
-        \cite{adafruit_5035};
+  \item $V_{\mathrm{sai}}$: tensão de saída do conversor, 5,2\,V~\cite{adafruit_powerboost1000c};
+  \item $V_{\mathrm{nom}}$: tensão nominal da bateria, 3,7\,V~\cite{adafruit_5035};
   \item $\eta$: rendimento do conversor, 0,90, valor declarado pelo
-        fabricante do módulo (``90\%+'') \cite{adafruit_powerboost1000c}.
+        fabricante do módulo (``90\%+'')~\cite{adafruit_powerboost1000c}.
 \end{itemize}
 
 Com esses valores,
@@ -1204,22 +1118,18 @@ $C_{\mathrm{bat}} = 4870{,}2 \times 5{,}2 / (3{,}7 \times 0{,}90)
 \paragraph*{Escolha da bateria}
 
 O fabricante do módulo oferece pacotes de íon-lítio de 3,7\,V com
-6600\,mAh (produto 353) e com 10050\,mAh (produto 5035)
-\cite{adafruit_353,adafruit_5035}. O pacote de 6600\,mAh não atende aos
+6600\,mAh (produto 353) e com 10050\,mAh (produto 5035)~\cite{adafruit_353,adafruit_5035}. O pacote de 6600\,mAh não atende aos
 7605\,mAh necessários. Foi escolhido, então, o de 10050\,mAh, cuja capacidade
-mínima, de 9500\,mAh, atende ao requisito \cite{adafruit_5035}.
+mínima, de 9500\,mAh, atende ao requisito~\cite{adafruit_5035}.
 
 Sem a margem de 20\%, a autonomia teórica em supervisão seria de cerca
-de 36\,h, obtida pela divisão da capacidade pela corrente na bateria
-\cite{bu402_crate}: $9500/260{,}8 \approx 36{,}4$\,h. A corrente de
+de 36\,h, obtida pela divisão da capacidade pela corrente na bateria~\cite{bu402_crate}, ou seja, $9500/260{,}8 \approx 36{,}4$\,h. A corrente de
 260,8\,mA na bateria resulta da mesma relação da
 \autoref{eq:cap-celula}, aplicada a 167\,mA.
-
-O consumo próprio do módulo, de 5\,mA \cite{adafruit_2465_produto}, não
-foi somado: representa cerca de 2\% da corrente na bateria e fica
+O consumo próprio do módulo, de 5\,mA~\cite{adafruit_2465_produto}, não foi somado, pois representa cerca de 2\% da corrente na bateria e fica
 coberto pela margem de 20\%. A proteção contra descarga excessiva é do
 próprio pacote, que desliga em 2,5\,V, pois o conversor não protege a
-bateria \cite{adafruit_5035}.
+bateria~\cite{adafruit_5035}.
 
 \paragraph*{Comparação com bateria de 9\,V}
 
@@ -1230,8 +1140,7 @@ corrente da placa, e a capacidade necessária é $C_{\mathrm{carga}} =
 
 A Energizer 522 fornece cerca de 600\,mAh na menor corrente do gráfico de
 capacidade do fabricante (25\,mA, descarga contínua até 4,8\,V), e a
-capacidade diminui com o aumento da corrente \cite{energizer522}.
-
+capacidade diminui com o aumento da corrente~\cite{energizer522}.
 Mesmo com 600\,mAh, seriam necessárias ao menos nove baterias
 ($4870{,}2/600 \approx 8{,}1$), e uma única bateria duraria menos de
 3,6\,h em supervisão ($600/167$). Por esse motivo, a bateria de 9\,V não
@@ -1239,15 +1148,12 @@ foi adotada.
 
 \paragraph*{Substituição da bateria}
 
-A bateria deve passar por teste de carga ao menos uma vez por ano
-\cite{reiswig2023nfpa72}. O teste consiste em operar o dispositivo apenas
+A bateria deve passar por teste de carga ao menos uma vez por ano~\cite{reiswig2023nfpa72}. O teste consiste em operar o dispositivo apenas
 pela bateria e verificar se ele sustenta o requisito de 24 horas de
-supervisão e 15 minutos de alarme \cite[item~5.3]{cbmmg2017it14}.
-
+supervisão e 15 minutos de alarme~\cite[item~5.3]{cbmmg2017it14}.
 A bateria deve ser substituída quando não sustentar esse requisito, ou
 quando o sistema indicar falha de bateria, descrita a seguir. O
-fabricante do pacote não define prazo de substituição em calendário
-\cite{adafruit_5035}; por isso, nenhum prazo fixo foi adotado.
+fabricante do pacote não define prazo de substituição em calendário~\cite{adafruit_5035}; por isso, nenhum prazo fixo foi adotado.
 
 \paragraph*{Supervisão de energia e alertas}
 
@@ -1255,21 +1161,17 @@ O fabricante do pacote não publica curva de descarga. Os limiares de
 tensão foram lidos na figura \textit{Discharge Characteristics (by rate
 of discharge)} do \textit{datasheet} da Panasonic NCR18650B, célula 18650
 de íon-lítio usada como referência, na curva de 0,2\,C, a de menor
-corrente \cite{panasonic_ncr18650b}.
-
+corrente~\cite{panasonic_ncr18650b}.
 Nessa curva, a tensão cai lentamente até cerca de 3,3\,V, ponto em que
-cerca de 86\% da capacidade foi descarregada. A partir daí, a queda se
-acentua: 3,0\,V corresponde a cerca de 96\% da capacidade, e a descarga
-termina em 2,50\,V, mesma tensão de corte do pacote adotado
-\cite{adafruit_5035}.
+cerca de 86\% da capacidade foi descarregada. A partir daí, a queda se acentua, e 3,0\,V corresponde a cerca de 96\% da capacidade, e a descarga
+termina em 2,50\,V, mesma tensão de corte do pacote adotado~\cite{adafruit_5035}.
 
 Com a corrente de 260,8\,mA em supervisão, os 14\% restantes em 3,3\,V
 correspondem a cerca de 5\,h de operação, e os 4\% restantes em 3,0\,V, a
 cerca de 1,5\,h. São estimativas obtidas da curva típica, e não medições.
 
 A falha de bateria é detectada durante a recarga. O fabricante do pacote
-informa carga padrão de cerca de 8\,h com corrente de 0,2\,C
-\cite{adafruit_5035}, ou seja, 2010\,mA para a capacidade típica de
+informa carga padrão de cerca de 8\,h com corrente de 0,2\,C~\cite{adafruit_5035}, ou seja, 2010\,mA para a capacidade típica de
 10050\,mAh. Com a corrente menor do módulo, o tempo de carga foi estimado
 pela proporção inversa da corrente, conforme a
 \autoref{eq:tempo-carga}.
@@ -1284,20 +1186,18 @@ Cada variável da \autoref{eq:tempo-carga} é descrita a seguir:
 
 \begin{itemize}
   \item $T_{\mathrm{est}}$: tempo estimado de recarga completa, em h;
-  \item $t_{\mathrm{pad}}$: tempo da carga padrão do pacote, 8\,h
-        \cite{adafruit_5035};
+  \item $t_{\mathrm{pad}}$: tempo da carga padrão do pacote, 8\,h~\cite{adafruit_5035};
   \item $I_{\mathrm{pad}}$: corrente da carga padrão, 0,2\,C, ou
-        2010\,mA \cite{adafruit_5035};
+        2010\,mA~\cite{adafruit_5035};
   \item $I_{\mathrm{carr}}$: corrente máxima de carga do módulo,
-        1000\,mA \cite{adafruit_2465_produto}.
+        1000\,mA~\cite{adafruit_2465_produto}.
 \end{itemize}
 
 Resulta $T_{\mathrm{est}} = 8 \times 2010 / 1000 \approx 16{,}1$\,h. O
-valor é coerente com o ensaio de bancada de \citeonline{paulv2016ups}, no
+valor é coerente com o ensaio de bancada de~\citeonline{paulv2016ups}, no
 qual o mesmo módulo, com corrente de 1\,A, carregou uma célula 18650 de
 2400\,mAh em cerca de 4\,h; na mesma proporção, 10050\,mAh levariam cerca
 de 16,8\,h.
-
 O tempo máximo de recarga foi definido em $T_{\mathrm{carga}} = 19{,}5$\,h,
 cerca de 20\% acima da estimativa e acima do valor proporcional ao
 ensaio. A folga evita o falso alarme de falha durante uma recarga normal,
@@ -1325,7 +1225,7 @@ Bateria crítica & Tensão $< 3{,}0$\,V & LED ATENÇÃO piscando & Bateria crít
 Falha de bateria & Rede presente e tensão $< 4{,}20$\,V após $T_{\mathrm{carga}}$ & LED ATENÇÃO aceso & Substituir a bateria \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{panasonic_ncr18650b}.}
+\fonte{elaborada pela própria autora, com base em~\citeonline{panasonic_ncr18650b}.}
 \end{table}
 
 Cada mudança de estado da \autoref{tab:estados-energia} gera um e-mail
@@ -1340,10 +1240,8 @@ bateria, com até cerca de 36\,h de autonomia.
 \paragraph*{Frequência de leitura e envio}
 
 Os pluviômetros do Cemaden registram a chuva a cada 10 minutos quando há
-chuva e a cada 60 minutos quando não há \cite[p.~3]{freitas2021analise}.
-\citeonline{mendes2020proposicao} também leram os sensores de umidade do
+chuva e a cada 60 minutos quando não há~\cite[p.~3]{freitas2021analise}.~\citeonline{mendes2020proposicao} também leram os sensores de umidade do
 solo em intervalos de 10 minutos.
-
 Com base nesses intervalos, o dispositivo lê o sensor e envia os dados a
 cada 60 minutos no nível VERDE sem chuva. Quando há chuva prevista ou
 observada, ou quando o nível é AMARELO ou VERMELHO, o intervalo passa a
@@ -1356,12 +1254,10 @@ Esse modo é usado apenas em teste, e não na operação. O
 testes.
 
 O intervalo de 60 minutos reduz os envios de 144 para 24 por dia. O
-dimensionamento, porém, não considera essa redução: a corrente de 80\,mA
+dimensionamento, porém, não considera essa redução, pois a corrente de 80\,mA
 supõe o Wi-Fi conectado todo o tempo.
-
 Uma redução efetiva do consumo exigiria o modo \textit{modem-sleep}
-entre os envios, em que o ESP8266 consome 15\,mA
-\cite[Tabela~3-4]{espressif_esp8266ex}. Esse modo não foi implementado, e
+entre os envios, em que o ESP8266 consome 15\,mA~\cite[Tabela~3-4]{espressif_esp8266ex}. Esse modo não foi implementado, e
 seu ganho depende do tempo de cada envio, que não foi determinado.
 
 % -------------------------------------------------------------
@@ -1372,19 +1268,15 @@ seu ganho depende do tempo de cada envio, que não foi determinado.
 O sistema também foi reproduzido na plataforma de simulação Wokwi (Wokwi
 B.V., Amstelveen, Países Baixos), usada pela extensão oficial para o
 Visual Studio Code (Microsoft Corporation, Redmond, EUA). O Wokwi oferece uma rede
-Wi-Fi virtual, \texttt{Wokwi-GUEST}, com acesso à internet
-\cite{wokwi_esp32wifi}.
-
+Wi-Fi virtual, \texttt{Wokwi-GUEST}, com acesso à internet~\cite{wokwi_esp32wifi}.
 Com essa rede, o \textit{firmware} simulado faz as mesmas consultas HTTPS
 às APIs BNDMET e OpenWeatherMap e envia os dados ao mesmo
 \textit{backend}, pela rota \texttt{POST /leituras}
 (\autoref{subsec:arquitetura}). O endereço do \textit{backend} aponta para
-o computador local, acessível a partir da rede virtual
-\cite{wokwi_esp32wifi}.
+o computador local, acessível a partir da rede virtual~\cite{wokwi_esp32wifi}.
 
 A simulação usa um ESP32 DevKit C V4, em vez do ESP8266 do protótipo
-físico, por ser a placa da família ESP com suporte do simulador ao Wi-Fi
-\cite{wokwi_esp32wifi}. O \textit{firmware} da simulação aplica a mesma
+físico, por ser a placa da família ESP com suporte do simulador ao Wi-Fi~\cite{wokwi_esp32wifi}. O \textit{firmware} da simulação aplica a mesma
 lógica de alerta do protótipo físico e acrescenta a supervisão de energia
 (\autoref{subsec:energia}).
 
@@ -1398,7 +1290,7 @@ representa.
 \fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax,height=\textheight,keepaspectratio]{figures/cap4_wokwi_circuito_v3.png}}
 \caption{Circuito do ambiente de simulação Wokwi}
 \label{fig:wokwi_diagrama}
-\fonte{Autora, 2026.}
+\fonte{elaborada pela própria autora.}
 \end{figure}
 
 \begin{table}[H]
@@ -1422,14 +1314,13 @@ LED ATENÇÃO (roxo) & 1 & GPIO23 & Bateria baixa, crítica ou com falha (\autor
 Resistor de 220\,$\Omega$ & 6 & -- & Limitação de corrente dos LEDs virtuais \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base no arquivo \texttt{diagram.json} do projeto e em \citeonline{espressif_esp32,wokwi_potentiometer,wokwi_slideswitch,wokwi_buzzer}.}
+\fonte{elaborada pela própria autora, com base no arquivo \texttt{diagram.json} do projeto e em~\citeonline{espressif_esp32,wokwi_potentiometer,wokwi_slideswitch,wokwi_buzzer}.}
 \end{table}
 
 O potenciômetro do solo fornece ao conversor de 12 \textit{bits} do ESP32
-valores de 0 a 4095 \cite{espressif_esp32}. Esse valor substitui a leitura
+valores de 0 a 4095~\cite{espressif_esp32}. Esse valor substitui a leitura
 do higrômetro na \autoref{eq:saturacao}, com a mesma setagem por solo
 seco e solo saturado.
-
 As leituras nos extremos da escala (0 ou 4095) são tratadas como falha do
 higrômetro, pois correspondem a circuito aberto ou em curto. Assim, as
 regras de contingência da \autoref{tab:contingencia} também podem ser
@@ -1437,13 +1328,13 @@ testadas.
 
 O potenciômetro da bateria é convertido linearmente em tensão, de 2,50\,V
 no início do curso a 4,20\,V no fim. Esses extremos são a tensão de corte
-e a tensão de fim de carga do pacote adotado \cite{adafruit_5035}. A
+e a tensão de fim de carga do pacote adotado~\cite{adafruit_5035}. A
 chave e o potenciômetro alimentam os estados da \autoref{tab:estados-energia}.
 
 O \textit{buzzer} do Wokwi é piezoelétrico e emite som apenas com sinal
-oscilante \cite{wokwi_buzzer}. Para reproduzir o \textit{buzzer} ativo,
+oscilante~\cite{wokwi_buzzer}. Para reproduzir o \textit{buzzer} ativo,
 o \textit{firmware} da simulação gera, no nível VERMELHO, um sinal de
-2300\,Hz, frequência de ressonância do TMB-12A03 \cite{quickteck_tmb12a03}.
+2300\,Hz, frequência de ressonância do TMB-12A03~\cite{quickteck_tmb12a03}.
 
 Os LEDs virtuais foram ligados com resistor em série, ao contrário dos
 LEDs do protótipo físico. O simulador não reproduz o consumo de energia;
@@ -1458,9 +1349,7 @@ demonstração que divide todos os tempos por 120. Os intervalos de 60 e
 O \textit{firmware} também aceita comandos pelo monitor serial, usados
 apenas em teste. O comando \texttt{chuva <mm>} substitui $P_{72}$ por um
 valor informado, e \texttt{chuva na} simula as APIs indisponíveis.
-
-O comando \texttt{chuva parcial <mm>} simula dados de chuva incompletos:
-um dos dias de $P_{48,\mathrm{obs}}$ fica sem registro, e o valor
+O comando \texttt{chuva parcial <mm>} simula dados de chuva incompletos, em que um dos dias de $P_{48,\mathrm{obs}}$ fica sem registro, e o valor
 informado passa a ser o mínimo garantido de $P_{72}$
 (\autoref{subsec:contingencia}). Os
 comandos \texttt{status} e \texttt{calibrar} mostram as leituras e gravam
@@ -1483,7 +1372,7 @@ pinos e as ligações entre os componentes.
     {figures/image51_componentes_ligados_versao_3_bb.png}}
 \caption{Diagrama de montagem do protótipo embarcado}
 \label{fig:componentes_ligados}
-\fonte{Autora, 2026.}
+\fonte{elaborada pela própria autora.}
 \end{figure}
 
 \begin{figure}[H]
@@ -1492,7 +1381,7 @@ pinos e as ligações entre os componentes.
         {figures/image52_esquematico_versao_3.png}}
     \caption{Esquemático elétrico do protótipo embarcado}
     \label{fig:esquematico}
-    \fonte{Autora, 2026, com utilização da biblioteca Matplotlib (Matplotlib Development Team) e da linguagem Python (Python Software Foundation, EUA).}
+    \fonte{elaborada pela própria autora, com utilização da biblioteca Matplotlib (Matplotlib Development Team) e da linguagem Python (Python Software Foundation, EUA).}
 \end{figure}
 
 Na montagem, o LED azul indica o nível VERDE (\autoref{subsec:leds}), e a
@@ -1501,8 +1390,7 @@ alimentação redundante não aparece na figura, pois não foi montada
 (\autoref{subsec:bateria-carregador}).
 
 A transmissão dos dados coletados por este circuito ao restante do
-sistema é descrita na \autoref{subsec:arquitetura}: o \textit{firmware}
-calcula o nível de alerta, monta um objeto JSON com o nível, os valores
+sistema é descrita na \autoref{subsec:arquitetura}. O \textit{firmware} calcula o nível de alerta, monta um objeto JSON com o nível, os valores
 de $S$, $P_{48}$, $P_{24}$ e $P_{72}$ (ou o mínimo garantido de
 $P_{72}$, quando os dados de chuva estão incompletos) e os avisos de
 dado incompleto ou indisponível,
@@ -1539,7 +1427,7 @@ Pacote de íon-lítio Adafruit 5035 (células 18650, 9500\,mAh mínimos) & 3,7 (
 Módulo carregador e elevador PowerBoost 1000C & 5,2 (saída) & carga: até 1000\,mA; consumo próprio: 5\,mA & USB \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base em \citeonline{espressif_esp8266ex,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,adafruit_5035,adafruit_2465_produto}.}
+\fonte{elaborada pela própria autora, com base em~\citeonline{espressif_esp8266ex,aithinker_esp12e,dfrobot_sen0114,ti_lm393,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,quickteck_tmb12a03,adafruit_5035,adafruit_2465_produto}.}
 \end{table}
 
 Com os preços consultados em outubro de 2026, o custo dos componentes
@@ -1575,11 +1463,10 @@ Módulo carregador e elevador PowerBoost 1000C (MCP73871 + TPS61090) & 1 & 205,5
 \textbf{Total} & & \textbf{421,20} \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com preços consultados em 4, 5 e 22 out. 2026, sem frete
-\cite{usinainfo_nodemcu,usinainfo_higrometro,lcsc_tmb12a03,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,adafruit_5035,amazon_powerboost1000c,eletrodex_protoboard_ks214,eletrodex_jumper}.}
+\fonte{elaborada pela própria autora, com preços consultados em 4, 5 e 22 out. 2026, sem frete~\cite{usinainfo_nodemcu,usinainfo_higrometro,lcsc_tmb12a03,usinainfo_led_azul,usinainfo_led_amarelo,usinainfo_led_vermelho,adafruit_5035,amazon_powerboost1000c,eletrodex_protoboard_ks214,eletrodex_jumper}.}
 \nota{$^{\mathrm{a}}$Preço unitário de US\$\,29,95 e $^{\mathrm{b}}$preço
 unitário de US\$\,0,1945, convertidos pela taxa PTAX de venda de 2 out.
-2026, de R\$\,5,2238 \cite{piranot2026ptax}, sem impostos de importação.
+2026, de R\$\,5,2238~\cite{piranot2026ptax}, sem impostos de importação.
 $^{\mathrm{c}}$Preço exibido na página da loja, com o produto indisponível
 na data da consulta; o higrômetro cotado é um módulo resistivo equivalente
 (HL-69). $^{\mathrm{d}}$Valor proporcional ao preço do cabo de 40 vias
@@ -1609,9 +1496,7 @@ apresentadas no \autoref{cap:resultados}.
 
 O \textit{backend} recebe as leituras pela rota \texttt{POST
 /leituras}, grava cada leitura no banco de dados e registra os eventos
-do sistema. O \textit{backend} não recalcula o nível de alerta: ele
-armazena o nível enviado pelo dispositivo.
-
+do sistema. O \textit{backend} não recalcula o nível de alerta, pois apenas armazena o nível enviado pelo dispositivo.
 Quando o nível sobe, ou quando muda a condição da rede elétrica ou da
 bateria, o \textit{backend} envia um e-mail automático aos
 administradores. O banco de dados possui quatro tabelas
@@ -1631,22 +1516,20 @@ administradores. O banco de dados possui quatro tabelas
 \texttt{administradores} & Contas de acesso ao painel \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026.}
+\fonte{elaborada pela própria autora.}
 \end{table}
 
 Os dados ficam no banco PostgreSQL do \textit{backend}, executado em
-contêiner Docker (\autoref{tab:tecnologias}). O sistema não apaga
-leituras nem eventos: a guarda é permanente. Cada leitura e cada evento
+contêiner Docker (\autoref{tab:tecnologias}). O sistema não apaga leituras nem eventos, ou seja, a guarda é permanente. Cada leitura e cada evento
 recebem data e hora, e a tabela \texttt{eventos} registra qual
 administrador enviou cada alerta e quantos moradores o receberam.
-
 Esse histórico permite reconstituir, depois de um incidente, o nível
 calculado, os dados de entrada e os alertas enviados. Por isso, pode ser
 fornecido a órgãos de fiscalização e investigação, como a Defesa Civil,
 o Ministério Público e a Polícia. Em operação, o servidor deve ter cópias
 de segurança periódicas, e os dados pessoais dos moradores (nome, e-mail
 e telefone) devem ser tratados conforme a Lei Geral de Proteção de Dados
-Pessoais \cite{brasil2018lgpd}.
+Pessoais~\cite{brasil2018lgpd}.
 
 % -------------------------------------------------------------
 \subsection{Página Inicial e Cadastro do Morador}
@@ -1657,11 +1540,9 @@ A página inicial é pública. Ela apresenta o que o sistema acompanha
 (saturação do solo, chuva das últimas 48~h e previsão para 24~h),
 explica os três níveis de alerta, cada um com a sua cor e a sua
 orientação, e traz o botão ``Quero receber alertas''.
-
 O morador se cadastra por um formulário da própria página, com nome,
 e-mail, telefone e localidade. Ao final, a página confirma o cadastro e
-informa o e-mail que receberá os avisos. O morador não precisa de senha:
-o cadastro serve apenas para o recebimento dos alertas.
+informa o e-mail que receberá os avisos. O morador não precisa de senha, pois o cadastro serve apenas para o recebimento dos alertas.
 
 % -------------------------------------------------------------
 \subsection{Acesso do Administrador e Painel}
@@ -1699,7 +1580,6 @@ nível (\autoref{qua:mensagens-alerta}) com os dados da última leitura.
 O administrador revisa a mensagem e confirma o envio. Ao final, o painel
 informa quantos moradores receberam o e-mail, e o envio é registrado na
 lista de eventos.
-
 A mensagem leva um rodapé que informa que as cores do sistema não
 correspondem aos níveis oficiais de emergência da Agência Nacional de
 Mineração.
@@ -1714,7 +1594,6 @@ A validação foi feita por casos de teste executados na simulação
 saída esperada, obtida das regras do modelo de alerta
 (\autoref{sec:modelo-risco}) e dos estados de energia
 (\autoref{tab:estados-energia}).
-
 Em cada caso, foram registrados o circuito virtual, com os LEDs, e o
 monitor serial, com a leitura do solo, a chuva, o nível, a energia e o
 objeto JSON enviado ao \textit{backend}. A chegada dos dados foi conferida
@@ -1734,7 +1613,6 @@ Os nove casos combinam três valores de $S$ com três valores de $P_{72}$,
 um em cada faixa da \autoref{tab:limiares}. Os valores foram escolhidos
 longe dos limiares, para que o resultado não dependa do ajuste fino do
 potenciômetro.
-
 O valor de $S$ foi ajustado no potenciômetro do solo, e o de $P_{72}$ foi
 informado pelo comando \texttt{chuva <mm>}. Nesses casos, a rede elétrica
 permaneceu presente e a bateria em 4,20\,V. A saída esperada segue a
@@ -1760,7 +1638,7 @@ C08 & 0,95 ($S \geq S_2$) & 80 & AMARELO; LED amarelo; \textit{buzzer} desligado
 C09 & 0,95 ($S \geq S_2$) & 120 & VERMELHO; LED vermelho; \textit{buzzer} acionado \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base na \autoref{tab:matriz}.}
+\fonte{elaborada pela própria autora, com base na \autoref{tab:matriz}.}
 \end{table}
 
 Os casos C03 e C07 verificam que a chuva sem solo úmido, e o solo úmido
@@ -1779,7 +1657,6 @@ chuva podem estar completos ou incompletos, quando uma das APIs falha ou
 um dos dias não tem registro na estação (\autoref{subsec:bndmet}). Nesse
 último caso, o nível é avaliado com o mínimo garantido de $P_{72}$
 (\autoref{subsec:contingencia}).
-
 Como a ocorrência de dados incompletos nas APIs reais não pode ser
 controlada, os casos X07 a X09 a reproduzem pelo comando
 \texttt{chuva parcial <mm>}. O caso X09 verifica que um mínimo garantido
@@ -1805,7 +1682,7 @@ X08 & $S_1 \leq S < S_2$; dados de chuva incompletos, mínimo garantido de 80\,m
 X09 & $S \geq S_2$; dados de chuva incompletos, mínimo garantido de 30\,mm & AMARELO (caso especial), pois o mínimo é menor que $P_1$; aviso ``dados de chuva incompletos'' \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base na \autoref{tab:contingencia}.}
+\fonte{elaborada pela própria autora, com base na \autoref{tab:contingencia}.}
 \end{table}
 
 \paragraph*{Casos de energia}
@@ -1814,7 +1691,6 @@ Os casos de energia usaram a chave da rede e o potenciômetro da bateria,
 com o nível de alerta fixo em VERDE ($S < S_1$ e $P_{72} = 30$\,mm). As
 tensões de 3,06\,V e 2,68\,V foram escolhidas dentro das faixas de bateria
 baixa e crítica da \autoref{tab:estados-energia}.
-
 No caso E04, a bateria foi mantida abaixo de 4,20\,V com a rede presente
 até o fim do tempo $T_{\mathrm{carga}}$, reduzido a 585~segundos pelo modo
 de demonstração.
@@ -1834,7 +1710,7 @@ E03 & Rede ausente; bateria em 3,06\,V e depois em 2,68\,V & LED ATENÇÃO pisca
 E04 & Rede presente; bateria em 3,57\,V até o fim de $T_{\mathrm{carga}}$ & Durante a recarga, estado normal, com indicação de recarga; após $T_{\mathrm{carga}}$, LED ATENÇÃO aceso e falha de bateria, sem a indicação de recarga \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base na \autoref{tab:estados-energia}.}
+\fonte{elaborada pela própria autora, com base na \autoref{tab:estados-energia}.}
 \end{table}
 
 Os valores de $S$ e de tensão desses casos vêm dos potenciômetros da
@@ -1850,13 +1726,11 @@ higrômetro real no lugar do potenciômetro e sem a supervisão de energia
 verificam a leitura do higrômetro, a decisão do nível e o acionamento dos
 LEDs e do \textit{buzzer} reais.
 
-Os casos foram executados com a sonda em dois recipientes com areia:
-um com areia seca e outro com areia saturada de água. Antes dos casos,
+Os casos foram executados com a sonda em dois recipientes com areia, sendo um com areia seca e outro com areia saturada de água. Antes dos casos,
 foi feita a setagem do higrômetro, com a sonda na areia seca e na areia
 saturada, pelo comando \texttt{calibrar}. A saturação $S$ de cada caso
 foi obtida pela posição da sonda na areia, e $P_{72}$ foi informado pelo
 comando \texttt{chuva <mm>}, como na simulação.
-
 Como a umidade da areia não pode ser ajustada com precisão, a saída
 esperada de cada caso é definida pela faixa de $S$ efetivamente lida
 (\autoref{tab:limiares}), e não por um valor fixo.
@@ -1880,9 +1754,9 @@ F07 & APIs reais (BNDMET e OpenWeatherMap) & $P_{48}$, $P_{24}$ e $P_{72}$ do di
 F08 & Sonda na areia saturada ($S \geq S_2$); dados de chuva incompletos, mínimo garantido de 120\,mm & VERMELHO, avaliado com o mínimo garantido; LED vermelho; \textit{buzzer} acionado \\
 \hline
 \end{tabular}
-\fonte{Autora, 2026, com base nas \autoref{tab:matriz} e \autoref{tab:contingencia}.}
+\fonte{elaborada pela própria autora, com base nas \autoref{tab:matriz} e \autoref{tab:contingencia}.}
 \end{table}
 
 No protótipo físico, $S$ vem do higrômetro, mas os casos continuam sendo
-testes da lógica de decisão: a umidade do solo em torno da sonda foi
+testes da lógica de decisão, pois a umidade do solo em torno da sonda foi
 preparada para cada caso e não representa o maciço de uma barragem.

@@ -6,7 +6,7 @@
 \newline
 
 O sistema desenvolvido combina a saturação do solo, medida no local, com
-a chuva observada e prevista e classifica a condição da área monitorada
+a chuva observada e prevista para classificar a condição da área monitorada
 em três níveis de alerta. Nos 31 casos de teste, executados na simulação
 e no protótipo físico, a saída observada foi igual à saída esperada.
 
@@ -30,7 +30,6 @@ Pelo cálculo, um pacote de fábrica de células de íon-lítio, de 3,7\,V e
 interromper a saída na falta da rede elétrica. Na
 simulação, a supervisão de energia avisou o administrador da falta de
 rede, da bateria baixa, da bateria crítica e da falha de recarga.
-
 O protótipo físico custou R\$\,59,18, e a alimentação redundante elevou
 o custo total a R\$\,421,20, valores muito inferiores aos de instrumentos
 geotécnicos automatizados.
@@ -51,36 +50,36 @@ Conclui-se que é possível construir, com componentes de baixo custo e
 tecnologias de código aberto, um sistema de alerta que possibilita
 auxiliar a execução do plano de emergência na evacuação antecipada da
 população que mora e/ou circula próxima a barragens de rejeitos. O
-sistema é complementar: não substitui a sirene, o plano de ação de
-emergência nem a Defesa Civil.
+sistema é complementar, ou seja, não substitui a sirene, o plano de ação de emergência e nem a Defesa Civil.
 
 \paragraph*{Trabalhos futuros}
 
-São propostos os seguintes trabalhos futuros:
+A partir do que foi realizado neste trabalho, são propostos os seguintes trabalhos futuros:
 
 \begin{enumerate}
 
-  \item enviar o alerta aos moradores também por SMS, que não depende de
+  \item Considerar o envio do alerta aos moradores também por SMS, que não depende de
   acesso à internet;
 
-  \item analisar a sensibilidade do nível de alerta aos valores adotados no
+  \item Analisar a sensibilidade do nível de alerta aos valores adotados no
   modelo, como os
   limiares $S_1$, $S_2$, $P_1$ e $P_2$, ajustados ao local, por meio de
   superfícies de resposta;
 
-  \item substituir o higrômetro por instrumentos geotécnicos, como
+  \item Substituir o higrômetro por instrumentos geotécnicos, como
   piezômetros, e por um sensor de umidade volumétrica;
 
-  \item instalar múltiplos pontos de medição, em posições e
+  \item Instalar múltiplos pontos de medição, em posições e
   profundidades diferentes da estrutura;
 
-  \item montar a bateria, o carregador e a detecção da rede no
+  \item Montar a bateria, o carregador e a detecção da rede no
   protótipo físico e ensaiar a autonomia real;
 
-  \item complementar os dias sem registro na estação da BNDMET com os
+  \item Complementar os dias sem registro na estação da BNDMET com os
   dados de uma segunda estação próxima;
 
-  \item testar o sistema em um piloto em escala reduzida e/ou em campo,
-  em uma barragem real.
+  \item Testar o sistema em um piloto com escala reduzida e/ou em campo, em uma barragem real;
+
+  \item Revisar, junto com a Defesa Civil, os textos de orientação exibidos na plataforma e enviados no e-mail de alerta, adotando mensagens mais diretas ao morador, como ``Mantenha-se informado(a).'' no nível VERDE, ``Prepare-se! Conheça a Rota de Fuga e o Ponto de Encontro. Acompanhe novos avisos.'' no nível AMARELO, ``Desloque-se para o Ponto de Encontro via Rota de Fuga seguindo as orientações da Defesa Civil.'' no nível VERMELHO e ``Cadastre-se para receber avisos e alertas através do seu e-mail.'' no botão de cadastro da página inicial.
 
 \end{enumerate}

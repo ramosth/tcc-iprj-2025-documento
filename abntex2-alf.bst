@@ -120,7 +120,7 @@ FUNCTION {output.nonnull}
 FUNCTION {output.nonnull.dash}
 { 's :=                                   %the argument is written into s
   output.state mid.sentence =
-    { " --- " * write$ }                       %mid.sentence first write comma
+    { " -- " * write$ }                       %mid.sentence first write comma
     { output.state after.block =
         { add.period$ write$ newline$ write$}
         { output.state before.all = 'write$
@@ -246,12 +246,12 @@ FUNCTION {bbl.and}
   abnt.and.type #1 = {" \& "} 'skip$ if$}
 FUNCTION {bbl.chapter} { "cap." }
 FUNCTION {bbl.colon} {": "}
-FUNCTION {bbl.editors} { "Ed." }
-FUNCTION {bbl.editor} { "Ed." }
+FUNCTION {bbl.editors} { "ed." }
+FUNCTION {bbl.editor} { "ed." }
 FUNCTION {bbl.edby} { "editado por" }
 FUNCTION {bbl.edition} { "ed." }
 FUNCTION {bbl.empty} {""}
-FUNCTION {bbl.etal}{abnt.etal.text "" = {""} {" " abnt.etal.text *} if$}
+FUNCTION {bbl.etal}{abnt.etal.text "" = {""} {" \emph{" abnt.etal.text * "}" *} if$}
 FUNCTION {bbl.doi.url} {"http://dx.doi.org/"}
 FUNCTION {bbl.in}{ "In" iso.abbreviation 'skip$ { bbl.colon *} if$}
 FUNCTION {bbl.ldots} %#0 use nothing, #1 use \ldots, #2 use $\ldots$, 3# use {...}
@@ -269,9 +269,9 @@ FUNCTION {bbl.missing.year}
  if$}
 FUNCTION {bbl.monography} { "Monografia" }
 FUNCTION {bbl.mthesis} { "Disserta\c{c}\~{a}o" }
-FUNCTION {bbl.no.address} {"[S.l.]"}
-FUNCTION {bbl.no.address.no.publisher} {"[S.l.: s.n.]"}
-FUNCTION {bbl.no.publisher} {"[s.n.]"}
+FUNCTION {bbl.no.address} {"[\emph{S. l.}]"}
+FUNCTION {bbl.no.address.no.publisher} {"[\emph{S. l.}: \emph{s. n.}]"}
+FUNCTION {bbl.no.publisher} {"[\emph{s. n.}]"}
 FUNCTION {bbl.number} { iso.abbreviation {"no."} {"n."} if$ }
 FUNCTION {bbl.nr} { "n." }
 FUNCTION {bbl.of} { "de" }
@@ -718,30 +718,7 @@ FUNCTION {format.title}
 }
 
 FUNCTION {n.dashify}
-{
-  't :=
-  ""
-    { t empty$ not }
-    { t #1 #1 substring$ "-" =
-        { t #1 #2 substring$ "--" = not
-            { "--" *
-              t #2 global.max$ substring$ 't :=
-            }
-            {   { t #1 #1 substring$ "-" = }
-                { "-" *
-                  t #2 global.max$ substring$ 't :=
-                }
-              while$
-            }
-          if$
-        }
-        { t #1 #1 substring$ *
-          t #2 global.max$ substring$ 't :=
-        }
-      if$
-    }
-  while$
-}
+{ }
 
 FUNCTION {word.in} { bbl.in " " * }
 

@@ -38,7 +38,7 @@
 \usepackage[
     alf,                    % estilo alfabético    
     bibjustif,              % justifica as referências
-    abnt-etal-cite=2,       % “et al.” a partir de 2 autores nas citações
+    abnt-etal-cite=3,       % “et al.” a partir de 4 autores nas citações (NBR 10520:2023)
     abnt-etal-list=3,       % até 3 nomes nas entradas da bibliografia
     abnt-full-initials=no,  % iniciais mínimas nos nomes
     abnt-emphasize=italic,  % títulos de obras em itálico
@@ -46,6 +46,22 @@
     abnt-upper-cite=no      % DESATIVA caixa alta nas citações
 ]{abntex2cite}
 \usepackage{hyperref}
+% --- NBR 10520:2023 / NBR 6023:2018: entidades em maiúsculas só nas Referências
+\newif\ifemreferencias
+\DeclareRobustCommand{\ent}[2]{\ifemreferencias #1\else #2\fi}
+\newcommand{\DOUfim}[2]{\ifx,#1\ #2\else#1#2\fi}
+\DeclareRobustCommand{\hANM}{. Agência Nacional de Mineração}
+\DeclareRobustCommand{\hDNPM}{. Departamento Nacional de Produção Mineral}
+\DeclareRobustCommand{\hCONAMA}{. Conselho Nacional do Meio Ambiente}
+\DeclareRobustCommand{\hPR}{. Presidência da República}
+\DeclareRobustCommand{\hMI}{. Ministério da Integração Nacional}
+\DeclareRobustCommand{\hGovEst}{. Governo do Estado}
+\DeclareRobustCommand{\hCBM}{. Corpo de Bombeiros Militar}
+\DeclareRobustCommand{\hConst}{. [Constituição (1988)]}
+\DeclareRobustCommand{\eICMM}{\ent{INTERNATIONAL COUNCIL ON MINING AND METALS}{International Council on Mining and Metals}}
+\DeclareRobustCommand{\eUNEP}{\ent{UNITED NATIONS ENVIRONMENT PROGRAMME}{United Nations Environment Programme}}
+\DeclareRobustCommand{\ePRI}{\ent{PRINCIPLES FOR RESPONSIBLE INVESTMENT}{Principles for Responsible Investment}}
+
 
 \DeclareFloatingEnvironment[
     fileext=loq,
@@ -189,6 +205,8 @@
  \include{conclusao}
 
     \include{nocite}
+    \citeoption{abnt-options-tcc}
+    \emreferenciastrue
     \bibliography{tcc}
 	% Elementos pós-textuais
 	\postextual
