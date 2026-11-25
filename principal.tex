@@ -145,6 +145,12 @@
 
 \input{config}		%Define as configurações do arquivo
 
+% Lista de Quadros no mesmo padrão da Lista de Figuras (Quadro 1 – ...)
+\makeatletter
+\AtBeginDocument{\def\newfloat@listofquadro@hook{%
+  \renewcommand*{\cftfigurename}{Quadro\space}\let\l@quadro\l@figure}}
+\makeatother
+
 \begin{document}
     \newpage
     \pagenumbering{arabic}
@@ -175,7 +181,7 @@
 
 	%Lista de Quadros
 	\pdfbookmark[0]{Lista de Quadros}{loq}
-	\listof{quadro}{Lista de Quadros}
+	\listofquadros*
 	\cleardoublepage
 
  	%Lista de Tabelas
